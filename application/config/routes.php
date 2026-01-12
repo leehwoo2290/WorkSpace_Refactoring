@@ -56,20 +56,21 @@ $route['default_controller'] = 'welcome';
 */
 
 // JWT API routes
-$route['api/authentication/web/login']   = 'auth/JwtController/login';
-$route['api/authentication/web/me']      = 'auth/JwtController/me';
-$route['api/authentication/web/refresh'] = 'auth/JwtController/refresh';
-$route['api/authentication/web/logout']  = 'auth/JwtController/logout';
+$route['api/authentication/web/login']['post']   = 'auth/JwtController/login';
+$route['api/authentication/web/me']['get']      = 'auth/JwtController/me';
+$route['api/authentication/web/refresh']['post'] = 'auth/JwtController/refresh';
+$route['api/authentication/web/logout']['post']  = 'auth/JwtController/logout';
 
-$route['api/authentication/app/login']   = 'auth/JwtController/login';
-$route['api/authentication/app/me']      = 'auth/JwtController/me';
-$route['api/authentication/app/refresh'] = 'auth/JwtController/refresh';
-$route['api/authentication/app/logout']  = 'auth/JwtController/logout';
+$route['api/authentication/web/csrf']['get'] = 'auth/CsrfController/csrf';
 
-$route['api/authentication/web/csrf'] = 'auth/CsrfController/csrf';
+$route['api/authentication/web/users']['get'] = 'auth/UserController/list';
+$route['api/authentication/web/login-logs']['get'] = 'auth/UserController/logList';
 
-$route['api/authentication/web/login-logs'] = 'auth/UserController/logList';
-
+//---------------------------------------------------------------------------------------------
+$route['api/authentication/app/login']['post']   = 'auth/JwtController/login';
+$route['api/authentication/app/me']['get']      = 'auth/JwtController/me';
+$route['api/authentication/app/refresh']['post'] = 'auth/JwtController/refresh';
+$route['api/authentication/app/logout']['post']  = 'auth/JwtController/logout';
 
 $route['default_controller'] = 'welcome';
 $route['404_override'] = '';

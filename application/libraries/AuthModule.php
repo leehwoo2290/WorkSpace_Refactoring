@@ -1,6 +1,8 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 
+
+
 use App\auth\service\JwtService;
 use App\auth\service\UserService;
 use App\auth\JwtManager;
@@ -14,10 +16,13 @@ use App\auth\dto\UserLoginRes;
 use App\auth\dto\UserMeRes;
 use App\auth\dto\UserLoginLogListRes;
 use App\auth\dto\UserLoginLogListReq;
+use App\auth\dto\UserListRes;
+use App\auth\dto\UserListReq;
 use App\auth\repository\UserRoleRepository;
 use App\auth\repository\UserAuthRepository;
 use App\auth\repository\RefreshTokenRepository;
 use App\auth\Repository\UserLoginLogRepository;
+use App\auth\Repository\UserRepository;
 
 /**
  * AuthModule (구 JwtLibrary)
@@ -40,6 +45,7 @@ class AuthModule
     private UserRoleRepository $userRoleRepository;
     private UserAuthRepository $userAuthRepository;
     private UserLoginLogRepository $userLoginLogRepository;
+    private UserRepository $userRepository;
     private JwtService $jwtService;
     private UserService $userService;
 
@@ -82,9 +88,10 @@ class AuthModule
         $this->userAuthRepository = new UserAuthRepository($this->CI->db);
 
         $this->userLoginLogRepository = new UserLoginLogRepository($this->CI->db);
+        $this->userRepository = new UserRepository($this->CI->db);
 
         $this->jwtService = new JwtService($this->jwtManager, $this->tokenTransport, $this->userContext, $this->userRoleRepository, $this->userAuthRepository, $this->refreshTokenHasher, $this->refreshTokenRepository, $this->userLoginLogRepository);
-        $this->userService = new UserService($this->userLoginLogRepository);
+        $this->userService = new UserService($this->userLoginLogRepository, $this->userRepository);
     }
 
     /** @return UserContext */
@@ -118,14 +125,19 @@ class AuthModule
         $this->jwtService->logout();
     }
 
+    public function purgeRefreshTokens(int $replacedRetentionDays = 7, int $limit = 5000): int
+    {
+        return $this->refreshTokenRepository->purgeExpiredAndOldReplaced($replacedRetentionDays, $limit);
+    }
+
     public function logList(UserLoginLogListReq $userLoginLogListReq): UserLoginLogListRes
     {
         return $this->userService->logList($userLoginLogListReq);
     }
 
-    public function purgeRefreshTokens(int $replacedRetentionDays = 7, int $limit = 5000): int
+    public function userList(UserListReq $userListReq): UserListRes
     {
-        return $this->refreshTokenRepository->purgeExpiredAndOldReplaced($replacedRetentionDays, $limit);
+        return $this->userService->userList($userListReq);
     }
 
 }

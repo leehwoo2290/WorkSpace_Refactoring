@@ -38,15 +38,15 @@ final class UserLoginLogListReq implements HttpRequestDto, ApiDocDto
     {
         return $this->success;
     }
-    public static function fromArray(array $q): self
+    public static function fromArray(array $query): self
     {
-        $page = (int) ($q['page'] ?? 1);
-        $size = (int) ($q['size'] ?? 20);
+        $page = (int) ($query['page'] ?? 1);
+        $size = (int) ($query['size'] ?? 20);
 
-        $email = trim((string) ($q['email'] ?? ''));
-        $success = trim((string) ($q['success'] ?? ''));
-        $from = trim((string) ($q['from'] ?? ''));
-        $to = trim((string) ($q['to'] ?? ''));
+        $email = trim((string) ($query['email'] ?? ''));
+        $success = trim((string) ($query['success'] ?? ''));
+        $from = trim((string) ($query['from'] ?? ''));
+        $to = trim((string) ($query['to'] ?? ''));
 
         return new self($page, $size, $email, $success, $from, $to);
     }

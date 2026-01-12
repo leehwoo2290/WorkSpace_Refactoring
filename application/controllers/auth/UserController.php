@@ -5,16 +5,34 @@ use App\common\ApiResult;
 use App\auth\dto\UserLoginLogListRes;
 use App\auth\dto\UserLoginLogListReq;
 
+use App\auth\dto\UserListRes;
+use App\auth\dto\UserListReq;
+
 class UserController extends BASE_Controller
 {
 
     public function list()
     {
+        /*
+        @Description
+        - [GET] /api/authentication/web/users
+        - Header: Authorization: Bearer {accessToken}
+        - Query:
+        - page: int (default 1)
+        - size: int (default 20)
+        - keyword: string (이름/이메일/사번 부분검색)
+        - role: '' | 'User' | 'Staff' | 'Manager' | 'Admin' | 'SuperAdmin'
+        - status: '' | 'Pending' | 'Normal' | 'Quit'
+        - engineerYn: '' | 'Y' | 'N'
+        - 성공: 200 OK (ApiResult::ok)
+        - 실패: 401/403 (권한/인증)
+        */
+        
         try {
-            $userLoginLogListReq = $this->requestDtoMapper->queryRequestDto(UserLoginLogListReq::class);
-            $userLoginLogListRes = $this->authModule->logList($userLoginLogListReq);
+            $userListReq = $this->requestDtoMapper->queryRequestDto(UserListReq::class);
+            $userListRes = $this->authModule->userList($userListReq);
 
-            ApiResult::ok($userLoginLogListRes, UserLoginLogListRes::class);
+            ApiResult::ok($userListRes, UserListRes::class);
 
         } catch (\Throwable $e) {
 
