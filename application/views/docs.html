@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>API Documentation</title>
+
+	<!-- Style -->
+	<link href='http://fonts.googleapis.com/earlyaccess/nanumgothic.css' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+	<style>
+
+		/* Better visibility for long tokens / JSON */
+		.footer-container .code-wrap { overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
+
+		@charset "utf-8";*{margin:0}body{min-width:960px;background-color:#fdfdfd !important}::-webkit-scrollbar{display:none}p.ico-circle-none{border-radius:3px;border:1px #fdcf42 solid}p.ico-circle{border-radius:3px;background-color:#fdcf42}p.ico-close{width:12px;height:12px;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAW9JREFUSA21ljFvgzAQhWMEEluHrJ2yFqkL7dohan90qw5dGwYqsaZT1w7dkECi9wyHTOOzj1S5Idjnu+/58AHZbCar6/qmqqornp97BQMszk8waJrmNsuytzzPn/8jglwwwAITbAM1OGi8hWMYhve2bZ/KsvzBXGsMN8bcTznfXdc9JH3ffxH0yCAErK3EA8dGj2AbgIUAVSWxXCtwrkgMDu4ssFZEAz8RCIgc6OAf+eAn+Aud1x1yYFJzLCoYQ8UzsSKIoSZQwRHrFcCCsMuDTVLsHHEwUQCLPhH42ei2LG4d+91rUACBkogGjnz7qsDgUhasQNo9b0ZThSjggwMI+J/2DJ6DV0CC41mAgKdNRZETgRA88qB5RRYCGjgqgGljZwFtwogffzU5VkAT6ILdcSzXxAJcmDQOMZI0Ta+p7XacrOltjuUrDh8dxm0MP5iWjQk+0OR4pYBP97WMtTXmVLIj1r4oio85/1J/W34BVf6z7vH0Q60AAAAASUVORK5CYII=);background-size:12px 12px}body.console-active .sidebar-menu-area{padding-bottom:350px}.sidebar-container{position:fixed;width:310px;height:100%;background-color:#2a2e3e;overflow:hidden}.sidebar-container .sidebar-brand-area img{width:310px;height:100px}.sidebar-container .sidebar-menu-area{height:100%;padding-bottom:100px}.sidebar-container .sidebar-menu-area .sidebar-menu-wrap{height:100%}.sidebar-container .sidebar-menu-area .sidebar-menu-wrap ul{display:block;list-style:none;padding:0}.sidebar-container .sidebar-menu-area .sidebar-menu-wrap ul>li{margin:10px 0;min-height:32px;padding:6px 20px;display:block}.sidebar-container .sidebar-menu-area .sidebar-menu-wrap ul>li>.block{float:left;margin-left:-20px;margin-top:-6px;width:4px;height:32px}.sidebar-container .sidebar-menu-area .sidebar-menu-wrap ul>li label>a{color:#fff;font-family:'Nanum Gothic',san-serif;font-weight:700;font-size:16px;margin:0;text-decoration:none}.sidebar-container .sidebar-menu-area .sidebar-menu-wrap ul>li ol{display:none}.sidebar-container .sidebar-menu-area .sidebar-menu-wrap ul>li label>a:hover,.sidebar-container .sidebar-menu-area .sidebar-menu-wrap ul>li ol>li>a:hover{cursor:pointer}.sidebar-container .sidebar-menu-area .sidebar-menu-wrap ul>li:first-child{margin-top:27px}.sidebar-container .sidebar-menu-area .sidebar-menu-wrap ul>li.highlight>.block{background-color:#fdcf42}.sidebar-container .sidebar-menu-area .sidebar-menu-wrap ul>li.highlight label{color:#fdcf42}.sidebar-container .sidebar-menu-area .sidebar-menu-wrap ul>li.highlight ol{display:block;list-style:none;margin:10px 0 0 16px;padding:0}.sidebar-container .sidebar-menu-area .sidebar-menu-wrap ul>li.highlight ol li{padding:5px;height:32px}.sidebar-container .sidebar-menu-area .sidebar-menu-wrap ul>li.highlight ol li a{font-family:'Nanum Gothic',san-serif;font-weight:400;color:#a3a5b1;text-decoration:none}.sidebar-container .sidebar-menu-area .sidebar-menu-wrap ul>li.highlight ol li.highlight a{color:#fff;text-decoration:none}body.console-active .main-container{padding-bottom:250px}.main-container{margin-left:310px}.main-container .main-header-area{padding:50px}.main-container .main-header-area h1{font-family:'Nanum Gothic',san-serif;font-weight:700;font-size:32px;padding-bottom:22px;border-bottom:1px #d5d5d5 solid;color:#1f2438}.main-container .main-header-area h2{margin:40px 3px 8px 3px;font-family:'Nanum Gothic',san-serif;font-weight:700;font-size:22px;color:#4e5367}.main-container .main-header-area blockquote{margin:0 3px 12px 3px;padding:8px 14px;border-left:4px #e2e2e2 solid;color:#a3a5b1}.main-container .main-header-area section.api-box{margin:12px 3px 0 3px;border:1px rgba(0,0,0,0.07) solid}.main-container .main-header-area section.api-box .method:before{font-family:'Nanum Gothic',san-serif;font-weight:400;font-size:18px;text-align:center;color:#fff;content:attr(data-method)}.main-container .main-header-area section.api-box .method[data-method='GET']{background-color:#55c399}.main-container .main-header-area section.api-box .method[data-method='POST']{background-color:#5ba7ff}.main-container .main-header-area section.api-box .method[data-method='DELETE']{background-color:#fe636b}.main-container .main-header-area section.api-box .method[data-method='PUT']{background-color:#fdcf42}.main-container .main-header-area section.api-box .method{float:left;text-align:center;width:82px;height:30px;padding-top:1px}.main-container .main-header-area section.api-box .endpoint{height:30px;font-family:'Nanum Gothic',san-serif;font-weight:400;font-size:14px;padding:4px 10px 0 92px;background-color:#ededed}.main-container .main-header-area section.api-box .endpoint>a{color:#333}.main-container .main-header-area section.api-box .endpoint>a,.main-container .main-header-area section.api-box .endpoint>a:hover{text-decoration:none}.main-container .main-header-area section.api-box .group{margin:12px 14px 16px 14px}.main-container .main-header-area section.api-box .group label{margin:0;padding-bottom:6px;font-family:'Nanum Gothic',san-serif;font-weight:400;font-size:14px;color:#4e5367}.main-container .main-header-area section.api-box .group label+div{border-top:1px #e2e2e2 solid}.main-container .main-header-area section.api-box .group div.row{height:28px;margin:0}.main-container .main-header-area section.api-box .group div.row div{font-family:'Nanum Gothic',san-serif;font-weight:400;font-size:14px;padding:0 8px;margin-top:3px;color:#4e5367}.main-container .main-header-area section.api-box .group div.row div p{float:left;width:6px;height:6px;margin:8px 6px 0 0}.main-container .main-header-area section.api-box .group div.row div input{font-family:'Nanum Gothic',san-serif;font-weight:400;font-size:12px;display:block;margin-top:-1px;padding:auto 4px;width:100%;height:24px;border-radius:3px;border:1px rgba(0,0,0,0.07) solid}.main-container .main-header-area section.api-box .group div.row div textarea{font-family:'Source Code Pro';height:100px}.main-container .main-header-area section.api-box .group div.row div:first-child{padding-top:2px}.main-container .main-header-area section.api-box .tryit{margin-top:-20px}.main-container .main-header-area section.api-box .tryit>div{margin:10px;text-align:center}.main-container .main-header-area section.api-box .tryit>div button{font-family:'Nanum Gothic',san-serif;font-weight:400;font-size:14px;width:140px;height:26px;border:0;border-radius:3px;background-color:#4e5367;color:#fff;transition:.35s all;-webkit-transition:.35s all}.main-container .main-header-area section.api-box .tryit>div button:hover{background-color:#2a2e3e}body.console-active .footer-container{display:block}.footer-container{position:fixed;display:none;bottom:0;width:100%;height:250px;background-color:#4e5367}.footer-container .footer-header-area{width:100%;height:24px;padding:3px 7px 0 7px;background-color:#696f86}.footer-container .footer-header-area label{font-family:'Nanum Gothic',san-serif;font-weight:400;font-size:12px;color:#fff;width:50%;float:left;margin:0}.footer-container .footer-header-area p{float:right;margin:2px -2px;padding:0}.footer-container .footer-content-area .code-area{padding:0}.footer-container .footer-content-area .code-area pre{font-family:'Source Code Pro';font-weight:400;font-size:12px;margin:0;border:0;border-radius:0;background:transparent}.footer-container .footer-content-area .code-area .description{position:absolute;right:30px;bottom:20px;font-family:'Nanum Gothic',san-serif;font-weight:400;font-size:24px;color:#fff;opacity:.2}.footer-container .footer-content-area .request pre{padding:20px 20px 20px 32px}.footer-container .footer-content-area .response{border-left:1px rgba(255,255,255,0.2) dashed}.footer-container .footer-content-area .response pre{padding:20px 32px 20px 20px}pre.highlighter{color:#fff}pre.highlighter .cross-hatch{color:#fdcf42}pre.highlighter .url{color:#fff}pre.highlighter .spacial-charactor{color:#a3a5b1}pre.highlighter .parameter-key{color:#5ba7ff}pre.highlighter .parameter-value{color:#fff}pre.highlighter .header-key{color:#55c399}pre.highlighter .header-value{color:#fdcf42}pre.highlighter .brackets{color:#fff}pre.highlighter .string{color:#55c399}pre.highlighter .number{color:#fdcf42}pre.highlighter .xml-block{color:#5ba7ff}pre.highlighter .xml-tag-block{color:#55c399}pre.highlighter .xml-field{color:#fe636b}pre.highlighter .xml-content{color:#fff}pre.highlighter .query-key{color:#55c399}pre.highlighter .query-value{color:#fdcf42}
+	</style>
+	
+	<!-- jQuery -->
+	<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+	<!-- Less -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.5.1/less.min.js"></script>
+
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+	<!-- underscope -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+	<!-- jquery.slimscroll -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jQuery-slimScroll/1.3.6/jquery.slimscroll.min.js"></script>
+
+	<!-- JS -->
+	<script>
+		var base_url = '<?= $base_url ?>'
+		var menu_click_flag = false
+		const SCROLL_Y_CONTROL = 50
+
+		$(document).ready(function(){
+			$(window).scroll(function(){
+				if (menu_click_flag)
+					return false
+
+				var _window = $(this)
+				var window_scroll_top = _window.scrollTop()
+
+				if (window_scroll_top + _window.height() == $(document).height()) {
+			    	$('li.highlight ol .highlight').removeClass('highlight')
+			    	$('li.highlight ol li').last().addClass('highlight')
+			    }
+			    else {
+			    	$('div.api-wrap').each(function(index, method_dom){
+			    		var _method_dom = $(method_dom)
+			    		var method_dom_top = _method_dom.offset().top
+			    		
+			    		if (window_scroll_top <= method_dom_top + _method_dom.height() / 2){
+			    			$('li.highlight ol .highlight').removeClass('highlight')
+			    			$('li.highlight ol li').each(function(index, li_dom){
+			    				if (_method_dom.find('h2.method-name').text() == $(li_dom).find('a').text()){
+			    					$(li_dom).addClass('highlight')
+			    					return false
+			    				}
+			    			})
+			    			return false
+			    		}
+			    	})
+			    }
+			})
+
+			$('ol li').click(function(event){
+				event.preventDefault()
+				menu_click_flag = true
+
+				var _this = $(this);
+				$('html, body').stop(true).animate({
+					scrollTop: $('.' + _this.text()).offset().top - SCROLL_Y_CONTROL
+				}, 500, function() { menu_click_flag = false });
+
+				$('li.highlight ol .highlight').removeClass('highlight')
+				_this.addClass('highlight')
+			})
+
+			$('li.collection label a').click(function(){
+				location.href = base_url + 'docs/view/' + $(this).text()
+			})
+
+			$(document).on('keyup', '.api-box .urlparameter input[type="text"]', function(){
+				var _this = $(this)
+				var input_index = _this.parents('.urlparameter').find('input[type="text"]').index(_this)
+				var url_val = _this.parents('.group').siblings('.endpoint')
+				var method_name = _this.parents('.api-box').siblings('.method-name').text()
+
+				var split_url = url_val.text().split(method_name + '/')
+				split_url[0] += method_name
+				split_url[1].split('/').forEach(function(element, index){
+					split_url[0] += '/' + (index == input_index ? (_this.val() != '' ? _this.val() : _this.parent().siblings('div').text()) : element)
+				})
+
+				url_val.text(split_url[0])
+			})
+
+			
+			$(document).on('click', '.btn-fetch-csrf', function(e){
+				e.preventDefault();
+
+				var api_parent = $(this).parents('section');
+				var input = $(this).siblings('input[type="text"]');
+
+				var base = '';
+				try {
+					if (typeof base_url !== 'undefined' && base_url) base = base_url.toString();
+					else {
+						var seg = (window.location.pathname.split('/').filter(function(x){return x;}))[0] || '';
+						base = window.location.origin + (seg ? '/' + seg : '');
+					}
+				} catch(_e) { base = ''; }
+				base = base.replace(/\/+$/,'');
+				var url1 = base + '/api/authentication/web/csrf';
+				var url2 = base + '/index.php/api/authentication/web/csrf';
+
+				function applyToken(res){
+					try {
+						var token = '';
+						if (res && res.data && res.data.token) token = res.data.token;
+						if (!token && res && res['data'] && res['data']['token']) token = res['data']['token'];
+						input.val(token);
+						$('.csrf-row input[type="text"]').val(token);
+					} catch(_e) {}
+				}
+
+				$.ajax({type:'GET', url:url1})
+					.done(applyToken)
+					.fail(function(xhr){
+						if (xhr && xhr.status == 404){
+							$.ajax({type:'GET', url:url2}).done(applyToken).fail(function(){ alert('CSRF 발급 실패'); });
+						} else {
+							alert('CSRF 발급 실패');
+						}
+					});
+			});
+
+
+			$(document).on('click', 'button[type="submit"]', function(){
+				var api_parent = $(this).parents('section')
+				var call_type = api_parent.find('.method').attr('data-method')
+
+				var ajax_config = {
+					type: call_type,
+					url: function(){
+						var url = api_parent.find('.endpoint').text().replace(/\s/g, '')
+
+						if (call_type == 'GET'){
+							$.each(api_parent.children('.parameter').children('.row'), function(index, row_val){
+								$.each($(row_val).children('div'), function(div_index, div_val){
+									var input_dom = $(div_val).children('input[type="text"]')
+									var parameter_val = input_dom.val()
+									if (parameter_val != undefined){
+										url += (index ? '&' : '?') + input_dom.parent().siblings('div').text() + '=' + parameter_val
+									}
+								})
+							})
+						}
+
+						return url
+					}(),
+
+					data: call_type != 'GET' ? ajax_data_binding(api_parent, 'parameter') : null,
+					headers: ajax_data_binding(api_parent, 'header')
+				}
+
+
+				// Prefer the real href (so routes like /api/... are used)
+				var endpoint_url = (api_parent.find('.endpoint a').attr('href') || api_parent.find('.endpoint').text()).replace(/\s/g, '');
+
+				if (call_type == 'GET'){
+					$.each(api_parent.children('.parameter').children('.row'), function(index, row_val){
+						$.each($(row_val).children('div'), function(div_index, div_val){
+							var input_dom = $(div_val).children('input[type="text"]')
+							var parameter_val = input_dom.val()
+							if (parameter_val != undefined){
+								endpoint_url += (endpoint_url.indexOf('?') !== -1 ? '&' : '?') + input_dom.parent().siblings('div').text() + '=' + parameter_val
+							}
+						})
+					})
+				}
+
+				ajax_config['url'] = endpoint_url;
+
+				// A안: JSON-only body for non-GET (use Raw JSON textarea)
+				if (call_type != 'GET') {
+					var raw_dom = api_parent.find('textarea.raw-json');
+					if (raw_dom.length) {
+						var raw = (raw_dom.val() || '').trim();
+						if (!raw) raw = '{}';
+						try { JSON.parse(raw); } catch(e) { alert('Raw JSON이 올바르지 않습니다.'); return; }
+
+						ajax_config['data'] = raw;
+						ajax_config['processData'] = false;
+						ajax_config['contentType'] = 'application/json; charset=UTF-8';
+					}
+				}
+
+				var response_func = function(a, b, c){
+					// jQuery signatures:
+					// - success: (data, textStatus, jqXHR)
+					// - error:   (jqXHR, textStatus, errorThrown)
+					var data = null;
+					var jqXHR = null;
+					var textStatus = null;
+
+					if (c && typeof c === 'object' && typeof c.status !== 'undefined') {
+						data = a;
+						textStatus = b;
+						jqXHR = c;
+					} else if (a && typeof a === 'object' && typeof a.status !== 'undefined' && typeof a.responseText !== 'undefined') {
+						jqXHR = a;
+						textStatus = b;
+						data = null;
+					} else {
+						data = a;
+						textStatus = b;
+						jqXHR = c;
+					}
+
+					var request_data_str = '# ' + call_type + ' ' + ajax_config['url'] + '\n';
+
+					if (ajax_config['data'] && typeof ajax_config['data'] === 'object') {
+						for (parameter_key in ajax_config['data']) {
+							request_data_str += '? ' + parameter_key + '=' + ajax_config['data'][parameter_key] + '\n';
+						}
+					} else if (ajax_config['data'] && typeof ajax_config['data'] === 'string') {
+						request_data_str += ajax_config['data'] + '\n';
+					}
+					request_data_str += '\n';
+
+					for (header_key in ajax_config['headers']){
+						request_data_str += '+ ' + header_key + ':' + ajax_config['headers'][header_key] + '\n';
+					}
+
+					var statusCode = (jqXHR && jqXHR.status) ? jqXHR.status : null;
+
+					// If logout succeeded, clear Authorization field so /me won't keep using old access token
+					try {
+						var u2 = (ajax_config['url'] || '').toString();
+						var isLogout = /\/api\/authentication\/(web|app)\/logout(\?|$)/.test(u2);
+						if (isLogout && (statusCode === 204 || statusCode === 200)) {
+							$('.auth-bearer').val('');
+						}
+					} catch (e) {}
+
+					// Response text
+					var response_text = '';
+					if (statusCode === 204) {
+						response_text = "204 No Content (Success)\n- This endpoint returns no body by design.\n- Treat HTTP 204 as logout success.";
+					} else {
+						if (jqXHR && typeof jqXHR.responseText === 'string' && jqXHR.responseText !== '') {
+							response_text = jqXHR.responseText;
+						} else if (typeof(data) === 'string') {
+							response_text = data;
+						} else if (data && typeof(data) === 'object') {
+							try { response_text = JSON.stringify(data, null, 2); } catch(e) { response_text = String(data); }
+						} else if (statusCode) {
+							response_text = String(statusCode) + ' ' + ((jqXHR && jqXHR.statusText) ? jqXHR.statusText : '');
+						} else {
+							response_text = '';
+						}
+
+						// If CI error page HTML, extract h1/p
+						try {
+							var error_regex = /<h1>(.*)<\/h1>\s{0,}<p>(.*)<\/p>/g;
+							if (typeof response_text === 'string' && response_text.match(/<h1>/g)) {
+								var matched = response_text.match(error_regex);
+								if (matched && matched.length) response_text = matched.join('\n');
+							}
+						} catch(e) {}
+					}
+
+					// Auto-fill Authorization for /me after successful login
+					try {
+						var u = (ajax_config['url'] || '').toString();
+						var isLogin = /\/api\/authentication\/(web|app)\/login(\?|$)/.test(u);
+						if (isLogin && data && typeof data === 'object' && data.data) {
+							var token = null;
+							if (data.data.accessToken) token = data.data.accessToken;
+							else if (data.data.jwtTokenRes && data.data.jwtTokenRes.accessToken) token = data.data.jwtTokenRes.accessToken;
+
+							if (token) {
+								$('.auth-bearer').val('Bearer ' + token);
+							}
+						}
+					} catch (e) {}
+
+					var request_code_wrap = $('.request pre.code-wrap');
+					var response_code_wrap = $('.response pre.code-wrap');
+					request_code_wrap.text(request_data_str);
+					request_code_wrap.removeClass('highlighter');
+					response_code_wrap.text(response_text);
+					response_code_wrap.removeClass('highlighter');
+
+					parse_code_block();
+					$('body').addClass('console-active');
+				}
+
+				ajax_config['success'] = response_func
+				ajax_config['error'] = response_func
+				
+				$.ajax(ajax_config)
+			})
+
+			$('.footer-header-area').click(function(){
+				$('body').removeClass('console-active')
+			})
+		})
+
+		function ajax_data_binding(api_parent, group_name){
+			var data_str = {}
+			$.each(api_parent.find('.' + group_name).children('.row'), function(index, row){
+				var row_div = $(row).children('div')
+				data_str[row_div.eq(0).text()] = row_div.eq(1).children('input[type="text"]').val()
+			})
+			return data_str
+		}
+
+		function parse_code_block(){
+			function formatXml(xml) {
+				var formatted = '';
+				var reg = /(>)[\s]*(<)(\/*)/g;
+				xml = xml.replace(reg, '$1\r\n$2$3');
+				var pad = 0;
+				jQuery.each(xml.split('\r\n'), function(index, node) {
+					var indent = 0;
+					if (node.match( /.+<\/\w[^>]*>$/ )) {
+						indent = 0;
+					} else if (node.match( /^<\/\w/ )) {
+						if (pad != 0) pad -= 1;
+					} else if (node.match( /^<\w[^>]*[^\/]>.*$/ )) {
+						indent = 1;
+					} else {
+						indent = 0;
+					}
+
+					var padding = '';
+					for (var i = 0; i < pad; i++) {
+						padding += '    ';
+					}
+
+					formatted += padding + node + '\r\n';
+					pad += indent;
+				});
+
+				return formatted;
+			}
+			$("pre.code-wrap").each(function(){
+				if ($(this).hasClass("highlighter"))
+					return;
+
+				var data = $(this).html();
+
+				data = _.unescape(data).trim();
+
+				// cross-hatch
+				var crosshatch = /^(#[\s]+)(GET|POST|DELETE|UPDATE)([\s]{1,})([\S]+)([\s]*HTTP\/[\d.]+){0,1}/gm;
+				data = data.replace(crosshatch, "<span class='cross-hatch'>$1$2</span>$3<span class='url'>$4</span><span class='cross-hatch'>$5</span>");
+
+				// spacial-charactor
+				var spacialcharactor = /^(\?)([\s]{1,})([\S]+=)([\S]+){0,}$/gm;
+				data = data.replace(spacialcharactor, "<span class='spacial-charactor'>$1</span>$2<span class='parameter-key'>$3</span><span class='parameter-value'>$4</span>");
+
+				// header
+				var header = /^(\+)([\s]{1,})([\S]+:)[\s]{0,}([\S]+)$/gm;
+				data = data.replace(header, "<span class='spacial-charactor'>$1</span>$2<span class='header-key'>$3</span><span class='header-value'>$4</span>");
+
+				// Query Param
+				var newlength = 0;
+				var queryParam = /(((&){0,1}[\w]+=)([\w]+))/gm;
+				while ((m = queryParam.exec(data)) !== null) {
+					if (m.index === queryParam.lastIndex)
+						queryParam.lastIndex ++;
+					newlength += m[1].length;
+				}
+
+				if (data.length == newlength) {
+					$(".response .description").html("query response");
+
+					data = data.replace(queryParam, "<span class='query-key'>$2</span><span class='query-value'>$4</span>");
+
+				// JSON
+				} else if (data.indexOf("\<\?xml") === -1 && data.indexOf("\<\? xml") === -1) {
+					try {
+						odata = data;
+						data = JSON.stringify(JSON.parse(data), null, 4);
+
+						$(".response .description").html("json response");
+
+						// brackets
+						var brackets = /({|}|\(|\)|\[|\])/gm;
+						data = data.replace(brackets, "<span class='brackets'>$1</span>");
+
+						// numbers | strings
+						var m;
+						var lastindex = 0;
+						var newdata = "";
+						var numberstrings = /(("[ \t\S]*")|('[ \t\S]*')|([\d]+)){0,1}(:)([\s]{1,})((("[ \t\S]*")|('[ \t\S]*')|([\d]+|null))){0,1}/gm;
+						while ((m = numberstrings.exec(data)) !== null) {
+							if (m.index === numberstrings.lastIndex) {
+						        numberstrings.lastIndex++;
+						    }
+
+						    newdata += data.substr(lastindex, m.index - lastindex);
+
+							if (m[4])
+								newdata += "<span class='number'>" + m[1] + m[5] + "</span>";
+							else
+								newdata += "<span class='string'>" + m[1] + m[5] + "</span>";
+
+							newdata += m[6];
+
+							if (m[7]) {
+								if (m[11])
+									newdata += "<span class='number'>" + m[8] + "</span>";
+								else
+									newdata += "<span class='string'>" + m[8] + "</span>";
+
+								lastindex = m.index + m[0].length;
+							} else {
+								lastindex = m.index + m[0].length;
+							}
+						}
+						data = newdata + data.substr(lastindex, data.length - lastindex)
+						data = data.replace(/(,)/gm, "<span class='brackets'>$1</span>");
+					} catch(e) {
+						data = odata;
+						$(".response .description").html("response");
+					}
+
+				// XML
+				} else {
+					data = formatXml(data);
+
+					$(".response .description").html("xml response");
+
+					var m;
+					var lastindex = 0;
+					var newdata = "";
+					var xml = /(<)([\/|?]{0,})([^>\s]+)(([\s]+[^>\s]+)*)(>)/gm;
+					while ((m = xml.exec(data)) !== null) {
+						if (m.index === xml.lastIndex) {
+							xml.lastIndex++;
+						}
+
+						newdata += "<span class='xml-content'>" + data.substr(lastindex, m.index - lastindex) + "</span>";
+
+						if (m[2] === '?') {
+							newdata += "<span class='xml-block'>" + _.escape(m[0]) + "</span>";
+						} else {
+							newdata += "<span class='xml-tag-block'>" + _.escape(m[1] + m[2] + m[3]) + "</span>" + m[4].replace(/([\w]+=)(('[\w]')|("[\w]+"))/g, "<span class='xml-field'>$1</span><span class='number'>$2</span>") + "<span class='xml-tag-block'>" + _.escape(m[6]) + "</span>";
+						}
+
+						lastindex = m.index + m[0].length;
+					}
+					data = newdata + "<span class='xml-content'>" + data.substr(lastindex, data.length - lastindex) + "</span>";
+				}
+
+				$(this).addClass("highlighter");
+				$(this).html(data);
+			});
+		}
+	</script>
+</head>
+<body>
+	<aside class="sidebar-container">
+		<div class="sidebar-brand-area">
+			<img src="https://cdn.rawgit.com/myartame/codeigniter-apidocs/develop/assets/img/brand.png" alt="">
+		</div>
+		<div class="sidebar-menu-area">
+			<div class="sidebar-menu-wrap">
+				<ul>
+					<?php $highlight_flag = true; ?>
+					<?php foreach ($api_list as $controller_key => $api_value): ?>
+						<li class="collection <?php if ($controller_key == $active_controller) echo 'highlight' ?>">
+							<div class="block"></div>
+							<label><a><?= $controller_key ?></a></label>
+							<ol>
+								<?php foreach ($api_value as $method_index => $api_method_name): ?>
+									<li class="<?php if (!$method_index) echo 'highlight'; ?>"><a><?= $api_method_name; ?></a></li>
+								<?php endforeach;?>
+							</ol>
+						</li>
+					<?php endforeach;?>
+				</ul>
+			</div>
+		</div>
+	</aside>
+	<div class="main-container">
+		<div class="main-header-area">
+			<h1><?= $active_controller ?></h1>
+			<?php foreach ($api_detail as $api_item): ?>
+				<div class="api-wrap <?= $api_item['method_name']; ?>">
+					<h2 class="method-name"><?= $api_item['method_name']; ?></h2>
+					<?php if ($api_item['description'] != '') { ?>
+					<blockquote style="white-space: pre-line; text-align:left;"><?= htmlspecialchars(trim($api_item['description']), ENT_QUOTES, 'UTF-8'); ?></blockquote>
+					<?php } ?>
+					<section class="api-box">
+						<?php
+    $desc_method = '';
+    $doc_path = '';
+    if (!empty($api_item['description']) && preg_match('/\[\s*(GET|POST|PUT|PATCH|DELETE)\s*\]\s*(\/[^\s]+)/i', $api_item['description'], $m)) {
+        $desc_method = strtoupper($m[1]);
+        $doc_path = $m[2];
+    }
+    $effective_method = ($desc_method !== '') ? $desc_method : $api_item['call_type'];
+    $show_auth = (preg_match('#/me$#', (string)$doc_path) === 1);
+    $hide_auth = !$show_auth;
+$is_login = ($doc_path === '/api/authentication/web/login');
+?>
+<div class="method" data-method="<?= $effective_method ?>"></div>
+						<div class="endpoint">
+							<?php
+    $url_parameter_str = '';
+    if (isset($api_item['url_parameter']) && is_array($api_item['url_parameter'])) {
+        foreach($api_item['url_parameter'] as $url_parameter_item) {
+            $url_parameter_str .= '/{' . $url_parameter_item . '}';
+        }
+    }
+
+    $base_root = rtrim($base_url, '/');
+
+    if (!empty($doc_path)) {
+        $api_url = $base_root . $doc_path;
+    } else {
+        $api_url = $base_url . strtolower($active_controller)
+            . ($api_item['method_name'] == 'index' ? '' : '/' . $api_item['method_name'])
+            . ($url_parameter_str != '/' ? $url_parameter_str : '');
+    }
+?>
+							<a href="<?= $api_url; ?>" target="_blank"><?= $api_url; ?></a>
+						</div>
+						<?php if ($api_item['method_name'] != 'index'){ ?>
+							<?php if (count($api_item['url_parameter'])) { ?>
+								<div class="urlparameter group">
+									<label>URL Parameter</label>
+									<?php foreach($api_item['url_parameter'] as $url_parameter_item): ?>
+										<div class="row">
+											<div class="col-lg-3"><p class="ico-circle-none"></p><?= '{' . $url_parameter_item . '}' ?></div>
+											<div class="col-lg-9">
+												<input type="text" value="" />
+											</div>
+										</div>
+									<?php endforeach; ?>
+								</div>
+							<?php } ?>
+							<?php
+							$parameter_items = $api_item['parameter'] ?? [];
+
+							// GET은 body가 아니라 querystring 이므로, parameter가 비어있더라도 입력창을 보여주기
+							if (($effective_method ?? '') === 'GET') {
+								// 코드에서 $this->input->get(...) 패턴을 못 찾은 경우, Request DTO schema를 파라미터로 사용
+								if (empty($parameter_items) && !empty($api_item['request_schema_rows'])) {
+									$parameter_items = [];
+									foreach ($api_item['request_schema_rows'] as $r) {
+										if (!empty($r['field'])) $parameter_items[] = (string)$r['field'];
+									}
+								}
+
+								// 페이지네이션 기본 파라미터는 항상 노출
+								foreach (['page', 'size'] as $p) {
+									if (!in_array($p, $parameter_items, true)) $parameter_items[] = $p;
+								}
+							}
+
+							$parameter_items = array_values(array_unique($parameter_items));
+						?>
+						<?php if (count($parameter_items)) { ?>
+							<div class="parameter group">
+								<label>Parameter</label>
+								<?php foreach($parameter_items as $parameter_item): ?>
+									<div class="row">
+										<div class="col-lg-3"><p class="ico-circle"></p><?= $parameter_item ?></div>
+										<div class="col-lg-9">
+											<?php
+												$defaultVal = '';
+												if ($parameter_item === 'page') $defaultVal = '1';
+												if ($parameter_item === 'size') $defaultVal = '20';
+											?>
+											<input type="text" value="<?= htmlspecialchars($defaultVal, ENT_QUOTES, 'UTF-8') ?>" />
+										</div>
+									</div>
+								<?php endforeach; ?>
+							</div>
+						<?php } ?>
+							<?php if (true) { ?>
+								<div class="header group">
+									<label>Header</label>
+									<?php foreach($api_item['header'] as $header_item): ?>
+										<div class="row">
+											<div class="col-lg-3"><p class="ico-circle-none"></p><?= $header_item ?></div>
+											<div class="col-lg-9">
+												<input type="text" value="" />
+											</div>
+										</div>
+									<?php endforeach; ?>
+									<?php if (!empty($show_auth)) { ?>
+									<div class="row">
+										<div class="col-lg-3"><p class="ico-circle-none"></p>Authorization</div>
+										<div class="col-lg-9">
+											<input type="text" value="" placeholder="Bearer {accessToken}" class="auth-bearer" />
+										</div>
+									</div>
+									<?php } ?>
+
+									<?php if ($effective_method != 'GET') { ?>
+									<div class="row csrf-row">
+										<div class="col-lg-3"><p class="ico-circle-none"></p>X-CSRF-TOKEN</div>
+										<div class="col-lg-9">
+											<input type="text" value="" placeholder="Click Fetch CSRF then Try it" />
+											<button type="button" class="btn-fetch-csrf">Fetch CSRF</button>
+										</div>
+									</div>
+									<?php } ?>
+
+								</div>
+							<?php } ?>
+						<?php } ?>
+						
+						<?php if ($effective_method != 'GET') { ?>
+<?php if (!empty($api_item['request_dto_class'])) { ?>
+    <div class="group">
+        <label>Request DTO</label>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="dto-meta"><?= htmlspecialchars($api_item['request_dto_class'], ENT_QUOTES, 'UTF-8'); ?></div>
+            </div>
+        </div>
+
+        <?php if (!empty($api_item['request_schema_rows']) && is_array($api_item['request_schema_rows'])) { ?>
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table table-condensed table-bordered dto-table">
+                    <thead>
+                        <tr>
+                            <th style="width:34%;">field</th>
+                            <th style="width:18%;">type</th>
+                            <th style="width:10%;">required</th>
+                            <th style="width:38%;">description / aliases</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($api_item['request_schema_rows'] as $r): ?>
+                            <tr>
+                                <td><code><?= htmlspecialchars($r['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?></code></td>
+                                <td><?= htmlspecialchars($r['type'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?= !empty($r['required']) ? 'Y' : 'N'; ?></td>
+                                <td>
+                                    <?= htmlspecialchars($r['desc'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                                    <?php if (!empty($r['aliases'])) { ?>
+                                        <div class="dto-alias">aliases: <?= htmlspecialchars(is_array($r['aliases']) ? implode(', ', $r['aliases']) : (string)$r['aliases'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                    <?php } ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <?php } ?>
+    </div>
+<?php } ?>
+
+<div class="rawjson group">
+								<label>Raw JSON Body (application/json)</label>
+								<div class="row">
+									<div class="col-lg-12">
+										<textarea class="raw-json" style="width:100%;height:140px;" placeholder='{"apidoc Try it이 JSON (post)요청을 안정적으로 보내기 위해 빈칸으로 test"}'><?= htmlspecialchars($api_item['request_example_json'] ?? '{}', ENT_QUOTES, 'UTF-8') ?></textarea>
+									</div>
+								</div>
+							</div>
+						<?php } ?>
+
+
+<div class="group">
+    <label>Response (ApiResult)</label>
+    <?php if (!empty($api_item['response_dto_class'])) { ?>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="dto-meta">ApiResult&lt;<?= htmlspecialchars($api_item['response_dto_class'], ENT_QUOTES, 'UTF-8'); ?>&gt;</div>
+            </div>
+        </div>
+    <?php } ?>
+
+    <?php if (!empty($api_item['response_schema_rows']) && is_array($api_item['response_schema_rows'])) { ?>
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="table table-condensed table-bordered dto-table">
+                <thead>
+                    <tr>
+                        <th style="width:34%;">field</th>
+                        <th style="width:18%;">type</th>
+                        <th style="width:10%;">required</th>
+                        <th style="width:38%;">description / aliases</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($api_item['response_schema_rows'] as $r): ?>
+                        <tr>
+                            <td><code><?= htmlspecialchars($r['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?></code></td>
+                            <td><?= htmlspecialchars($r['type'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?= !empty($r['required']) ? 'Y' : 'N'; ?></td>
+                            <td>
+                                <?= htmlspecialchars($r['desc'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                                <?php if (!empty($r['aliases'])) { ?>
+                                    <div class="dto-alias">aliases: <?= htmlspecialchars(is_array($r['aliases']) ? implode(', ', $r['aliases']) : (string)$r['aliases'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                <?php } ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php } ?>
+
+    <?php if (isset($api_item['response_example_json']) && $api_item['response_example_json'] !== '') { ?>
+    <div class="row">
+        <div class="col-lg-12">
+            <pre class="dto-json"><?= htmlspecialchars($api_item['response_example_json'], ENT_QUOTES, 'UTF-8'); ?></pre>
+        </div>
+    </div>
+    <?php } ?>
+</div>
+
+<div class="tryit row">
+							<div class="col-lg-12">
+								<button type="submit">
+									Try it
+								</button>
+							</div>
+						</div>
+					</section>
+				</div>
+			<?php endforeach; ?>
+		</div>
+	</div>
+
+	<footer class="footer-container">
+		<div class="footer-header-area">
+			<label>Request Console</label>
+			<a href="#">
+				<p class="ico-close"></p>
+			</a>
+		</div>
+		<div class="footer-content-area row">
+			<div class="code-area request col-md-6">
+				<div class="description">api request</div>
+				<pre class="code-wrap">
+				</pre>
+			</div>
+			<div class="code-area response col-md-6">
+				<div class="description">response</div>
+				<pre class="code-wrap">
+				</pre>
+			</div>
+		</div>
+	</footer>
+
+	<script type="text/javascript">
+		$(function() {
+			window.__DOC_BASE = "<?= rtrim($base_url, '/') ?>";
+
+			$('.sidebar-menu-wrap').slimScroll({
+		        height: '100%'
+		    });
+		    $('.code-wrap').slimScroll({
+		    	height: '226px'
+		    });
+
+		    parse_code_block();
+		});
+	</script>
+</body>
+</html>
