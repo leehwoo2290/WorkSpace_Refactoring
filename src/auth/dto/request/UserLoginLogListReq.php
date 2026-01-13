@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace App\auth\dto\request;
 
 use App\common\dto\HttpRequestDto;
-use App\common\dto\ApiDocDto;
 
-final class UserLoginLogListReq implements HttpRequestDto, ApiDocDto
+
+final class UserLoginLogListReq implements HttpRequestDto
 {
     private int $page;
     private int $size;
@@ -82,59 +82,5 @@ final class UserLoginLogListReq implements HttpRequestDto, ApiDocDto
             $where['to'] = $this->to;
 
         return $where;
-    }
-
-   public static function apiDocSchema(): array
-    {
-        return [
-            [
-                'field' => 'page',
-                'type' => 'int',
-                'required' => false,
-                'description' => '페이지(1부터). default=1',
-            ],
-            [
-                'field' => 'size',
-                'type' => 'int',
-                'required' => false,
-                'description' => '페이지 크기. default=20, max=100',
-            ],
-            [
-                'field' => 'email',
-                'type' => 'string',
-                'required' => false,
-                'description' => '이메일 필터(선택)',
-            ],
-            [
-                'field' => 'success',
-                'type' => "string('Y'|'N')",
-                'required' => false,
-                'description' => "성공여부 필터('Y' 또는 'N')",
-            ],
-            [
-                'field' => 'from',
-                'type' => 'string',
-                'required' => false,
-                'description' => "시작일(예: 2026-01-01 또는 2026-01-01 00:00:00)",
-            ],
-            [
-                'field' => 'to',
-                'type' => 'string',
-                'required' => false,
-                'description' => "종료일(예: 2026-01-12 또는 2026-01-12 23:59:59)",
-            ],
-        ];
-    }
-
-    public static function apiDocExample(): array
-    {
-        return [
-            'page' => 1,
-            'size' => 20,
-            'email' => 'user@example.com',
-            'success' => 'Y',
-            'from' => '2026-01-01',
-            'to' => '2026-01-12',
-        ];
     }
 }

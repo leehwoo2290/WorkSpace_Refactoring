@@ -2,9 +2,7 @@
 declare(strict_types=1);
 namespace App\auth\dto\response;
 
-use App\common\dto\ApiDocDto;
-
-final class UserLoginRes implements \JsonSerializable, ApiDocDto
+final class UserLoginRes implements \JsonSerializable
 {
     private int $userSeq;
     private string $email;
@@ -47,32 +45,6 @@ final class UserLoginRes implements \JsonSerializable, ApiDocDto
             'status' => $this->status,
             'pwResetRequired' => $this->pwResetRequired,
             'jwtTokenRes' => $this->jwtTokenRes,
-        ];
-    }
-
-    public static function apiDocSchema(): array
-    {
-        return [
-            'userSeq' => ['type' => 'int', 'required' => true, 'description' => '사용자 식별자'],
-            'email' => ['type' => 'string', 'required' => true, 'description' => '이메일'],
-            'name' => ['type' => '?string', 'required' => false, 'description' => '이름(없을 수 있음)'],
-            'roles' => ['type' => 'string[]', 'required' => true, 'description' => '권한 리스트'],
-            'status' => ['type' => 'string', 'required' => true, 'description' => '계정 상태'],
-            'pwResetRequired' => ['type' => 'bool', 'required' => true, 'description' => '비밀번호 재설정 필요 여부'],
-            'jwtTokenRes' => ['type' => JwtTokenRes::class, 'required' => true, 'description' => 'access token 정보'],
-        ];
-    }
-
-    public static function apiDocExample(): array
-    {
-        return [
-            'userSeq' => 1,
-            'email' => 'user@example.com',
-            'name' => '홍길동',
-            'roles' => ['USER'],
-            'status' => 'ACTIVE',
-            'pwResetRequired' => false,
-            'jwtTokenRes' => JwtTokenRes::apiDocExample(),
         ];
     }
 }

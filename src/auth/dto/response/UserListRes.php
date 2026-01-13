@@ -3,10 +3,9 @@ declare(strict_types=1);
 
 namespace App\auth\dto\response;
 
-use App\common\dto\ApiDocDto;
 use App\auth\dto\UserListItem;
 
-final class UserListRes implements \JsonSerializable, ApiDocDto
+final class UserListRes implements \JsonSerializable
 {
     /** @var UserListItem[] */
     private array $items;
@@ -29,26 +28,6 @@ final class UserListRes implements \JsonSerializable, ApiDocDto
             'total' => $this->total,
             'page' => $this->page,
             'size' => $this->size,
-        ];
-    }
-
-    public static function apiDocSchema(): array
-    {
-        return [
-            'items' => ['type' => 'UserListItem[]', 'required' => true, 'description' => '회원 목록'],
-            'total' => ['type' => 'int', 'required' => true, 'description' => '전체 건수'],
-            'page'  => ['type' => 'int', 'required' => true, 'description' => '현재 페이지(1-base)'],
-            'size'  => ['type' => 'int', 'required' => true, 'description' => '페이지 사이즈'],
-        ];
-    }
-
-    public static function apiDocExample(): array
-    {
-        return [
-            'items' => [UserListItem::apiDocExample()],
-            'total' => 123,
-            'page' => 1,
-            'size' => 20,
         ];
     }
 }

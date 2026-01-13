@@ -4,9 +4,8 @@ declare(strict_types=1);
 namespace App\license\dto\request;
 
 use App\common\dto\HttpRequestDto;
-use App\common\dto\ApiDocDto;
 
-final class LicenseListReq implements HttpRequestDto, ApiDocDto
+final class LicenseListReq implements HttpRequestDto
 {
     private int $page;
     private int $size;
@@ -40,23 +39,5 @@ final class LicenseListReq implements HttpRequestDto, ApiDocDto
         $where = [];
         if ($this->searchKeyword !== null) $where['q'] = $this->searchKeyword;
         return $where;
-    }
-
-    public static function apiDocSchema(): array
-    {
-        return [
-            'page' => ['type' => 'int', 'required' => false, 'description' => '페이지(1-base), 기본 1'],
-            'size' => ['type' => 'int', 'required' => false, 'description' => '페이지 사이즈, 기본 20'],
-            'searchKeyword' => ['type' => 'string', 'required' => false, 'description' => '검색어(q 또는 keyword): 업체명/사업자번호/대표자명 부분검색'],
-        ];
-    }
-
-    public static function apiDocExample(): array
-    {
-        return [
-            'page' => 1,
-            'size' => 20,
-            'searchKeyword' => '엘림',
-        ];
     }
 }

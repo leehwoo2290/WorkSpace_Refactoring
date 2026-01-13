@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace App\auth\Dto;
 
-use App\common\dto\ApiDocDto;
 
-final class UserLoginLogItem implements \JsonSerializable, ApiDocDto
+final class UserLoginLogItem implements \JsonSerializable
 {
     private int $seq;
     private string $regTime;      // 접속시간
@@ -55,38 +54,6 @@ final class UserLoginLogItem implements \JsonSerializable, ApiDocDto
             'ipAddr' => $this->ipAddr,
             'deviceType' => $this->deviceType,
             'success' => $this->success,
-        ];
-    }
-
-    public static function apiDocSchema(): array
-    {
-        return [
-            'seq' => ['type' => 'int', 'required' => true, 'description' => '로그 PK'],
-            'regTime' => ['type' => 'string', 'required' => true, 'description' => '접속시간(Y-m-d H:i:s)'],
-            'email' => ['type' => 'string', 'required' => true, 'description' => '로그인 이메일'],
-            'name' => ['type' => 'string|null', 'required' => false, 'description' => '사용자 이름'],
-            'affiliation' => ['type' => 'string|null', 'required' => false, 'description' => '소속(회사/부서/팀 등 가공)'],
-            'mobile' => ['type' => 'string|null', 'required' => false, 'description' => '휴대폰번호'],
-            'countryCode' => ['type' => 'string', 'required' => true, 'description' => '국가코드'],
-            'ipAddr' => ['type' => 'string', 'required' => true, 'description' => 'IP 주소'],
-            'deviceType' => ['type' => 'string', 'required' => true, 'description' => 'PC 또는 MOBILE'],
-            'success' => ['type' => 'string', 'required' => true, 'description' => '로그인 성공 여부(Y|N)'],
-        ];
-    }
-
-    public static function apiDocExample(): array
-    {
-        return [
-            'seq' => 11906,
-            'regTime' => '2026-01-12 08:10:11',
-            'email' => 'test@example.com',
-            'name' => '홍길동',
-            'affiliation' => '회사A / 개발팀 / 1팀',
-            'mobile' => '01012345678',
-            'countryCode' => 'KR',
-            'ipAddr' => '192.168.0.10',
-            'deviceType' => 'PC',
-            'success' => 'Y',
         ];
     }
 }

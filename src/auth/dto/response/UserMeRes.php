@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace App\auth\dto\response;
 
-use App\common\dto\ApiDocDto;
 
-final class UserMeRes implements \JsonSerializable, ApiDocDto
+final class UserMeRes implements \JsonSerializable
 {
     private int $userSeq;
     /** @var string[] */
@@ -28,19 +27,4 @@ final class UserMeRes implements \JsonSerializable, ApiDocDto
         ];
     }
 
-    public static function apiDocSchema(): array
-    {
-        return [
-            'userSeq' => ['type' => 'int', 'required' => true, 'description' => '사용자 식별자'],
-            'roles' => ['type' => 'string[]', 'required' => true, 'description' => '권한 리스트'],
-        ];
-    }
-
-    public static function apiDocExample(): array
-    {
-        return [
-            'userSeq' => 1,
-            'roles' => ['USER'],
-        ];
-    }
 }

@@ -4,9 +4,8 @@ declare(strict_types=1);
 namespace App\auth\dto\request;
 
 use App\common\dto\HttpRequestDto;
-use App\common\dto\ApiDocDto;
 
-final class UserListReq implements HttpRequestDto, ApiDocDto
+final class UserListReq implements HttpRequestDto
 {
     private int $page;
     private int $size;
@@ -78,35 +77,5 @@ final class UserListReq implements HttpRequestDto, ApiDocDto
         if ($this->positionSeq !== null && $this->positionSeq > 0) $where['position_seq'] = $this->positionSeq;
 
         return $where;
-    }
-
-    public static function apiDocSchema(): array
-    {
-        return [
-            ['field' => 'page', 'type' => 'int', 'required' => false, 'description' => '페이지(1부터). default=1'],
-            ['field' => 'size', 'type' => 'int', 'required' => false, 'description' => '페이지 크기. default=20, max=100'],
-            ['field' => 'searchKeyWord', 'type' => 'string', 'required' => false, 'description' => '검색(이름/이메일/사번 부분검색)'],
-            ['field' => 'role', 'type' => 'string', 'required' => false, 'description' => '권한 필터'],
-            ['field' => 'status', 'type' => 'string', 'required' => false, 'description' => '상태 필터'],
-            ['field' => 'engineerYn', 'type' => "string('Y'|'N')", 'required' => false, 'description' => "기술인 여부('Y'|'N')"],
-            ['field' => 'licenseSeq', 'type' => 'int', 'required' => false, 'description' => '소속(license) 번호'],
-            ['field' => 'departmentSeq', 'type' => 'int', 'required' => false, 'description' => '부서 번호'],
-            ['field' => 'positionSeq', 'type' => 'int', 'required' => false, 'description' => '직위 번호'],
-        ];
-    }
-
-    public static function apiDocExample(): array
-    {
-        return [
-            'page' => 1,
-            'size' => 20,
-            'searchKeyWord' => 'kim',
-            'role' => '',
-            'status' => '',
-            'engineerYn' => '',
-            'licenseSeq' => null,
-            'departmentSeq' => null,
-            'positionSeq' => null,
-        ];
     }
 }

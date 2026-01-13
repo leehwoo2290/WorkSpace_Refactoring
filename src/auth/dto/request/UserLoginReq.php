@@ -4,9 +4,8 @@ declare(strict_types=1);
 namespace App\auth\dto\request;
 
 use App\common\dto\HttpRequestDto;
-use App\common\dto\ApiDocDto;
 
-final class UserLoginReq implements HttpRequestDto, ApiDocDto
+final class UserLoginReq implements HttpRequestDto
 {
     private string $email;
     private string $passwd;         // plain password from client
@@ -90,46 +89,6 @@ final class UserLoginReq implements HttpRequestDto, ApiDocDto
 
         $s = strtoupper(trim((string) $v));
         return in_array($s, ['1', 'Y', 'YES', 'TRUE', 'ON'], true);
-    }
-
-    public static function apiDocSchema(): array
-    {
-        return [
-            'email' => [
-                'type' => 'string',
-                'required' => true,
-                'description' => '로그인 이메일',
-            ],
-            // fromArray에서 passwd 또는 password 둘 다 허용
-            'password' => [
-                'type' => 'string',
-                'required' => true,
-                'aliases' => ['passwd'],
-                'description' => '평문 비밀번호 (legacy key: passwd)',
-            ],
-            'rememberEmail' => [
-                'type' => 'bool',
-                'required' => false,
-                'aliases' => ['remember_email'],
-                'description' => '이메일 저장 여부 (legacy key: remember_email)',
-            ],
-            'autoLogin' => [
-                'type' => 'bool',
-                'required' => false,
-                'aliases' => ['auto_login'],
-                'description' => '자동 로그인 여부 (legacy key: auto_login)',
-            ],
-        ];
-    }
-
-    public static function apiDocExample(): array
-    {
-        return [
-            'email' => 'test@eleng.co.kr',
-            'password' => 'test12345',
-            'rememberEmail' => false,
-            'autoLogin' => false,
-        ];
     }
 
 }

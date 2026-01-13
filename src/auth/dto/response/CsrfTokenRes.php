@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace App\auth\dto\response;
 
-use App\common\dto\ApiDocDto;
 
-final class CsrfTokenRes implements \JsonSerializable, ApiDocDto
+final class CsrfTokenRes implements \JsonSerializable
 {
     private string $token;
     private string $headerName;
@@ -27,21 +26,4 @@ final class CsrfTokenRes implements \JsonSerializable, ApiDocDto
         ];
     }
 
-    public static function apiDocSchema(): array
-    {
-        return [
-            'token' => ['type' => 'string', 'required' => true, 'description' => '더블서브밋 토큰 값'],
-            'headerName' => ['type' => 'string', 'required' => true, 'description' => '요청 시 담을 헤더 이름'],
-            'ttl' => ['type' => 'int', 'required' => true, 'description' => '유효기간(초)'],
-        ];
-    }
-
-    public static function apiDocExample(): array
-    {
-        return [
-            'token' => 'a1b2c3d4e5f6...',
-            'headerName' => 'X-CSRF-TOKEN',
-            'ttl' => 600,
-        ];
-    }
 }

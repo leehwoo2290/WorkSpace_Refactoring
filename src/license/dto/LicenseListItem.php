@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace App\license\dto;
 
-use App\common\dto\ApiDocDto;
 
-final class LicenseListItem implements \JsonSerializable, ApiDocDto
+final class LicenseListItem implements \JsonSerializable
 {
     private int $num;
     private int $licenseSeq;
@@ -66,42 +65,6 @@ final class LicenseListItem implements \JsonSerializable, ApiDocDto
             'safetyEngineerCnt' => $this->safetyEngineerCnt,
             'machineProjectCnt' => $this->machineProjectCnt,
             'safetyProjectCnt' => $this->safetyProjectCnt,
-        ];
-    }
-
-    public static function apiDocSchema(): array
-    {
-        return [
-            'num' => ['type' => 'int', 'required' => true, 'description' => '화면용 번호(1부터)'],
-            'licenseSeq' => ['type' => 'int', 'required' => true, 'description' => '라이선스 PK'],
-            'name' => ['type' => 'string', 'required' => false, 'description' => '업체명'],
-            'bizno' => ['type' => 'string', 'required' => false, 'description' => '사업자번호(저장 포맷은 DB 기준)'],
-            'ceoName' => ['type' => 'string', 'required' => false, 'description' => '대표자명'],
-            'contractDate' => ['type' => 'string(YYYY-MM-DD)', 'required' => false, 'description' => '계약일'],
-            'expireDate' => ['type' => 'string(YYYY-MM-DD)', 'required' => false, 'description' => '만료일'],
-            'userCnt' => ['type' => 'int', 'required' => true, 'description' => '소속 사용자 수(status!=Quit)'],
-            'machineEngineerCnt' => ['type' => 'int', 'required' => true, 'description' => '기계 기술인 수'],
-            'safetyEngineerCnt' => ['type' => 'int', 'required' => true, 'description' => '안전 기술인 수'],
-            'machineProjectCnt' => ['type' => 'int', 'required' => true, 'description' => '기계 프로젝트 수(deleted=N)'],
-            'safetyProjectCnt' => ['type' => 'int', 'required' => true, 'description' => '안전 프로젝트 수(레거시 쿼리 기반)'],
-        ];
-    }
-
-    public static function apiDocExample(): array
-    {
-        return [
-            'num' => 1,
-            'licenseSeq' => 10,
-            'name' => '엘림엔지니어링',
-            'bizno' => '1234567890',
-            'ceoName' => '홍길동',
-            'contractDate' => '2025-01-01',
-            'expireDate' => '2026-01-01',
-            'userCnt' => 12,
-            'machineEngineerCnt' => 3,
-            'safetyEngineerCnt' => 2,
-            'machineProjectCnt' => 7,
-            'safetyProjectCnt' => 5,
         ];
     }
 }
