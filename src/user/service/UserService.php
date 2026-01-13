@@ -1,17 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace App\auth\service;
+namespace App\user\service;
 
-use App\auth\dto\response\UserLoginLogListRes;
-use App\auth\dto\request\UserLoginLogListReq;
-use App\auth\dto\UserLoginLogItem;
-use App\auth\dto\response\UserListRes;
-use App\auth\dto\request\UserListReq;
-use App\auth\dto\UserListItem;
+use App\user\dto\response\UserLoginLogListRes;
+use App\user\dto\query\UserLoginLogListQuery;
+use App\user\dto\UserLoginLogItem;
+use App\user\dto\response\UserListRes;
+use App\user\dto\query\UserListQuery;
+use App\user\dto\UserListItem;
 
-use App\auth\Repository\UserLoginLogRepository;
-use App\auth\Repository\UserRepository;
+use App\user\Repository\UserLoginLogRepository;
+use App\user\Repository\UserRepository;
 use App\common\Exception\ApiException;
 use App\auth\ExceptionErrorCode\AuthErrorCode;
 
@@ -26,17 +26,17 @@ final class UserService
         $this->userRepository = $userRepository;
     }
 
-    public function logList(UserLoginLogListReq $userLoginLogListReq): UserLoginLogListRes
+    public function logList(UserLoginLogListQuery $userLoginLogListQuery): UserLoginLogListRes
     {
-        if ($userLoginLogListReq->success() !== null && $userLoginLogListReq->success() !== 'Y' && $userLoginLogListReq->success() !== 'N') {
+        if ($userLoginLogListQuery->success() !== null && $userLoginLogListQuery->success() !== 'Y' && $userLoginLogListQuery->success() !== 'N') {
             throw ApiException::badRequest('VALIDATION_FAILED Not(N , Y ," ")', AuthErrorCode::VALIDATION_FAILED);
         }
 
-        $page = max(1, $userLoginLogListReq->page());
-        $size = max(1, min(100, $userLoginLogListReq->size()));
+        $page = max(1, $userLoginLogListQuery->page());
+        $size = max(1, min(100, $userLoginLogListQuery->size()));
         $offset = ($page - 1) * $size;
 
-        $where = $userLoginLogListReq->where();
+        $where = $userLoginLogListQuery->where();
         $total = $this->loginLogRepository->count($where);
         $rows = $this->loginLogRepository->findList($where, $offset, $size);
 
@@ -71,17 +71,17 @@ final class UserService
     }
 
 
-    public function userList(UserListReq $req): UserListRes
+    public function userList(UserListQuery $userListQuery): UserListRes
     {
         // 간단 검증(원하면 여기서 role/status allowed set 제한 가능)
-        $where = $req->where();
+        $where = $userListQuery->where();
 
         if (isset($where['engineer_yn']) && $where['engineer_yn'] !== 'Y' && $where['engineer_yn'] !== 'N') {
             throw ApiException::badRequest('VALIDATION_FAILED engineerYn must be Y or N', AuthErrorCode::VALIDATION_FAILED);
         }
 
-        $page = max(1, $req->page());
-        $size = max(1, min(100, $req->size()));
+        $page = max(1, $userListQuery->page());
+        $size = max(1, min(100, $userListQuery->size()));
         $offset = ($page - 1) * $size;
 
         $total = $this->userRepository->count($where);

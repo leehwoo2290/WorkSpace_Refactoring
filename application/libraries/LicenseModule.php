@@ -1,6 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-use App\license\dto\request\LicenseListReq;
+use App\license\dto\query\LicenseListQuery;
+
 use App\license\dto\response\LicenseListRes;
 use App\license\repository\LicenseRepository;
 use App\license\service\LicenseService;
@@ -35,17 +36,15 @@ final class LicenseModule
     /**
      * 라이선스 목록(검색/페이징)
      */
-    public function list(LicenseListReq $req): LicenseListRes
+    public function list(LicenseListQuery $licenseListQuery): LicenseListRes
     {
-        // 서비스 메서드명은 너가 만든 네이밍에 맞춰서 하나로 통일해.
-        // (아래 둘 중 프로젝트에 존재하는 쪽으로 사용)
+
         if (method_exists($this->licenseService, 'list')) {
-            /** @var LicenseListRes */
-            return $this->licenseService->list($req);
+
+            return $this->licenseService->list($licenseListQuery);
         }
 
-        /** @var LicenseListRes */
-        return $this->licenseService->licenseList($req);
+        return $this->licenseService->licenseList($licenseListQuery);
     }
 
     // ====== 아래는 레거시(M_license + dashboard/upload License) 기준으로 "추가될 수 있는" 모듈 API 스켈레톤 ======

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\auth\Entity;
+namespace App\user\entity;
 
 use DateTimeImmutable;
 

@@ -1,17 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace App\auth\dto\request;
+namespace App\user\dto\query;
 
 use App\common\dto\HttpRequestDto;
 
 
-final class UserLoginLogListReq implements HttpRequestDto
+final class UserLoginLogListQuery implements HttpRequestDto
 {
     private int $page;
     private int $size;
 
-    private ?string $email;     // like 검색용
+    private ?string $searchKeyWord;     // 검색용
     private ?string $success;   // 'Y'|'N'
     private ?string $from;      // 'YYYY-MM-DD' or 'YYYY-MM-DD HH:ii:ss'
     private ?string $to;
@@ -19,7 +19,7 @@ final class UserLoginLogListReq implements HttpRequestDto
     private function __construct(
         int $page,
         int $size,
-        ?string $email,
+        ?string $searchKeyWord,
         ?string $success,
         ?string $from,
         ?string $to
@@ -27,7 +27,7 @@ final class UserLoginLogListReq implements HttpRequestDto
         $this->page = $page;
         $this->size = $size;
 
-        $this->email = $email !== '' ? $email : null;
+        $this->searchKeyWord = $searchKeyWord !== '' ? $searchKeyWord : null;
         $this->success = $success !== '' ? $success : null;
         $this->from = $from !== '' ? $from : null;
         $this->to = $to !== '' ? $to : null;
@@ -71,8 +71,8 @@ final class UserLoginLogListReq implements HttpRequestDto
     {
         $where = [];
 
-        if ($this->email !== null)
-            $where['email'] = $this->email;     
+        if ($this->searchKeyWord !== null)
+            $where['searchKeyWord'] = $this->searchKeyWord;
         if ($this->success !== null)
             $where['success'] = $this->success;
 

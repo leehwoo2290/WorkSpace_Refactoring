@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\auth\dto;
+namespace App\user\dto;
 
 final class UserListItem implements \JsonSerializable
 {

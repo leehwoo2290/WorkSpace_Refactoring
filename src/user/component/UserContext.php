@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\auth;
+namespace App\user\component;
 
 /**
  * 요청 스코프(Request-scope) 인증 컨텍스트.

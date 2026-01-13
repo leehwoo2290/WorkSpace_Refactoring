@@ -63,8 +63,8 @@ $route['api/web/auth/logout']['post']  = 'auth/JwtController/logout';
 
 $route['api/web/auth/csrf']['get'] = 'auth/CsrfController/csrf';
 
-$route['api/web/audit/users']['get'] = 'auth/UserController/list';
-$route['api/web/audit/login-logs']['get'] = 'auth/UserController/logList';
+$route['api/web/audit/users']['get'] = 'user/UserController/list';
+$route['api/web/audit/login-logs']['get'] = 'user/UserController/logList';
 
 $route['api/web/audit/licenses']['get'] = 'license/LicenseController/list';
 

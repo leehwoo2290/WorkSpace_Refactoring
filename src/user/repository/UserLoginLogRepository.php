@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\auth\Repository;
+namespace App\user\repository;
 
-use App\auth\entity\UserLoginLogEntity;
-use App\auth\dto\UserLoginLogRes;
+use App\user\entity\UserLoginLogEntity;
 use DateTimeImmutable;
 
 final class UserLoginLogRepository

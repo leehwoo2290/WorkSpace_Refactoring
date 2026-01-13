@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\auth\Dto;
+namespace App\user\dto;
 
 
 final class UserLoginLogItem implements \JsonSerializable

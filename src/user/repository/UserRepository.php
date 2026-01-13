@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\auth\Repository;
+namespace App\user\repository;
 
 final class UserRepository
 {

@@ -3,18 +3,18 @@ declare(strict_types=1);
 
 namespace App\auth\service;
 
-use App\auth\JwtManager;
-use App\auth\TokenTransport;
-use App\auth\UserContext;
-use App\auth\JwtBootstrapper;
+use App\auth\component\JwtManager;
+use App\auth\component\TokenTransport;
+use App\user\component\UserContext;
+use App\auth\component\JwtBootstrapper;
 use App\auth\dto\JwtTokenPair;
 use App\auth\entity\RefreshTokenEntity;
-use App\auth\RefreshTokenHasher;
-use App\auth\UserLoginLogRecoder;
+use App\auth\component\RefreshTokenHasher;
+use App\user\component\UserLoginLogRecoder;
 use App\auth\repository\RefreshTokenRepository;
 use App\auth\repository\UserRoleRepository;
 use App\auth\repository\UserAuthRepository;
-use App\auth\Repository\UserLoginLogRepository;
+use App\user\Repository\UserLoginLogRepository;
 use App\auth\dto\request\UserLoginReq;
 use App\auth\dto\response\UserLoginRes;
 use App\auth\dto\response\UserMeRes;

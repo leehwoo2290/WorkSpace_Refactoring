@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\auth;
+namespace App\user\component;
 
-use App\auth\Entity\UserLoginLogEntity;
-use App\auth\Repository\UserLoginLogRepository;
+use App\user\Entity\UserLoginLogEntity;
+use App\user\Repository\UserLoginLogRepository;
 
 /**
  * 로그인 로그 기록 서비스

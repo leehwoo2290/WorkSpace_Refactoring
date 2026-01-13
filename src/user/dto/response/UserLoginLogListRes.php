@@ -1,17 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace App\auth\dto\response;
+namespace App\user\dto\response;
 
-use App\auth\dto\UserListItem;
+use App\user\dto\UserLoginLogItem;
 
-final class UserListRes implements \JsonSerializable
+final class UserLoginLogListRes implements \JsonSerializable
 {
-    /** @var UserListItem[] */
+    /** @var UserLoginLogItem[] */
     private array $items;
     private int $total;
     private int $page;
     private int $size;
+
 
     public function __construct(array $items, int $total, int $page, int $size)
     {

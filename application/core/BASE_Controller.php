@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 use GeoIp2\Database\Reader;
-use App\auth\UserContext;
+use App\user\component\UserContext;
 
 // require_once("application/core/ADMIN_Controller.php");
 // require_once("application/core/MEMBER_Controller.php");

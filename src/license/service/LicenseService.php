@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\license\service;
 
-use App\license\dto\request\LicenseListReq;
+use App\license\dto\query\LicenseListQuery;
 use App\license\dto\response\LicenseListRes;
 use App\license\dto\LicenseListItem;
 use App\license\Repository\LicenseRepository;
@@ -17,13 +17,13 @@ final class LicenseService
         $this->licenseRepository = $licenseRepository;
     }
 
-    public function licenseList(LicenseListReq $req): LicenseListRes
+    public function licenseList(LicenseListQuery $licenseListQuery): LicenseListRes
     {
-        $page = max(1, $req->page());
-        $size = max(1, min(100, $req->size()));
+        $page = max(1, $licenseListQuery->page());
+        $size = max(1, min(100, $licenseListQuery->size()));
         $offset = ($page - 1) * $size;
 
-        $where = $req->where();
+        $where = $licenseListQuery->where();
 
         $total = $this->licenseRepository->count($where);
         $rows = $this->licenseRepository->findList($where, $offset, $size);

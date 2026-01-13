@@ -2,27 +2,26 @@
 
 
 
-
 use App\auth\service\JwtService;
-use App\auth\service\UserService;
-use App\auth\JwtManager;
-use App\auth\JwtBootstrapper;
-use App\auth\RefreshTokenHasher;
-use App\auth\TokenTransport;
-use App\auth\UserContext;
+use App\user\service\UserService;
+use App\auth\component\JwtManager;
+use App\auth\component\JwtBootstrapper;
+use App\auth\component\RefreshTokenHasher;
+use App\auth\component\TokenTransport;
+use App\user\component\UserContext;
 use App\auth\dto\response\JwtTokenRes;
 use App\auth\dto\request\UserLoginReq;
 use App\auth\dto\response\UserLoginRes;
 use App\auth\dto\response\UserMeRes;
-use App\auth\dto\response\UserLoginLogListRes;
-use App\auth\dto\request\UserLoginLogListReq;
-use App\auth\dto\response\UserListRes;
-use App\auth\dto\request\UserListReq;
+use App\user\dto\response\UserLoginLogListRes;
+use App\user\dto\query\UserLoginLogListQuery;
+use App\user\dto\response\UserListRes;
+use App\user\dto\query\UserListQuery;
 use App\auth\repository\UserRoleRepository;
 use App\auth\repository\UserAuthRepository;
 use App\auth\repository\RefreshTokenRepository;
-use App\auth\Repository\UserLoginLogRepository;
-use App\auth\Repository\UserRepository;
+use App\user\Repository\UserLoginLogRepository;
+use App\user\Repository\UserRepository;
 
 /**
  * AuthModule (구 JwtLibrary)
@@ -130,14 +129,14 @@ class AuthModule
         return $this->refreshTokenRepository->purgeExpiredAndOldReplaced($replacedRetentionDays, $limit);
     }
 
-    public function logList(UserLoginLogListReq $userLoginLogListReq): UserLoginLogListRes
+    public function logList(UserLoginLogListQuery $userLoginLogListQuery): UserLoginLogListRes
     {
-        return $this->userService->logList($userLoginLogListReq);
+        return $this->userService->logList($userLoginLogListQuery);
     }
 
-    public function userList(UserListReq $userListReq): UserListRes
+    public function userList(UserListQuery $userListQuery): UserListRes
     {
-        return $this->userService->userList($userListReq);
+        return $this->userService->userList($userListQuery);
     }
 
 }

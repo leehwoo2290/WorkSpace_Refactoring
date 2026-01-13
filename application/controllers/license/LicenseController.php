@@ -1,7 +1,8 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 use App\common\ApiResult;
-use App\license\dto\request\LicenseListReq;
+
+use App\license\dto\query\LicenseListQuery;
 use App\license\dto\response\LicenseListRes;
 
 class LicenseController extends BASE_Controller
@@ -30,8 +31,8 @@ class LicenseController extends BASE_Controller
         */
 
         try {
-            $licenseListReq = $this->requestDtoMapper->queryRequestDto(LicenseListReq::class);
-            $licenseListRes = $this->licenseModule->list($licenseListReq);
+            $licenseListQuery = $this->requestDtoMapper->queryRequestDto(LicenseListQuery::class);
+            $licenseListRes = $this->licenseModule->list($licenseListQuery);
 
             ApiResult::ok($licenseListRes, LicenseListRes::class);
 

@@ -1,12 +1,14 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
+
+
 use App\common\ApiResult;
 
-use App\auth\dto\response\UserLoginLogListRes;
-use App\auth\dto\request\UserLoginLogListReq;
+use App\user\dto\response\UserLoginLogListRes;
+use App\user\dto\query\UserLoginLogListQuery;
 
-use App\auth\dto\response\UserListRes;
-use App\auth\dto\request\UserListReq;
+use App\user\dto\response\UserListRes;
+use App\user\dto\query\UserListQuery;
 
 class UserController extends BASE_Controller
 {
@@ -29,8 +31,8 @@ class UserController extends BASE_Controller
         */
         
         try {
-            $userListReq = $this->requestDtoMapper->queryRequestDto(UserListReq::class);
-            $userListRes = $this->authModule->userList($userListReq);
+            $userListQuery = $this->requestDtoMapper->queryRequestDto(UserListQuery::class);
+            $userListRes = $this->authModule->userList($userListQuery);
 
             ApiResult::ok($userListRes, UserListRes::class);
 
@@ -58,7 +60,7 @@ class UserController extends BASE_Controller
         */
 
         try {
-            $userLoginLogListReq = $this->requestDtoMapper->queryRequestDto(UserLoginLogListReq::class);
+            $userLoginLogListReq = $this->requestDtoMapper->queryRequestDto(UserLoginLogListQuery::class);
             $userLoginLogListRes = $this->authModule->logList($userLoginLogListReq);
 
             ApiResult::ok($userLoginLogListRes, UserLoginLogListRes::class);

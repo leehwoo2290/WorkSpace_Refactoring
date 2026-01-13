@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace App\auth;
+namespace App\auth\component;
 
 use App\auth\repository\UserRoleRepository;
 use App\auth\service\JwtService;
-use App\auth\TokenTransport;
-use App\auth\UserContext;
+use App\auth\component\TokenTransport;
+use App\user\component\UserContext;
 
 final class JwtBootstrapper
 {
