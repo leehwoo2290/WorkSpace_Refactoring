@@ -2,11 +2,11 @@
 
 use App\common\ApiResult;
 
-use App\auth\dto\UserLoginLogListRes;
-use App\auth\dto\UserLoginLogListReq;
+use App\auth\dto\response\UserLoginLogListRes;
+use App\auth\dto\request\UserLoginLogListReq;
 
-use App\auth\dto\UserListRes;
-use App\auth\dto\UserListReq;
+use App\auth\dto\response\UserListRes;
+use App\auth\dto\request\UserListReq;
 
 class UserController extends BASE_Controller
 {
@@ -15,12 +15,12 @@ class UserController extends BASE_Controller
     {
         /*
         @Description
-        - [GET] /api/authentication/web/users
+        - [GET] /api/web/audit/users
         - Header: Authorization: Bearer {accessToken}
         - Query:
         - page: int (default 1)
         - size: int (default 20)
-        - keyword: string (이름/이메일/사번 부분검색)
+        - searchKeyword: string (이름/이메일/사번 부분검색)
         - role: '' | 'User' | 'Staff' | 'Manager' | 'Admin' | 'SuperAdmin'
         - status: '' | 'Pending' | 'Normal' | 'Quit'
         - engineerYn: '' | 'Y' | 'N'
@@ -44,7 +44,7 @@ class UserController extends BASE_Controller
     {
         /*
         @Description
-        - [GET] /api/authentication/web/login-logs
+        - [GET] /api/web/audit/login-logs
         - Header: Authorization: Bearer {accessToken}
         - Query:
           - page: int (default 1)

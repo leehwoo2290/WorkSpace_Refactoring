@@ -1,7 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 use App\common\ApiResult;
-use App\auth\dto\CsrfTokenRes;
+use App\auth\dto\response\CsrfTokenRes;
 
 class CsrfController extends BASE_Controller
 {
@@ -11,7 +11,7 @@ class CsrfController extends BASE_Controller
     {
         /*
        @Description
-       [GET] /api/authentication/web/csrf
+       [GET] /api/web/auth/csrf
        - 목적: CSRF 더블서브밋 토큰 발급
        - 응답: 200 OK (ApiResult::ok)
        - 부가: csrf_cookie 쿠키가 세팅되고,

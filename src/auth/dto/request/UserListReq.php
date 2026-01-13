@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\auth\dto;
+namespace App\auth\dto\request;
 
 use App\common\dto\HttpRequestDto;
 use App\common\dto\ApiDocDto;
@@ -49,7 +49,7 @@ final class UserListReq implements HttpRequestDto, ApiDocDto
         $page = (int)($query['page'] ?? 1);
         $size = (int)($query['size'] ?? 20);
 
-        $keyword = (string)($query['q'] ?? $query['keyword'] ?? '');
+        $searchKeyWord = (string)($query['q'] ?? $query['keyword'] ?? '');
         $role = (string)($query['role'] ?? '');
         $status = (string)($query['status'] ?? '');
         $engineerYn = (string)($query['engineerYn'] ?? $query['engineer_yn'] ?? '');
@@ -57,7 +57,7 @@ final class UserListReq implements HttpRequestDto, ApiDocDto
         $licenseSeq = isset($query['licenseSeq']) ? (int)$query['licenseSeq'] : (isset($query['license_seq']) ? (int)$query['license_seq'] : null);
         $departmentSeq = isset($query['departmentSeq']) ? (int)$query['departmentSeq'] : (isset($query['department_seq']) ? (int)$query['department_seq'] : null);
         $positionSeq = isset($query['positionSeq']) ? (int)$query['positionSeq'] : (isset($query['position_seq']) ? (int)$query['position_seq'] : null);
-        return new self($page, $size, $keyword, $role, $status, $engineerYn, $licenseSeq, $departmentSeq, $positionSeq);
+        return new self($page, $size, $searchKeyWord, $role, $status, $engineerYn, $licenseSeq, $departmentSeq, $positionSeq);
     }
 
     public function page(): int { return $this->page; }
@@ -85,7 +85,7 @@ final class UserListReq implements HttpRequestDto, ApiDocDto
         return [
             ['field' => 'page', 'type' => 'int', 'required' => false, 'description' => '페이지(1부터). default=1'],
             ['field' => 'size', 'type' => 'int', 'required' => false, 'description' => '페이지 크기. default=20, max=100'],
-            ['field' => 'q', 'type' => 'string', 'required' => false, 'description' => '검색(이름/이메일/사번 부분검색)'],
+            ['field' => 'searchKeyWord', 'type' => 'string', 'required' => false, 'description' => '검색(이름/이메일/사번 부분검색)'],
             ['field' => 'role', 'type' => 'string', 'required' => false, 'description' => '권한 필터'],
             ['field' => 'status', 'type' => 'string', 'required' => false, 'description' => '상태 필터'],
             ['field' => 'engineerYn', 'type' => "string('Y'|'N')", 'required' => false, 'description' => "기술인 여부('Y'|'N')"],
@@ -100,7 +100,7 @@ final class UserListReq implements HttpRequestDto, ApiDocDto
         return [
             'page' => 1,
             'size' => 20,
-            'q' => 'kim',
+            'searchKeyWord' => 'kim',
             'role' => '',
             'status' => '',
             'engineerYn' => '',

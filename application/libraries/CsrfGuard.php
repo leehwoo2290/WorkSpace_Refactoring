@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-use App\auth\dto\CsrfTokenRes;
+use App\auth\dto\response\CsrfTokenRes;
 use App\auth\service\CsrfService;
 use App\common\Exception\ApiException;
 use App\auth\ExceptionErrorCode\AuthErrorCode;
@@ -15,6 +15,14 @@ class CsrfGuard
     public function __construct()
     {
         $this->CI = &get_instance();
+
+        // Composer autoload가 설정되어 있어야 src/ 네임스페이스 및 firebase/php-jwt가 로딩됩니다.
+        if (!class_exists('Firebase\\JWT\\JWT')) {
+            throw new \RuntimeException(
+                "Composer autoload is not enabled. Set \$config['composer_autoload'] = FCPATH.'vendor/autoload.php';"
+            );
+        }
+        
         $this->CI->config->load('jwt');
         $jwt = (array) $this->CI->config->item('jwt');
         $this->csrfConfig = (array) ($jwt['csrf'] ?? []);

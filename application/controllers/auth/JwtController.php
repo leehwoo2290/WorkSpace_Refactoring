@@ -1,11 +1,13 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-use App\auth\dto\UserLoginReq;
+
 use App\common\ApiResult;
 
-use App\auth\dto\UserLoginRes;
-use App\auth\dto\UserMeRes;
-use App\auth\dto\JwtTokenRes;
+use App\auth\dto\response\UserLoginRes;
+use App\auth\dto\response\UserMeRes;
+use App\auth\dto\response\JwtTokenRes;
+
+use App\auth\dto\request\UserLoginReq;
 
 class JwtController extends BASE_Controller
 {
@@ -14,7 +16,7 @@ class JwtController extends BASE_Controller
     {
         /*
       @Description
-      - [POST] /api/authentication/web/login
+      - [POST] /api/web/auth/login
       - 필요: X-CSRF-TOKEN 헤더 (= csrf_cookie 쿠키 값과 동일)
       - Body(JSON): { "email": "...", "password": "..." }
       - 성공: 201 Created (ApiResult::created)
@@ -37,7 +39,7 @@ class JwtController extends BASE_Controller
     {
         /*
        @Description
-       - [GET] /api/authentication/web/me
+       - [GET] /api/web/auth/me
        - 성공: 200 OK (ApiResult::ok)
        - 인증: accessToken 쿠키 기반
         */
@@ -58,7 +60,7 @@ class JwtController extends BASE_Controller
     {
         /*
         @Description
-        - [POST] /api/authentication/web/refresh
+        - [POST] /api/web/auth/refresh
         - 필요: X-CSRF-TOKEN 헤더 (= csrf_cookie 쿠키 값과 동일)
         - 인증: refreshToken 쿠키 기반
         - 성공: 201 Created (ApiResult::created)
@@ -80,7 +82,7 @@ class JwtController extends BASE_Controller
     {
         /*
         @Description
-        - [POST] /api/authentication/web/logout
+        - [POST] /api/web/auth/logout
         - 필요: X-CSRF-TOKEN 헤더 (= csrf_cookie 쿠키 값과 동일)
         - 성공: 204 No Content (ApiResult::none)
         */

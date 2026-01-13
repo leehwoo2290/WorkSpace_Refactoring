@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace App\auth\service;
 
-use App\auth\dto\UserLoginLogListRes;
-use App\auth\dto\UserLoginLogListReq;
+use App\auth\dto\response\UserLoginLogListRes;
+use App\auth\dto\request\UserLoginLogListReq;
 use App\auth\dto\UserLoginLogItem;
-use App\auth\dto\UserListRes;
-use App\auth\dto\UserListReq;
+use App\auth\dto\response\UserListRes;
+use App\auth\dto\request\UserListReq;
 use App\auth\dto\UserListItem;
 
 use App\auth\Repository\UserLoginLogRepository;

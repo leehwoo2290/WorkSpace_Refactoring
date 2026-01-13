@@ -15,10 +15,10 @@ use App\auth\repository\RefreshTokenRepository;
 use App\auth\repository\UserRoleRepository;
 use App\auth\repository\UserAuthRepository;
 use App\auth\Repository\UserLoginLogRepository;
-use App\auth\dto\UserLoginReq;
-use App\auth\dto\UserLoginRes;
-use App\auth\dto\UserMeRes;
-use App\auth\dto\JwtTokenRes;
+use App\auth\dto\request\UserLoginReq;
+use App\auth\dto\response\UserLoginRes;
+use App\auth\dto\response\UserMeRes;
+use App\auth\dto\response\JwtTokenRes;
 use App\common\Exception\ApiException;
 use App\auth\ExceptionErrorCode\AuthErrorCode;
 

@@ -12,7 +12,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Docs extends CI_Controller
 {
     // 네 프로젝트 기준 컨트롤러 폴더
-    const CONTROLLER_DIR = './application/controllers/auth';
+    const CONTROLLER_DIR = './application/controllers/license';
 
     public function __construct()
     {
@@ -24,6 +24,25 @@ class Docs extends CI_Controller
         if (is_file($autoload)) {
             require_once $autoload;
         }
+    }
+
+    private static function getControllerFiles(string $dir): array
+    {
+        $result = [];
+        $items = scandir($dir);
+        foreach ($items as $item) {
+            if ($item === '.' || $item === '..')
+                continue;
+
+            $path = $dir . DIRECTORY_SEPARATOR . $item;
+            if (is_dir($path)) {
+                // 하위폴더 재귀 탐색
+                $result = array_merge($result, self::getControllerFiles($path));
+            } elseif (substr($item, -4) === '.php') {
+                $result[] = $path;
+            }
+        }
+        return $result;
     }
 
     public function index()
@@ -63,17 +82,21 @@ class Docs extends CI_Controller
         $controller_arr = [];
         $dir = self::CONTROLLER_DIR;
 
-        if (!is_dir($dir)) return $controller_arr;
+        if (!is_dir($dir))
+            return $controller_arr;
 
         foreach (scandir($dir) as $f) {
-            if ($f === '.' || $f === '..') continue;
-            if (!preg_match('/\.php$/i', $f)) continue;
+            if ($f === '.' || $f === '..')
+                continue;
+            if (!preg_match('/\.php$/i', $f))
+                continue;
 
             $controller_name = preg_replace('/\.php$/i', '', $f);
             $api_str = $this->_get_controller_source($controller_name);
 
             $controller_arr[$controller_name] = [];
-            if ($api_str === '') continue;
+            if ($api_str === '')
+                continue;
 
             // public function xxx( 형태로 추출 (언더스코어 시작 메서드는 제외)
             preg_match_all('/function\s+(?P<method_name>[^_]\w+)\s*\(/', $api_str, $method_list);
@@ -88,7 +111,8 @@ class Docs extends CI_Controller
     private function _get_controller_source($controller_name)
     {
         $path = rtrim(self::CONTROLLER_DIR, '/\\') . '/' . $controller_name . '.php';
-        if (!is_file($path)) return '';
+        if (!is_file($path))
+            return '';
         $src = file_get_contents($path);
         return is_string($src) ? $src : '';
     }
@@ -96,7 +120,8 @@ class Docs extends CI_Controller
     private function _get_api_detail($controller_name)
     {
         $src = $this->_get_controller_source($controller_name);
-        if ($src === '') return [];
+        if ($src === '')
+            return [];
 
         $use_map = $this->_build_use_map($src);
         $namespace = $this->_parse_namespace($src);
@@ -106,7 +131,8 @@ class Docs extends CI_Controller
         // 함수 단위로 쪼개기
         $parts = preg_split('/\bfunction\b/', $src);
         foreach ($parts as $i => $part) {
-            if ($i === 0) continue;
+            if ($i === 0)
+                continue;
 
             $api_str = 'function' . $part;
 
@@ -189,13 +215,15 @@ class Docs extends CI_Controller
     private function _build_use_map($src)
     {
         $map = [];
-        if (!preg_match_all('/^\s*use\s+([^;]+);/m', $src, $m)) return $map;
+        if (!preg_match_all('/^\s*use\s+([^;]+);/m', $src, $m))
+            return $map;
 
         foreach ($m[1] as $useLine) {
             // "A\B\C as X, D\E\F"
             $chunks = array_map('trim', explode(',', $useLine));
             foreach ($chunks as $chunk) {
-                if ($chunk === '') continue;
+                if ($chunk === '')
+                    continue;
                 if (preg_match('/^([\\\\\w]+)\s+as\s+(\w+)$/i', $chunk, $mm)) {
                     $fqcn = ltrim($mm[1], '\\');
                     $alias = $mm[2];
@@ -212,19 +240,23 @@ class Docs extends CI_Controller
 
     private function _resolve_class($token, $use_map, $namespace)
     {
-        if (!$token) return null;
+        if (!$token)
+            return null;
 
         $t = trim($token);
         $t = ltrim($t, '\\');
 
         // 이미 FQCN이면 그대로
-        if (strpos($t, '\\') !== false) return $t;
+        if (strpos($t, '\\') !== false)
+            return $t;
 
         // use alias
-        if (isset($use_map[$t])) return $use_map[$t];
+        if (isset($use_map[$t]))
+            return $use_map[$t];
 
         // namespace가 있으면 붙임(거의 없지만)
-        if ($namespace !== '') return $namespace . '\\' . $t;
+        if ($namespace !== '')
+            return $namespace . '\\' . $t;
 
         return $t; // 글로벌로 남김
     }
@@ -267,10 +299,12 @@ class Docs extends CI_Controller
 
     private function _dto_schema_rows($dtoClass, $prefix)
     {
-        if (!$dtoClass) return [];
+        if (!$dtoClass)
+            return [];
 
         $schema = $this->_call_static_schema($dtoClass);
-        if (!is_array($schema)) return [];
+        if (!is_array($schema))
+            return [];
 
         $rows = [];
         $this->_flatten_schema($schema, $rows, $prefix);
@@ -279,12 +313,16 @@ class Docs extends CI_Controller
 
     private function _call_static_schema($dtoClass)
     {
-        if (!class_exists($dtoClass)) return null;
+        if (!class_exists($dtoClass))
+            return null;
 
         try {
-            if (method_exists($dtoClass, 'apiDocSchema')) return $dtoClass::apiDocSchema();
-            if (method_exists($dtoClass, 'docsSchema')) return $dtoClass::docsSchema();
-            if (method_exists($dtoClass, 'schema')) return $dtoClass::schema();
+            if (method_exists($dtoClass, 'apiDocSchema'))
+                return $dtoClass::apiDocSchema();
+            if (method_exists($dtoClass, 'docsSchema'))
+                return $dtoClass::docsSchema();
+            if (method_exists($dtoClass, 'schema'))
+                return $dtoClass::schema();
         } catch (\Throwable $e) {
             return null;
         }
@@ -294,12 +332,16 @@ class Docs extends CI_Controller
 
     private function _call_static_example($dtoClass)
     {
-        if (!class_exists($dtoClass)) return null;
+        if (!class_exists($dtoClass))
+            return null;
 
         try {
-            if (method_exists($dtoClass, 'apiDocExample')) return $dtoClass::apiDocExample();
-            if (method_exists($dtoClass, 'docsExample')) return $dtoClass::docsExample();
-            if (method_exists($dtoClass, 'example')) return $dtoClass::example();
+            if (method_exists($dtoClass, 'apiDocExample'))
+                return $dtoClass::apiDocExample();
+            if (method_exists($dtoClass, 'docsExample'))
+                return $dtoClass::docsExample();
+            if (method_exists($dtoClass, 'example'))
+                return $dtoClass::example();
         } catch (\Throwable $e) {
             return null;
         }
@@ -310,7 +352,8 @@ class Docs extends CI_Controller
     private function _dto_example_json($dtoClass)
     {
         $ex = $this->_call_static_example($dtoClass);
-        if ($ex === null) return '';
+        if ($ex === null)
+            return '';
 
         $json = json_encode($ex, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         return is_string($json) ? $json : '';
@@ -319,7 +362,8 @@ class Docs extends CI_Controller
     private function _apiresult_schema_rows($dtoClass, $kind)
     {
         // kind === 'none' 이면 204 반환(바디 없음) → schema도 비워둠
-        if ($kind === 'none') return [];
+        if ($kind === 'none')
+            return [];
 
         $rows = [
             ['name' => 'success', 'type' => 'bool', 'required' => true, 'desc' => 'ApiResult wrapper', 'aliases' => []],
@@ -399,8 +443,8 @@ class Docs extends CI_Controller
                 }
             } elseif (is_array($spec)) {
                 $type = isset($spec['type']) ? $spec['type'] : 'mixed';
-                $required = isset($spec['required']) ? (bool)$spec['required'] : true;
-                $desc = (string)($spec['desc'] ?? ($spec['description'] ?? ''));
+                $required = isset($spec['required']) ? (bool) $spec['required'] : true;
+                $desc = (string) ($spec['desc'] ?? ($spec['description'] ?? ''));
                 $aliases = $spec['aliases'] ?? [];
 
                 if (is_string($type) && class_exists($type)) {

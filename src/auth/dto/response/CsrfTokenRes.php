@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\auth\dto;
+namespace App\auth\dto\response;
 
 use App\common\dto\ApiDocDto;
 

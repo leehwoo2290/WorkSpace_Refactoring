@@ -29,7 +29,7 @@ final class UserListItem implements \JsonSerializable, ApiDocDto
     private ?string $status;
 
     public function __construct(
-        int $no,
+        int $num,
         int $userSeq,
         ?string $role,
         ?string $name,
@@ -45,7 +45,7 @@ final class UserListItem implements \JsonSerializable, ApiDocDto
         ?int $tenureYears,
         ?string $status
     ) {
-        $this->num = $no;
+        $this->num = $num;
         $this->userSeq = $userSeq;
         $this->role = $role;
         $this->name = $name;
