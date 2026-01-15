@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace App\user\repository;
 
 use App\user\entity\UserLoginLogEntity;
+use App\user\dto\query\UserLoginLogListQuery;
 use DateTimeImmutable;
+use QueryEnumMapper;
 
 final class UserLoginLogRepository
 {
@@ -20,7 +22,7 @@ final class UserLoginLogRepository
     {
         $data = [
             'email' => $e->email(),
-            'passwd' => $e->passwd(),      // 리팩토링에서는 null 권장
+            'passwd' => $e->passwd(),
             'success' => $e->success(),
             'domain' => $e->domain(),
             'ip_addr' => $e->ipAddr(),
@@ -29,81 +31,50 @@ final class UserLoginLogRepository
             'language' => $e->language(),
             'is_mobile' => $e->isMobile(),
             'device_id' => $e->deviceId(),
-            // reg_time은 DB default current_timestamp 사용
+            'reg_time' => $e->regTime()->format('Y-m-d H:i:s'),
         ];
 
         $this->db->insert('tb_user_login_log', $data);
+
         return (int) $this->db->insert_id();
     }
 
-    /** 조회 예시: 최신 1건 */
-    // public function findLatestByEmail(string $email): ?UserLoginLogEntity
-    // {
-    //     $this->db->from('tb_user_login_log');
-    //     $this->db->where('email', $email);
-    //     $this->db->order_by('reg_time', 'DESC');
-    //     $this->db->limit(1);
-
-    //     $q = $this->db->get();
-    //     if ($q->num_rows() < 1) return null;
-
-    //     return $this->rowToEntity($q->row());
-    // }
-
-    /** row(stdClass/array) -> Entity */
-    private function rowToEntity($row): UserLoginLogEntity
+    /** DB row -> Entity */
+    public static function fromRow(object $row): UserLoginLogEntity
     {
         $get = static function (string $k) use ($row) {
-            if (is_array($row))
-                return $row[$k] ?? null;
-            if (is_object($row))
-                return $row->$k ?? null;
-            return null;
+            return $row->{$k} ?? null;
         };
 
-        $reg = $get('reg_time');
-        $regTime = null;
-        if (is_string($reg) && $reg !== '') {
-            $regTime = new DateTimeImmutable($reg);
-        }
+        $regTimeRaw = (string) ($get('reg_time') ?? '');
+        $regTime = $regTimeRaw !== '' ? new DateTimeImmutable($regTimeRaw) : new DateTimeImmutable('now');
 
         return new UserLoginLogEntity(
-            ($get('seq') !== null) ? (int) $get('seq') : null,
-            (string) $get('email'),
+            (int) ($get('seq') ?? 0),
+            (string) ($get('email') ?? ''),
             ($get('passwd') !== null && $get('passwd') !== '') ? (string) $get('passwd') : null,
-            (string) $get('success'),
-            (string) $get('domain'),
-            (string) $get('ip_addr'),
-            (string) $get('user_agent'),
-            (string) $get('country_code'),
-            (string) $get('language'),
-            (string) $get('is_mobile'),
+            (string) ($get('success') ?? 'N'),
+            ($get('domain') !== null && $get('domain') !== '') ? (string) $get('domain') : null,
+            ($get('ip_addr') !== null && $get('ip_addr') !== '') ? (string) $get('ip_addr') : null,
+            ($get('user_agent') !== null && $get('user_agent') !== '') ? (string) $get('user_agent') : null,
+            ($get('country_code') !== null && $get('country_code') !== '') ? (string) $get('country_code') : null,
+            ($get('language') !== null && $get('language') !== '') ? (string) $get('language') : null,
+            (string) ($get('is_mobile') ?? ''),
             $regTime,
             ($get('device_id') !== null && $get('device_id') !== '') ? (string) $get('device_id') : null
         );
     }
 
-    public function count(array $where = []): int
+    public function count(UserLoginLogListQuery $query): int
     {
-        $this->db->from('tb_user_login_log log');
-        $this->db->join('tb_user user', 'user.email=log.email', 'left');
-        $this->db->join('tb_license license', 'license.seq=user.license_seq', 'left');
-        $this->db->join('tb_user_privacy privacy', 'privacy.user_seq=user.seq', 'left');
-
-        // 소속(부서/팀)까지 쓰려면 아래 join 추가(테이블 없으면 주석)
-        $this->db->join('tb_user_office office', 'office.user_seq=user.seq', 'left');
-        $this->db->join('tb_office_department department', 'department.seq=office.department_seq', 'left');
-        $this->db->join('tb_office_team team', 'team.seq=office.team_seq', 'left');
-
-        $this->applyWhere($where);
+        $this->baseFromJoin();
+        $this->applyWhere($query);
 
         return (int) $this->db->count_all_results();
     }
 
-    /**
-     * @return object[] row list
-     */
-    public function findList(array $where, int $offset, int $limit, string $orderBy = 'log.reg_time DESC'): array
+    /** @return object[] */
+    public function findList(UserLoginLogListQuery $query, string $orderBy = 'log.reg_time DESC'): array
     {
         $this->db->select("
             log.seq,
@@ -120,6 +91,17 @@ final class UserLoginLogRepository
             team.name as team_name
         ", false);
 
+        $this->baseFromJoin();
+        $this->applyWhere($query);
+
+        $this->db->order_by($orderBy);
+        $this->db->limit($query->size(), $query->offset());
+
+        return $this->db->get()->result();
+    }
+
+    private function baseFromJoin(): void
+    {
         $this->db->from('tb_user_login_log log');
         $this->db->join('tb_user user', 'user.email=log.email', 'left');
         $this->db->join('tb_license license', 'license.seq=user.license_seq', 'left');
@@ -128,23 +110,33 @@ final class UserLoginLogRepository
         $this->db->join('tb_user_office office', 'office.user_seq=user.seq', 'left');
         $this->db->join('tb_office_department department', 'department.seq=office.department_seq', 'left');
         $this->db->join('tb_office_team team', 'team.seq=office.team_seq', 'left');
-
-        $this->applyWhere($where);
-
-        $this->db->order_by($orderBy);
-        $this->db->limit($limit, $offset);
-
-        return $this->db->get()->result();
     }
 
-    private function applyWhere(array $where): void
+    private function applyWhere(UserLoginLogListQuery $query): void
     {
-        if (!empty($where['email'])) {
-            $this->db->like('log.email', (string) $where['email']);
+        $where = $query->makeWhere();
+
+        if (!empty($where['searchKeyWord'])) {
+            $this->db->like('log.email', (string) $where['searchKeyWord']);
         }
 
+        if (!empty($where['searchKeyWord'])) {
+            $this->db->like('log.email', (string) $where['searchKeyWord']);
+        }
+
+        // success enum 매핑/검증 (Y/N)
         if (!empty($where['success'])) {
-            $this->db->where('log.success', (string) $where['success']); // 'Y'|'N'
+            $maps = [
+                'yn' => [
+                    'Y' => 'Y',
+                    'N' => 'N',
+                ],
+            ];
+
+            $this->db->where(
+                'log.success',
+                QueryEnumMapper::map($maps, 'yn', (string) $where['success'])
+            );
         }
 
         if (!empty($where['from'])) {
@@ -155,5 +147,4 @@ final class UserLoginLogRepository
             $this->db->where('log.reg_time <=', (string) $where['to'] . ' 23:59:59');
         }
     }
-
 }

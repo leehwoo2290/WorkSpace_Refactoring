@@ -34,11 +34,9 @@ final class UserService
 
         $page = max(1, $userLoginLogListQuery->page());
         $size = max(1, min(100, $userLoginLogListQuery->size()));
-        $offset = ($page - 1) * $size;
 
-        $where = $userLoginLogListQuery->where();
-        $total = $this->loginLogRepository->count($where);
-        $rows = $this->loginLogRepository->findList($where, $offset, $size);
+        $total = $this->loginLogRepository->count($userLoginLogListQuery);
+        $rows = $this->loginLogRepository->findList($userLoginLogListQuery);
 
         $items = [];
         foreach ($rows as $r) {
@@ -73,19 +71,13 @@ final class UserService
 
     public function userList(UserListQuery $userListQuery): UserListRes
     {
-        // 간단 검증(원하면 여기서 role/status allowed set 제한 가능)
-        $where = $userListQuery->where();
-
-        if (isset($where['engineer_yn']) && $where['engineer_yn'] !== 'Y' && $where['engineer_yn'] !== 'N') {
-            throw ApiException::badRequest('VALIDATION_FAILED engineerYn must be Y or N', AuthErrorCode::VALIDATION_FAILED);
-        }
 
         $page = max(1, $userListQuery->page());
         $size = max(1, min(100, $userListQuery->size()));
         $offset = ($page - 1) * $size;
 
-        $total = $this->userRepository->count($where);
-        $rows = $this->userRepository->findList($where, $offset, $size);
+        $total = $this->userRepository->count($userListQuery);
+        $rows = $this->userRepository->findList($userListQuery);
 
         $tz = new \DateTimeZone('Asia/Seoul');
         $today = new \DateTimeImmutable('now', $tz);

@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace App\license\repository;
 
+use App\license\dto\query\LicenseListQuery;
+use QueryEnumMapper;
+
 final class LicenseRepository
 {
     private $db;
@@ -41,8 +44,31 @@ final class LicenseRepository
         // (select count(*) from tb_safety_project where license_seq=license.seq and deleted="N") as safety_project_cnt
     }
 
-    private function applyWhere(array $where): void
+
+    public function count(LicenseListQuery $query): int
     {
+        $this->db->from('tb_license license');
+        $this->applyWhere($query);
+
+        return (int) $this->db->count_all_results();
+    }
+
+    /** @return object[] */
+    public function findList(LicenseListQuery $query): array
+    {
+        $this->db->select($this->selectText(), false)->from('tb_license license');
+        $this->applyWhere($query);
+
+        $this->db->order_by('license.seq', 'DESC');
+        $this->db->limit($query->size(), $query->offset());
+
+        return $this->db->get()->result();
+    }
+
+    private function applyWhere(LicenseListQuery $query): void
+    {
+        $where = $query->makeWhere();
+
         if (!empty($where['q'])) {
             $q = trim((string) $where['q']);
             if ($q !== '') {
@@ -51,33 +77,34 @@ final class LicenseRepository
                 $this->db->or_like('license.name_abbr', $q);
                 $this->db->or_like('license.ceo_name', $q);
 
-                // bizno는 저장 포맷이 하이픈 없는 경우가 많아서 둘 다 시도
                 $qBiz = str_replace('-', '', $q);
                 $this->db->or_like('license.bizno', $qBiz);
-
                 $this->db->group_end();
             }
         }
-    }
 
-    public function count(array $where): int
-    {
-        $this->db->from('tb_license license');
-        $this->applyWhere($where);
+        // region/status 매핑 (일단 strict=false: maps 없으면 원문 통과)
+        $maps = [
+            'license_region' => [
+                // TODO: 'SEOUL' => '서울', 'CHUNGNAM' => '충남' ... (DB값에 맞춰 채우기)
+            ],
+            'license_status' => [
+                // TODO: 'ACTIVE' => 'Active', 'INACTIVE' => 'Inactive' ... (DB값에 맞춰 채우기)
+            ],
+        ];
 
-        // count_all_results는 내부적으로 쿼리 실행 후 builder 초기화
-        return (int) $this->db->count_all_results();
-    }
+        if (!empty($where['region'])) {
+            $this->db->where(
+                'license.region',
+                QueryEnumMapper::map($maps, 'license_region', (string) $where['region'], false)
+            );
+        }
 
-    /** @return object[] */
-    public function findList(array $where, int $offset, int $limit): array
-    {
-        $this->db->select($this->selectText(), false)->from('tb_license license');
-        $this->applyWhere($where);
-
-        $this->db->order_by('license.seq', 'DESC');
-        $this->db->limit($limit, $offset);
-
-        return $this->db->get()->result();
+        if (!empty($where['status'])) {
+            $this->db->where(
+                'license.status',
+                QueryEnumMapper::map($maps, 'license_status', (string) $where['status'], false)
+            );
+        }
     }
 }

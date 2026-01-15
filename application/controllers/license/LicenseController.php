@@ -31,7 +31,7 @@ class LicenseController extends BASE_Controller
         */
 
         try {
-            $licenseListQuery = $this->requestDtoMapper->queryRequestDto(LicenseListQuery::class);
+            $licenseListQuery = $this->requestQueryDtoMapper->queryRequestDto(LicenseListQuery::class);
             $licenseListRes = $this->licenseModule->list($licenseListQuery);
 
             ApiResult::ok($licenseListRes, LicenseListRes::class);

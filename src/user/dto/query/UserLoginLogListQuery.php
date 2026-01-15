@@ -3,18 +3,17 @@ declare(strict_types=1);
 
 namespace App\user\dto\query;
 
-use App\common\dto\HttpRequestDto;
+use App\common\dto\HttpQueryDto;
 
-
-final class UserLoginLogListQuery implements HttpRequestDto
+final class UserLoginLogListQuery implements HttpQueryDto
 {
     private int $page;
     private int $size;
 
-    private ?string $searchKeyWord;     // 검색용
-    private ?string $success;   // 'Y'|'N'
-    private ?string $from;      // 'YYYY-MM-DD' or 'YYYY-MM-DD HH:ii:ss'
-    private ?string $to;
+    private ?string $searchKeyWord;   // 부분검색
+    private ?string $success; // 'Y'|'N'
+    private ?string $from;    // 'YYYY-MM-DD' or 'YYYY-MM-DD HH:ii:ss'
+    private ?string $to;      // 'YYYY-MM-DD' or 'YYYY-MM-DD HH:ii:ss'
 
     private function __construct(
         int $page,
@@ -24,63 +23,59 @@ final class UserLoginLogListQuery implements HttpRequestDto
         ?string $from,
         ?string $to
     ) {
-        $this->page = $page;
-        $this->size = $size;
+        $this->page = ($page >= 1) ? $page : 1;
+        $this->size = ($size >= 1) ? $size : 20;
 
-        $this->searchKeyWord = $searchKeyWord !== '' ? $searchKeyWord : null;
-        $this->success = $success !== '' ? $success : null;
-        $this->from = $from !== '' ? $from : null;
-        $this->to = $to !== '' ? $to : null;
+        $this->searchKeyWord = self::normStr($searchKeyWord);
+        $this->success = self::normStr($success);
+        $this->from    = self::normStr($from);
+        $this->to      = self::normStr($to);
     }
 
-
-    public function success(): ?string
-    {
-        return $this->success;
-    }
     public static function fromArray(array $query): self
     {
-        $page = (int) ($query['page'] ?? 1);
-        $size = (int) ($query['size'] ?? 20);
+        $page = (int)($query['page'] ?? 1);
+        $size = (int)($query['size'] ?? 20);
 
-        $email = trim((string) ($query['email'] ?? ''));
-        $success = trim((string) ($query['success'] ?? ''));
-        $from = trim((string) ($query['from'] ?? ''));
-        $to = trim((string) ($query['to'] ?? ''));
+        // email은 email 우선, 없으면 q/keyword/searchKeyWord 등도 호환
+        $email = (string)($query['email'] ?? $query['q'] ?? $query['keyword'] ?? $query['searchKeyWord'] ?? '');
+        $success = (string)($query['success'] ?? '');
+        $from = (string)($query['from'] ?? '');
+        $to = (string)($query['to'] ?? '');
 
         return new self($page, $size, $email, $success, $from, $to);
     }
 
-
-    public function page(): int
-    {
-        return $this->page;
-    }
-    public function size(): int
-    {
-        return $this->size;
-    }
+    public function page(): int { return $this->page; }
+    public function size(): int { return $this->size; }
 
     public function offset(): int
     {
         return ($this->page - 1) * $this->size;
     }
 
+    public function success(): ?string
+    {
+        return $this->success;
+    }
+
     /** repository where 배열로 변환 */
-    public function where(): array
+    public function makeWhere(): array
     {
         $where = [];
 
-        if ($this->searchKeyWord !== null)
-            $where['searchKeyWord'] = $this->searchKeyWord;
-        if ($this->success !== null)
-            $where['success'] = $this->success;
-
-        if ($this->from !== null)
-            $where['from'] = $this->from;
-        if ($this->to !== null)
-            $where['to'] = $this->to;
+        if ($this->searchKeyWord !== null)   $where['searchKeyWord'] = $this->searchKeyWord;
+        if ($this->success !== null) $where['success'] = $this->success;
+        if ($this->from !== null)    $where['from'] = $this->from;
+        if ($this->to !== null)      $where['to'] = $this->to;
 
         return $where;
+    }
+
+    private static function normStr(?string $v): ?string
+    {
+        if ($v === null) return null;
+        $t = trim($v);
+        return $t !== '' ? $t : null;
     }
 }

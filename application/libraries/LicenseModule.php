@@ -38,12 +38,6 @@ final class LicenseModule
      */
     public function list(LicenseListQuery $licenseListQuery): LicenseListRes
     {
-
-        if (method_exists($this->licenseService, 'list')) {
-
-            return $this->licenseService->list($licenseListQuery);
-        }
-
         return $this->licenseService->licenseList($licenseListQuery);
     }
 

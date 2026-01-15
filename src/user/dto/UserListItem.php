@@ -63,7 +63,7 @@ final class UserListItem implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'no' => $this->num,
+            'num' => $this->num,
             'userSeq' => $this->userSeq,
             'role' => $this->role,
             'name' => $this->name,

@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\user\dto\query;
 
-use App\common\dto\HttpRequestDto;
+use App\common\dto\HttpQueryDto;
 
-final class UserListQuery implements HttpRequestDto
+final class UserListQuery implements HttpQueryDto
 {
     private int $page;
     private int $size;
@@ -80,53 +80,44 @@ final class UserListQuery implements HttpRequestDto
 
     public static function fromArray(array $query): self
     {
-        $page = (int)($query['page'] ?? 1);
-        $size = (int)($query['size'] ?? 20);
+        //값이 ''(빈 문자열)이면 null로 바꿔서 반환
+        $get = static function(string $k) use ($query) {
+        $v = $query[$k] ?? null;
+        if ($v === '') return null;
+        return $v;
+    };
 
-        $searchKeyWord = (string)($query['q'] ?? $query['keyword'] ?? $query['searchKeyWord'] ?? '');
-        $role          = (string)($query['role'] ?? '');
-        $status        = (string)($query['status'] ?? '');
-        $engineerYn    = (string)($query['engineerYn'] ?? $query['engineer_yn'] ?? '');
+    return new self(
+    // 1) page, size (생성자 첫 파라미터 순서대로!)
+    ($v = $get('page')) !== null ? max(1, (int)$v) : 1,
+    ($v = $get('size')) !== null ? max(1, (int)$v) : 20,
 
-        $licenseSeq = self::pickInt($query, ['licenseSeq', 'license_seq']);
-        $departmentSeq = self::pickInt($query, ['departmentSeq', 'department_seq']);
-        $positionSeq = self::pickInt($query, ['positionSeq', 'position_seq']);
+    // 2) 문자열 필터
+    $get('q') ?? $get('searchKeyWord'),
+    $get('role'),
+    $get('status') ?? $get('memberStatus'),
+    $get('engineer_yn') ?? $get('engineerYn'),
 
-        $position      = (string)($query['position'] ?? '');
-        $department    = (string)($query['department'] ?? '');
-        $workType      = (string)($query['workType'] ?? $query['work_type'] ?? '');
-        $laborContract = (string)($query['laborContract'] ?? $query['labor_contract'] ?? '');
-        $laborType     = (string)($query['laborType'] ?? $query['labor_type'] ?? '');
-        $yearOfService = self::pickInt($query, ['yearOfService', 'year_of_service']);
-        $country       = (string)($query['country'] ?? '');
-        $region        = (string)($query['region'] ?? '');
-        $gender        = (string)($query['gender'] ?? '');
-        $birthMonth    = (string)($query['birthMonth'] ?? $query['birth_month'] ?? '');
+    // 3) seq 필터
+    ($v = $get('license_seq')) !== null ? (int)$v : null,
+    ($v = $get('department_seq')) !== null ? (int)$v : null,
+    ($v = $get('position_seq')) !== null ? (int)$v : null,
 
-        return new self(
-            $page,
-            $size,
+    // 4) 기타 필터
+    $get('position'),
+    $get('department'),
+    $get('work_type') ?? $get('workForm'),
+    $get('labor_contract') ?? $get('contract_type'),
+    $get('labor_type') ?? $get('laborForm'),
+    ($v = $get('year_of_service')) !== null ? (int)$v : null,
+    $get('country'),
+    $get('region'),
+    $get('gender'),
 
-            $searchKeyWord,
-            $role,
-            $status,
-            $engineerYn,
-
-            $licenseSeq,
-            $departmentSeq,
-            $positionSeq,
-
-            $position,
-            $department,
-            $workType,
-            $laborContract,
-            $laborType,
-            $yearOfService,
-            $country,
-            $region,
-            $gender,
-            $birthMonth
-        );
+    // 생성자에서 birthMonth가 ?string 이면 int 캐스팅하면 TypeError 날 수 있음
+    // 그래서 그대로 문자열/NULL로 넘김
+    $get('birth_month')
+);
     }
 
     public function page(): int { return $this->page; }
@@ -138,7 +129,7 @@ final class UserListQuery implements HttpRequestDto
     }
 
     /** repository where 배열로 변환 */
-    public function where(): array
+    public function makeWhere(): array
     {
         $where = [];
 

@@ -10,10 +10,10 @@ use App\user\dto\query\UserLoginLogListQuery;
 use App\user\dto\response\UserListRes;
 use App\user\dto\query\UserListQuery;
 
-class UserController extends BASE_Controller
+class UserDetailController extends BASE_Controller
 {
 
-    public function list()
+    public function detail()
     {
         /*
         @Description
@@ -35,35 +35,6 @@ class UserController extends BASE_Controller
             $userListRes = $this->authModule->userList($userListQuery);
 
             ApiResult::ok($userListRes, UserListRes::class);
-
-        } catch (\Throwable $e) {
-
-            ApiResult::failThrowable($e, $e->getMessage());
-        }
-    }
-
-    public function logList()
-    {
-        /*
-        @Description
-        - [GET] /api/web/audit/login-logs
-        - Header: Authorization: Bearer {accessToken}
-        - Query:
-          - page: int (default 1)
-          - size: int (default 20)
-          - email: string (부분검색)
-          - success: '' | 'Y' | 'N'
-          - from: YYYY-MM-DD
-          - to: YYYY-MM-DD
-        - 성공: 200 OK (ApiResult::ok)
-        - 실패: 401/403 (권한/인증)
-        */
-
-        try {
-            $userLoginLogListReq = $this->requestQueryDtoMapper->queryRequestDto(UserLoginLogListQuery::class);
-            $userLoginLogListRes = $this->authModule->logList($userLoginLogListReq);
-
-            ApiResult::ok($userLoginLogListRes, UserLoginLogListRes::class);
 
         } catch (\Throwable $e) {
 

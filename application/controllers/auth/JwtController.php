@@ -24,7 +24,7 @@ class JwtController extends BASE_Controller
         */
 
         try {
-            $userLoginReq = $this->requestDtoMapper->jsonRequestDto(UserLoginReq::class, true);
+            $userLoginReq = $this->requestQueryDtoMapper->jsonRequestDto(UserLoginReq::class, true);
             $userLoginRes = $this->authModule->loginByCredentials($userLoginReq);
 
             ApiResult::created($userLoginRes, UserLoginRes::class);

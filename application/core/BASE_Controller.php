@@ -13,7 +13,7 @@ class BASE_Controller extends CI_Controller
     //추후 별도 컨트롤러에 빼기
     protected UserContext $userContext;
     public AuthModule $authModule;
-    public RequestDtoJsonMapper $requestDtoMapper;
+    public RequestQueryDtoJsonMapper $requestQueryDtoMapper;
 
     public function __construct()
     {
@@ -35,7 +35,7 @@ class BASE_Controller extends CI_Controller
         $this->load->database();
 
         $this->load->library('AuthModule', null, 'authModule');
-        $this->load->library('RequestDtoJsonMapper', null,'requestDtoMapper');
+        $this->load->library('RequestQueryDtoJsonMapper', null,'requestQueryDtoMapper');
 
         $this->authModule->bootstrap();
 

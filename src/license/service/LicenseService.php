@@ -23,10 +23,8 @@ final class LicenseService
         $size = max(1, min(100, $licenseListQuery->size()));
         $offset = ($page - 1) * $size;
 
-        $where = $licenseListQuery->where();
-
-        $total = $this->licenseRepository->count($where);
-        $rows = $this->licenseRepository->findList($where, $offset, $size);
+        $total = $this->licenseRepository->count($licenseListQuery);
+        $rows = $this->licenseRepository->findList($licenseListQuery);
 
         $items = [];
         foreach ($rows as $i => $r) {

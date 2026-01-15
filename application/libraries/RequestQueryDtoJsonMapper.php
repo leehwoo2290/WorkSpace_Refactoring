@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-final class RequestDtoJsonMapper
+final class RequestQueryDtoJsonMapper
 {
     private $CI;
 
@@ -10,6 +10,7 @@ final class RequestDtoJsonMapper
         $this->CI = &get_instance();
     }
 
+    //-------Request DTO from JSON Body -------
     private function requestDtoJsonBody(bool $requireNonEmpty = false): array
     {
         $CI = &get_instance();
@@ -52,6 +53,7 @@ final class RequestDtoJsonMapper
         return $dtoClass::fromArray($payload);
     }
 
+    //-------Query DTO from Query String -------
     public function queryRequestDto(string $dtoClass)
     {
         $query = $this->CI->input->get(NULL, true);
