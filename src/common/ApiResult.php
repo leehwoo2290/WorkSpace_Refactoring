@@ -84,6 +84,7 @@ final class ApiResult
     public static function failThrowable(\Throwable $e, string $fallbackMessage = 'INTERNAL_ERROR'): void
     {
         if ($e instanceof ApiException) {
+            //log_message('error', '[REFRESH] ApiException code=' . ($e->errorCode() ?? 'null') . ' msg=' . $e->getMessage());
             self::fail($e->errorCode(), $e->getMessage(), $e->httpStatus(), $e->data());
             return;
         }

@@ -11,7 +11,7 @@ namespace App\user\component;
  */
 final class UserContext
 {
-    private ?int $userId = null;
+    private ?int $userSeq = null;
     /** @var string[] */
     private array $roles = [];
 
@@ -21,26 +21,26 @@ final class UserContext
     }
 
     /** 현재 요청을 "인증됨" 상태로 만든다. */
-    public function authenticate(int $userId, array $roles = []): void
+    public function authenticate(int $userSeq, array $roles = []): void
     {
-        $this->userId = $userId;
+        $this->userSeq = $userSeq;
         $this->roles  = array_values(array_unique(array_map('strval', $roles)));
     }
 
     /** BC(이전 코드) 호환용 alias */
-    public function setAuthenticatedUser(int $userId, array $roles = []): void
+    public function setAuthenticatedUser(int $userSeq, array $roles = []): void
     {
-        $this->authenticate($userId, $roles);
+        $this->authenticate($userSeq, $roles);
     }
 
     public function clear(): void
     {
-        $this->userId = null;
+        $this->userSeq = null;
         $this->roles  = [];
     }
 
-    public function isAuthenticated(): bool { return $this->userId !== null; }
-    public function id(): ?int { return $this->userId; }
+    public function isAuthenticated(): bool { return $this->userSeq !== null; }
+    public function seq(): ?int { return $this->userSeq; }
 
     /** @return string[] */
     public function roles(): array { return $this->roles; }

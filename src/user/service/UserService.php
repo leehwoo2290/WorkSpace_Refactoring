@@ -18,11 +18,12 @@ use App\auth\ExceptionErrorCode\AuthErrorCode;
 final class UserService
 {
 
-    private UserLoginLogRepository $loginLogRepository;
+    private UserLoginLogRepository $userLoginLogRepository;
     private UserRepository $userRepository;
-    public function __construct(UserLoginLogRepository $loginLogRepository, UserRepository $userRepository)
+
+    public function __construct(UserLoginLogRepository $userLoginLogRepository, UserRepository $userRepository)
     {
-        $this->loginLogRepository = $loginLogRepository;
+        $this->userLoginLogRepository = $userLoginLogRepository;
         $this->userRepository = $userRepository;
     }
 
@@ -35,8 +36,8 @@ final class UserService
         $page = max(1, $userLoginLogListQuery->page());
         $size = max(1, min(100, $userLoginLogListQuery->size()));
 
-        $total = $this->loginLogRepository->count($userLoginLogListQuery);
-        $rows = $this->loginLogRepository->findList($userLoginLogListQuery);
+        $total = $this->userLoginLogRepository->count($userLoginLogListQuery);
+        $rows = $this->userLoginLogRepository->findList($userLoginLogListQuery);
 
         $items = [];
         foreach ($rows as $r) {

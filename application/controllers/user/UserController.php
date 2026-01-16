@@ -12,6 +12,14 @@ use App\user\dto\query\UserListQuery;
 
 class UserController extends BASE_Controller
 {
+    public UserModule $userModule;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->load->library('UserModule', null, 'userModule');
+    }
 
     public function list()
     {
@@ -29,10 +37,10 @@ class UserController extends BASE_Controller
         - 성공: 200 OK (ApiResult::ok)
         - 실패: 401/403 (권한/인증)
         */
-        
+
         try {
             $userListQuery = $this->requestQueryDtoMapper->queryRequestDto(UserListQuery::class);
-            $userListRes = $this->authModule->userList($userListQuery);
+            $userListRes = $this->userModule->userList($userListQuery);
 
             ApiResult::ok($userListRes, UserListRes::class);
 
@@ -61,7 +69,7 @@ class UserController extends BASE_Controller
 
         try {
             $userLoginLogListReq = $this->requestQueryDtoMapper->queryRequestDto(UserLoginLogListQuery::class);
-            $userLoginLogListRes = $this->authModule->logList($userLoginLogListReq);
+            $userLoginLogListRes = $this->userModule->logList($userLoginLogListReq);
 
             ApiResult::ok($userLoginLogListRes, UserLoginLogListRes::class);
 

@@ -27,22 +27,24 @@ final class LicenseService
         $rows = $this->licenseRepository->findList($licenseListQuery);
 
         $items = [];
-        foreach ($rows as $i => $r) {
-            $no = $offset + $i + 1;
+        foreach ($rows as $i => $row) {
+           // log_message('error', 'row['.$i.'] = ' . print_r($row, true));
+            $num = $offset + $i + 1;
 
             $items[] = new LicenseListItem(
-                $no,
-                (int)($r->seq ?? 0),
-                !empty($r->name) ? (string)$r->name : null,
-                !empty($r->bizno) ? (string)$r->bizno : null,
-                !empty($r->ceo_name) ? (string)$r->ceo_name : null,
-                !empty($r->contract_date) ? (string)$r->contract_date : null,
-                !empty($r->expire_date) ? (string)$r->expire_date : null,
-                (int)($r->user_cnt ?? 0),
-                (int)($r->machine_engineer_cnt ?? 0),
-                (int)($r->safety_engineer_cnt ?? 0),
-                (int)($r->machine_project_cnt ?? 0),
-                (int)($r->safety_project_cnt ?? 0),
+                $num,
+                (int)($row->seq ?? 0),
+                !empty($row->name) ? (string)$row->name : null,
+                !empty($row->name_abbr) ? (string)$row->name_abbr : null,
+                !empty($row->bizno) ? (string)$row->bizno : null,
+                !empty($row->ceo_name) ? (string)$row->ceo_name : null,
+                !empty($row->contract_date) ? (string)$row->contract_date : null,
+                !empty($row->expire_date) ? (string)$row->expire_date : null,
+                (int)($row->user_cnt ?? 0),
+                (int)($row->machine_engineer_cnt ?? 0),
+                (int)($row->safety_engineer_cnt ?? 0),
+                (int)($row->machine_project_cnt ?? 0),
+                (int)($row->safety_project_cnt ?? 0),
             );
         }
 

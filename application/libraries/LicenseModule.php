@@ -13,7 +13,7 @@ final class LicenseModule
     private LicenseRepository $licenseRepository;
 
 
-    public function __construct(?LicenseService $licenseService = null)
+    public function __construct()
     {
          $this->CI = &get_instance();
 

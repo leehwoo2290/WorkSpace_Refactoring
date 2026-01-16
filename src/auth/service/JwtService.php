@@ -38,11 +38,11 @@ final class JwtService
     private UserContext $userContext;
     private UserRoleRepository $userRoleRepository;
     private UserAuthRepository $userAuthRepository;
-    private UserLoginLogRepository $userLoginLogRepository;
     private JwtBootstrapper $jwtBootstrapper;
     private RefreshTokenHasher $refreshTokenHasher;
     private RefreshTokenRepository $refreshTokenRepository;
     private UserLoginLogRecoder $loginLogRecoder;
+    private UserLoginLogRepository $userLoginLogRepository;
 
     public function __construct(
         JwtManager $jwtManager,
@@ -50,9 +50,9 @@ final class JwtService
         UserContext $userContext,
         UserRoleRepository $roleRepository,
         UserAuthRepository $authRepository,
+        UserLoginLogRepository $userLoginLogRepository,
         RefreshTokenHasher $hasher,
-        RefreshTokenRepository $refreshTokenRepository,
-        UserLoginLogRepository $userLoginLogRepository
+        RefreshTokenRepository $refreshTokenRepository
     ) {
         $this->jwtManager = $jwtManager;
         $this->tokenTransport = $transport;
@@ -61,6 +61,7 @@ final class JwtService
         $this->userAuthRepository = $authRepository;
         $this->refreshTokenHasher = $hasher;
         $this->refreshTokenRepository = $refreshTokenRepository;
+        $this->userLoginLogRepository = $userLoginLogRepository;
 
         $this->loginLogRecoder = new UserLoginLogRecoder($userLoginLogRepository);
         $this->jwtBootstrapper = new JwtBootstrapper($jwtManager, $this, $transport, $userContext, $roleRepository);
@@ -202,7 +203,7 @@ final class JwtService
             throw ApiException::unauthorized('UNAUTHORIZED', AuthErrorCode::UNAUTHORIZED);
         }
 
-        return new UserMeRes((int) $this->userContext->id(), $this->userContext->roles());
+        return new UserMeRes((int) $this->userContext->seq(), $this->userContext->roles());
     }
 
 
@@ -211,6 +212,7 @@ final class JwtService
     {
         $refreshToken = $this->tokenTransport->getRefreshToken();
         if (!$refreshToken) {
+            //$this->endSession();
             throw ApiException::unauthorized('NO_REFRESH_TOKEN', AuthErrorCode::NO_REFRESH_TOKEN);
         }
         try {
@@ -318,6 +320,18 @@ final class JwtService
             return new JwtTokenRes($jwtTokenPair->getAccessToken(), (int) $jwtTokenPair->getAccessExp());
 
         } catch (ApiException $e) {
+            if (
+                in_array($e->errorCode(), [
+                    AuthErrorCode::REFRESH_TOKEN_EXPIRED,
+                    AuthErrorCode::INVALID_REFRESH_TOKEN,
+                    AuthErrorCode::REFRESH_HASH_MISMATCH,
+                    AuthErrorCode::REFRESH_TOKEN_REPLAY,
+                    AuthErrorCode::REFRESH_ROW_NOT_FOUND,
+                    AuthErrorCode::USER_NOT_FOUND,
+                ], true)
+            ) {
+                //$this->endSession();  
+            }
             throw $e;
         } catch (\Throwable $e) {
             //예상 못한 refresh 실패
@@ -330,7 +344,7 @@ final class JwtService
     {
         // 멱등: 인증 여부와 상관없이 항상 쿠키/컨텍스트 정리
         try {
-            $userSeq = (int) ($this->userContext->id() ?? 0);
+            $userSeq = (int) ($this->userContext->seq() ?? 0);
 
             // access로 userSeq를 알 수 있으면 revoke
             if ($userSeq > 0) {
@@ -356,8 +370,13 @@ final class JwtService
                 }
             }
         } finally {
-            $this->tokenTransport->clear();
-            $this->userContext->clear();
+            $this->endSession();
         }
+    }
+
+    private function endSession()
+    {
+        $this->tokenTransport->clear();
+        $this->userContext->clear();
     }
 }

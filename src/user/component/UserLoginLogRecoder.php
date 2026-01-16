@@ -5,6 +5,7 @@ namespace App\user\component;
 
 use App\user\Entity\UserLoginLogEntity;
 use App\user\Repository\UserLoginLogRepository;
+use DateTimeImmutable;
 
 /**
  * 로그인 로그 기록 서비스
@@ -29,6 +30,8 @@ final class UserLoginLogRecoder
         string $email,
         ?string $deviceId = null
     ): void {
+        $now = new DateTimeImmutable('now');
+
         $entity = new UserLoginLogEntity(
             null,
             $email,
@@ -40,7 +43,7 @@ final class UserLoginLogRecoder
             $_SERVER['GEOIP_COUNTRY_CODE'] ?? '',
             $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
             $this->isMobile() ? 'Y' : 'N',
-            null,
+            $now,
             $deviceId
         );
 
@@ -58,6 +61,8 @@ final class UserLoginLogRecoder
         ?string $inputPw = null,
         ?string $deviceId = null
     ): void {
+        $now = new DateTimeImmutable('now');
+        
         $entity = new UserLoginLogEntity(
             null,
             $email,
@@ -69,7 +74,7 @@ final class UserLoginLogRecoder
             $_SERVER['GEOIP_COUNTRY_CODE'] ?? '',
             $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
             $this->isMobile() ? 'Y' : 'N',
-            null,
+            $now,
             $deviceId
         );
 

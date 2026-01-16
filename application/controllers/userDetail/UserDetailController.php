@@ -4,37 +4,38 @@
 
 use App\common\ApiResult;
 
-use App\user\dto\response\UserLoginLogListRes;
-use App\user\dto\query\UserLoginLogListQuery;
+use App\userDetail\dto\response\UserDetailRes;
+use App\userDetail\dto\query\UserDetailQuery;
 
-use App\user\dto\response\UserListRes;
-use App\user\dto\query\UserListQuery;
+use App\userDetail\dto\response\UserBasicRes;
+
+use App\userDetail\dto\response\UserPrivacyRes;
+
+use App\userDetail\dto\response\UserOfficeRes;
+
+use App\userDetail\dto\response\UserEtcRes;
+
+use App\userDetail\dto\response\UserCareerRes;
 
 class UserDetailController extends BASE_Controller
 {
 
+    public UserModule $userModule;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->load->library('UserModule', null, 'userModule');
+    }
+
     public function detail()
     {
-        /*
-        @Description
-        - [GET] /api/web/audit/users
-        - Header: Authorization: Bearer {accessToken}
-        - Query:
-        - page: int (default 1)
-        - size: int (default 20)
-        - searchKeyword: string (이름/이메일/사번 부분검색)
-        - role: '' | 'User' | 'Staff' | 'Manager' | 'Admin' | 'SuperAdmin'
-        - status: '' | 'Pending' | 'Normal' | 'Quit'
-        - engineerYn: '' | 'Y' | 'N'
-        - 성공: 200 OK (ApiResult::ok)
-        - 실패: 401/403 (권한/인증)
-        */
-        
         try {
-            $userListQuery = $this->requestQueryDtoMapper->queryRequestDto(UserListQuery::class);
-            $userListRes = $this->authModule->userList($userListQuery);
+            $userDetailQuery = $this->requestQueryDtoMapper->queryRequestDto(UserDetailQuery::class);
+            $userDetailRes = $this->userModule->userDetail($userDetailQuery);
 
-            ApiResult::ok($userListRes, UserListRes::class);
+            ApiResult::ok($userDetailRes, UserDetailRes::class);
 
         } catch (\Throwable $e) {
 
@@ -42,4 +43,68 @@ class UserDetailController extends BASE_Controller
         }
     }
 
+    public function basic(int $userSeq): void
+    {
+        try {
+            $userBasicRes = $this->userModule->userBasic($userSeq);
+
+            ApiResult::ok($userBasicRes, UserBasicRes::class);
+
+        } catch (\Throwable $e) {
+
+            ApiResult::failThrowable($e, $e->getMessage());
+        }
+    }
+
+    public function privacy(int $userSeq): void
+    {
+        try {
+            $userPrivacyRes = $this->userModule->userPrivacy($userSeq);
+
+            ApiResult::ok($userPrivacyRes, UserPrivacyRes::class);
+
+        } catch (\Throwable $e) {
+
+            ApiResult::failThrowable($e, $e->getMessage());
+        }
+    }
+
+    public function office(int $userSeq): void
+    {
+        try {
+            $userOfficeRes = $this->userModule->userOffice($userSeq);
+
+            ApiResult::ok($userOfficeRes, UserOfficeRes::class);
+
+        } catch (\Throwable $e) {
+
+            ApiResult::failThrowable($e, $e->getMessage());
+        }
+    }
+
+    public function etc(int $userSeq): void
+    {
+        try {
+            $userEtcRes = $this->userModule->userEtc($userSeq);
+
+            ApiResult::ok($userEtcRes, UserEtcRes::class);
+
+        } catch (\Throwable $e) {
+
+            ApiResult::failThrowable($e, $e->getMessage());
+        }
+    }
+
+    public function career(int $userSeq): void
+    {
+        try {
+            $userCareerRes = $this->userModule->userCareer($userSeq);
+
+            ApiResult::ok($userCareerRes, UserCareerRes::class);
+
+        } catch (\Throwable $e) {
+
+            ApiResult::failThrowable($e, $e->getMessage());
+        }
+    }
 }

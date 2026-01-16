@@ -29,13 +29,13 @@ final class JwtManager
     // ================= Access Token =================
     //만료 시간과 발급 시간을 포함한 Access Token을 생성
   
-    public function generateAccessToken(string $userId, int $version, array $roles): string
+    public function generateAccessToken(string $userSeq, int $version, array $roles): string
     {
         $now = time();
         $exp = $now + $this->accessTtl;
 
         return JWT::encode([
-            'sub' => $userId,
+            'sub' => $userSeq,
             'iat' => $now,
             'exp' => $exp,
             'jti' => $this->uuidv4(),
@@ -47,13 +47,13 @@ final class JwtManager
 
     // ================= Refresh Token =================
     /** refresh 만료는 firstIssuedAt + refreshTtl 고정 */
-    public function generateRefreshToken(string $userId, int $version, int $firstIssuedAtTs): string
+    public function generateRefreshToken(string $userSeq, int $version, int $firstIssuedAtTs): string
     {
         $now = time();
         $exp = $firstIssuedAtTs + $this->refreshTtl;
 
         return JWT::encode([
-            'sub' => $userId,
+            'sub' => $userSeq,
             'iat' => $now,
             'exp' => $exp,
             'jti' => $this->uuidv4(),

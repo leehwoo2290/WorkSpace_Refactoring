@@ -5,22 +5,19 @@ namespace App\userDetail\dto\response;
 
 final class UserDetailRes implements \JsonSerializable
 {
-    public int $userId;
     public UserBasicRes $basic;
-    public UserOfficeRes $office;
-    public UserEtcRes $etc;
+    public ?UserOfficeRes $office;
+    public ?UserEtcRes $etc;
     public ?UserPrivacyRes $privacy;
     public ?UserCareerRes $career;
 
     public function __construct(
-        int $userId,
         UserBasicRes $basic,
-        UserOfficeRes $office,
-        UserEtcRes $etc,
+        ?UserOfficeRes $office = null,
+        ?UserEtcRes $etc = null,
         ?UserPrivacyRes $privacy = null,
         ?UserCareerRes $career = null
     ) {
-        $this->userId  = $userId;
         $this->basic   = $basic;
         $this->office  = $office;
         $this->etc     = $etc;
@@ -31,10 +28,9 @@ final class UserDetailRes implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'userId'  => $this->userId,
             'basic'   => $this->basic->jsonSerialize(),
-            'office'  => $this->office->jsonSerialize(),
-            'etc'     => $this->etc->jsonSerialize(),
+            'office'  => $this->office ? $this->office->jsonSerialize() : null,
+            'etc'     => $this->etc ? $this->etc->jsonSerialize() : null,
             'privacy' => $this->privacy ? $this->privacy->jsonSerialize() : null,
             'career'  => $this->career ? $this->career->jsonSerialize() : null,
         ];

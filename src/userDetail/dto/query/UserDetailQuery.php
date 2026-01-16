@@ -11,13 +11,21 @@ final class UserDetailQuery implements HttpQueryDto
 
     private function __construct(int $userSeq)
     {
+        if ($userSeq <= 0) {
+            throw new \InvalidArgumentException('userSeq must be a positive integer');
+        }
         $this->userSeq = $userSeq;
     }
 
     public static function fromArray(array $query): self
     {
-         $userSeq = (int)($query['user_seq']);
-         return new self($userSeq);
+        $raw = $query['userId'] ?? $query['user_id'] ?? $query['userSeq'] ?? null;
+
+        if ($raw === null || $raw === '') {
+            throw new \InvalidArgumentException('userId is required');
+        }
+
+        return new self((int) $raw);
     }
 
 
@@ -26,9 +34,15 @@ final class UserDetailQuery implements HttpQueryDto
     {
         $where = [];
 
-        
+        if ($this->userSeq !== null)
+            $where['user_seq'] = $this->userSeq;
 
         return $where;
+    }
+
+    public function userSeq(): int
+    {
+        return $this->userSeq;
     }
 
 }

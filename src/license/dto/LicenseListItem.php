@@ -10,6 +10,7 @@ final class LicenseListItem implements \JsonSerializable
     private int $licenseSeq;
 
     private ?string $name;
+    private ?string $englishName;
     private ?string $bizno;
     private ?string $ceoName;
 
@@ -26,6 +27,7 @@ final class LicenseListItem implements \JsonSerializable
         int $num,
         int $licenseSeq,
         ?string $name,
+        ?string $englishName,
         ?string $bizno,
         ?string $ceoName,
         ?string $contractDate,
@@ -39,6 +41,7 @@ final class LicenseListItem implements \JsonSerializable
         $this->num = $num;
         $this->licenseSeq = $licenseSeq;
         $this->name = $name;
+        $this->englishName = $englishName;
         $this->bizno = $bizno;
         $this->ceoName = $ceoName;
         $this->contractDate = $contractDate;
@@ -53,9 +56,10 @@ final class LicenseListItem implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'no' => $this->num,
+            'num' => $this->num,
             'licenseSeq' => $this->licenseSeq,
             'name' => $this->name,
+            'englishName' => $this->englishName,
             'bizno' => $this->bizno,
             'ceoName' => $this->ceoName,
             'contractDate' => $this->contractDate,

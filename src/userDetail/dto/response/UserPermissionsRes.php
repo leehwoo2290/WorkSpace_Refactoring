@@ -13,6 +13,19 @@ final class UserPermissionsRes implements \JsonSerializable
     public string $counseling_menu = 'N';
     public string $income_view = 'N';
 
+    public function __construct(string $customer_menu = 'N',
+                                        string $customer_detail = 'N',
+                                        string $fms_id_manage = 'N',
+                                        string $contract_menu = 'N',
+                                        string $counseling_menu = 'N',
+                                        string $income_view = 'N') {
+        $this->customer_menu = $customer_menu;
+        $this->customer_detail = $customer_detail;
+        $this->fms_id_manage = $fms_id_manage;
+        $this->contract_menu = $contract_menu;
+        $this->counseling_menu = $counseling_menu;
+        $this->income_view = $income_view;
+    }
     public function jsonSerialize(): array
     {
         return [

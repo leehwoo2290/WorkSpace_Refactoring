@@ -18,21 +18,37 @@ final class UserBasicRes implements \JsonSerializable
 
     public UserPermissionsRes $permissions;
 
-    public function __construct()
-    {
-        $this->permissions = new UserPermissionsRes();
+    public function __construct(
+        ?string $licenseName = null,
+        ?string $name = null,
+        ?string $role = null,
+        ?string $status = null,
+        ?string $email = null,
+        ?string $avatarFile = null,
+        ?string $remark = null,
+        ?UserPermissionsRes $permissions = null
+    ) {
+        $this->licenseName = $licenseName;
+        $this->name = $name;
+        $this->role = $role;
+        $this->status = $status;
+        $this->email = $email;
+        $this->avatarFile = $avatarFile;
+        $this->remark = $remark;
+
+        $this->permissions = $permissions ?: new UserPermissionsRes();
     }
 
     public function jsonSerialize(): array
     {
         return [
             'licenseName' => $this->licenseName,
-            'name'        => $this->name,
-            'role'        => $this->role,
-            'status'      => $this->status,
-            'email'       => $this->email,
-            'avatarFile'  => $this->avatarFile,
-            'remark'      => $this->remark,
+            'name' => $this->name,
+            'role' => $this->role,
+            'status' => $this->status,
+            'email' => $this->email,
+            'avatarFile' => $this->avatarFile,
+            'remark' => $this->remark,
             'permissions' => $this->permissions->jsonSerialize(),
         ];
     }

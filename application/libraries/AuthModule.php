@@ -3,7 +3,6 @@
 
 
 use App\auth\service\JwtService;
-use App\user\service\UserService;
 use App\auth\component\JwtManager;
 use App\auth\component\JwtBootstrapper;
 use App\auth\component\RefreshTokenHasher;
@@ -13,15 +12,10 @@ use App\auth\dto\response\JwtTokenRes;
 use App\auth\dto\request\UserLoginReq;
 use App\auth\dto\response\UserLoginRes;
 use App\auth\dto\response\UserMeRes;
-use App\user\dto\response\UserLoginLogListRes;
-use App\user\dto\query\UserLoginLogListQuery;
-use App\user\dto\response\UserListRes;
-use App\user\dto\query\UserListQuery;
 use App\auth\repository\UserRoleRepository;
 use App\auth\repository\UserAuthRepository;
 use App\auth\repository\RefreshTokenRepository;
-use App\user\Repository\UserLoginLogRepository;
-use App\user\Repository\UserRepository;
+use App\user\repository\UserLoginLogRepository;
 
 /**
  * AuthModule (구 JwtLibrary)
@@ -44,9 +38,8 @@ class AuthModule
     private UserRoleRepository $userRoleRepository;
     private UserAuthRepository $userAuthRepository;
     private UserLoginLogRepository $userLoginLogRepository;
-    private UserRepository $userRepository;
     private JwtService $jwtService;
-    private UserService $userService;
+   
 
 
     public function __construct()
@@ -87,10 +80,16 @@ class AuthModule
         $this->userAuthRepository = new UserAuthRepository($this->CI->db);
 
         $this->userLoginLogRepository = new UserLoginLogRepository($this->CI->db);
-        $this->userRepository = new UserRepository($this->CI->db);
 
-        $this->jwtService = new JwtService($this->jwtManager, $this->tokenTransport, $this->userContext, $this->userRoleRepository, $this->userAuthRepository, $this->refreshTokenHasher, $this->refreshTokenRepository, $this->userLoginLogRepository);
-        $this->userService = new UserService($this->userLoginLogRepository, $this->userRepository);
+        $this->jwtService = new JwtService(
+            $this->jwtManager, 
+            $this->tokenTransport, 
+            $this->userContext, 
+            $this->userRoleRepository, 
+            $this->userAuthRepository, 
+            $this->userLoginLogRepository, 
+            $this->refreshTokenHasher, 
+            $this->refreshTokenRepository);
     }
 
     /** @return UserContext */
@@ -127,16 +126,6 @@ class AuthModule
     public function purgeRefreshTokens(int $replacedRetentionDays = 7, int $limit = 5000): int
     {
         return $this->refreshTokenRepository->purgeExpiredAndOldReplaced($replacedRetentionDays, $limit);
-    }
-
-    public function logList(UserLoginLogListQuery $userLoginLogListQuery): UserLoginLogListRes
-    {
-        return $this->userService->logList($userLoginLogListQuery);
-    }
-
-    public function userList(UserListQuery $userListQuery): UserListRes
-    {
-        return $this->userService->userList($userListQuery);
     }
 
 }
