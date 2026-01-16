@@ -3,7 +3,7 @@
 use App\auth\dto\response\CsrfTokenRes;
 use App\auth\service\CsrfService;
 use App\common\Exception\ApiException;
-use App\auth\ExceptionErrorCode\AuthErrorCode;
+use App\auth\ExceptionErrorCode\ApiErrorCode;
 use App\common\ApiResult;
 
 class CsrfGuard
@@ -62,7 +62,7 @@ class CsrfGuard
     public function generateToken(): CsrfTokenRes
     {
         if (!$this->enabled()) {
-            throw ApiException::badRequest('CSRF_DISABLED', AuthErrorCode::CSRF_FAILED);
+            throw ApiException::badRequest('CSRF_DISABLED', ApiErrorCode::CSRF_FAILED);
         }
 
         $token = $this->csrfService->generateToken($this->enabled());

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\auth\service;
 
 use App\common\Exception\ApiException;
-use App\auth\ExceptionErrorCode\AuthErrorCode;
+use App\common\ExceptionErrorCode\ApiErrorCode;
 
 final class CsrfService
 {
@@ -51,14 +51,14 @@ final class CsrfService
     public function validateDoubleSubmit(string $cookieVal, string $headerVal): void
     {
         if ($cookieVal === '' || $headerVal === '' || !hash_equals($cookieVal, $headerVal)) {
-            throw ApiException::forbidden('CSRF_FAILED', AuthErrorCode::CSRF_FAILED);
+            throw ApiException::forbidden('CSRF_FAILED', ApiErrorCode::CSRF_FAILED);
         }
     }
 
     public function requirePost(string $method): void
     {
         if ($method !== 'POST') {
-            throw ApiException::forbidden('METHOD_NOT_ALLOWED', AuthErrorCode::VALIDATION_FAILED);
+            throw ApiException::forbidden('METHOD_NOT_ALLOWED', ApiErrorCode::VALIDATION_FAILED);
         }
     }
     /** (옵션) Origin/Referer allowlist 검증 */ //추후 추가

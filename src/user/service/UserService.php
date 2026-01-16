@@ -13,7 +13,7 @@ use App\user\dto\UserListItem;
 use App\user\Repository\UserLoginLogRepository;
 use App\user\Repository\UserRepository;
 use App\common\Exception\ApiException;
-use App\auth\ExceptionErrorCode\AuthErrorCode;
+use App\common\ExceptionErrorCode\ApiErrorCode;
 
 final class UserService
 {
@@ -30,7 +30,7 @@ final class UserService
     public function logList(UserLoginLogListQuery $userLoginLogListQuery): UserLoginLogListRes
     {
         if ($userLoginLogListQuery->success() !== null && $userLoginLogListQuery->success() !== 'Y' && $userLoginLogListQuery->success() !== 'N') {
-            throw ApiException::badRequest('VALIDATION_FAILED Not(N , Y ," ")', AuthErrorCode::VALIDATION_FAILED);
+            throw ApiException::badRequest('VALIDATION_FAILED Not(N , Y ," ")', ApiErrorCode::VALIDATION_FAILED);
         }
 
         $page = max(1, $userLoginLogListQuery->page());

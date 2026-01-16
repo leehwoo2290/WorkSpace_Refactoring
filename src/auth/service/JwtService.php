@@ -20,7 +20,7 @@ use App\auth\dto\response\UserLoginRes;
 use App\auth\dto\response\UserMeRes;
 use App\auth\dto\response\JwtTokenRes;
 use App\common\Exception\ApiException;
-use App\auth\ExceptionErrorCode\AuthErrorCode;
+use App\common\ExceptionErrorCode\ApiErrorCode;
 
 use DateTimeImmutable;
 
@@ -85,24 +85,24 @@ final class JwtService
 
         try {
             if (!$user)
-                throw ApiException::unauthorized('USER_NOT_FOUND', AuthErrorCode::USER_NOT_FOUND);
+                throw ApiException::unauthorized('USER_NOT_FOUND', ApiErrorCode::USER_NOT_FOUND);
 
             // status/black 체크 (레거시 규칙 반영)
             if (($user->status ?? '') !== 'Normal')
-                throw ApiException::forbidden('USER_NOT_ACTIVE', AuthErrorCode::USER_NOT_ACTIVE);
+                throw ApiException::forbidden('USER_NOT_ACTIVE', ApiErrorCode::USER_NOT_ACTIVE);
             if (($user->black ?? 'N') === 'Y')
-                throw ApiException::forbidden('USER_BLOCKED', AuthErrorCode::USER_BLOCKED);
+                throw ApiException::forbidden('USER_BLOCKED', ApiErrorCode::USER_BLOCKED);
 
             //$this->verifyPasswordAndMaybeUpgrade((int) $user->seq, (string) ($user->passwd ?? ''), $userLoginReq->passwd());
             // 비번 체크 (레거시: SHA1)
             $hashed = sha1($userLoginReq->passwd());
             if (!hash_equals((string) $user->passwd, $hashed)) {
-                throw ApiException::unauthorized('INVALID_PASSWORD', AuthErrorCode::INVALID_PASSWORD);
+                throw ApiException::unauthorized('INVALID_PASSWORD', ApiErrorCode::INVALID_PASSWORD);
             }
 
             $roles = $this->userRoleRepository->rolesOf((int) $user->seq);
             if (empty($roles)) {
-                throw ApiException::forbidden('USER_NO_ROLES', AuthErrorCode::USER_NO_ROLES);
+                throw ApiException::forbidden('USER_NO_ROLES', ApiErrorCode::USER_NO_ROLES);
             }
 
             // 토큰 발급 + 쿠키 set + refresh 저장
@@ -120,7 +120,7 @@ final class JwtService
             );
         } catch (ApiException $e) {
             // 레거시와 동일하게 "비번 불일치"만 실패 로그 남기기
-            if (method_exists($e, 'errorCode') && $e->errorCode() === AuthErrorCode::INVALID_PASSWORD) {
+            if (method_exists($e, 'errorCode') && $e->errorCode() === ApiErrorCode::INVALID_PASSWORD) {
                 // 비번 평문 저장 금지 → null로 남김
                 $this->loginLogRecoder->logFail($userLoginReq->email(), null, $deviceId);
             }
@@ -136,7 +136,7 @@ final class JwtService
     public function login(int $userSeq, array $roles): JwtTokenRes
     {
         if (!$this->userRoleRepository->exists($userSeq)) {
-            throw ApiException::unauthorized('USER_NOT_FOUND', AuthErrorCode::USER_NOT_FOUND);
+            throw ApiException::unauthorized('USER_NOT_FOUND', ApiErrorCode::USER_NOT_FOUND);
         }
 
         //$roles = $this->userRoleRepository->rolesOf($userSeq);
@@ -176,7 +176,7 @@ final class JwtService
         // bcrypt/argon2 계열
         if ((strpos($stored, '$2y$') === 0) || (strpos($stored, '$argon2id$') === 0) || (strpos($stored, '$argon2i$') === 0)) {
             if (!password_verify($plain, $stored)) {
-                throw ApiException::unauthorized('INVALID_PASSWORD', AuthErrorCode::INVALID_PASSWORD);
+                throw ApiException::unauthorized('INVALID_PASSWORD', ApiErrorCode::INVALID_PASSWORD);
             }
             return;
         }
@@ -184,7 +184,7 @@ final class JwtService
         // 레거시 SHA1
         $sha1 = sha1($plain);
         if (!hash_equals($stored, $sha1)) {
-            throw ApiException::unauthorized('INVALID_PASSWORD', AuthErrorCode::INVALID_PASSWORD);
+            throw ApiException::unauthorized('INVALID_PASSWORD', ApiErrorCode::INVALID_PASSWORD);
         }
 
         // 성공하면 bcrypt로 자동 업그레이드(실패해도 로그인은 성공)
@@ -200,7 +200,7 @@ final class JwtService
     public function me(): UserMeRes
     {
         if (!$this->userContext->isAuthenticated()) {
-            throw ApiException::unauthorized('UNAUTHORIZED', AuthErrorCode::UNAUTHORIZED);
+            throw ApiException::unauthorized('UNAUTHORIZED', ApiErrorCode::UNAUTHORIZED);
         }
 
         return new UserMeRes((int) $this->userContext->seq(), $this->userContext->roles());
@@ -213,7 +213,7 @@ final class JwtService
         $refreshToken = $this->tokenTransport->getRefreshToken();
         if (!$refreshToken) {
             //$this->endSession();
-            throw ApiException::unauthorized('NO_REFRESH_TOKEN', AuthErrorCode::NO_REFRESH_TOKEN);
+            throw ApiException::unauthorized('NO_REFRESH_TOKEN', ApiErrorCode::NO_REFRESH_TOKEN);
         }
         try {
             //토큰이 유효한지 최소한의 검증
@@ -221,7 +221,7 @@ final class JwtService
             $claims = $this->jwtManager->validateRefreshToken($refreshToken);
             $userSeq = (int) ($claims->sub ?? 0);
             if ($userSeq <= 0) {
-                throw ApiException::unauthorized('INVALID_REFRESH_TOKEN', AuthErrorCode::INVALID_REFRESH_TOKEN);
+                throw ApiException::unauthorized('INVALID_REFRESH_TOKEN', ApiErrorCode::INVALID_REFRESH_TOKEN);
             }
 
             //userSeq에 해당하는 사용자가 실제로 존재하는지 확인
@@ -229,7 +229,7 @@ final class JwtService
                 // 사용자 자체가 없으면 쿠키를 정리하고 끝
                 $this->tokenTransport->clear();
                 $this->userContext->clear();
-                throw ApiException::unauthorized('USER_NOT_FOUND', AuthErrorCode::USER_NOT_FOUND);
+                throw ApiException::unauthorized('USER_NOT_FOUND', ApiErrorCode::USER_NOT_FOUND);
             }
 
             //권한 조회
@@ -246,31 +246,31 @@ final class JwtService
                 //동시에 두 요청이 와도 한쪽이 먼저 처리되면 다른 쪽은 “이미 replaced” 체크에 걸리게 됨
                 $oldRefreshToken = $this->refreshTokenRepository->findByTokenIdForUpdate($tokenId);
                 if (!$oldRefreshToken)
-                    throw ApiException::unauthorized('REFRESH_ROW_NOT_FOUND', AuthErrorCode::REFRESH_ROW_NOT_FOUND);
+                    throw ApiException::unauthorized('REFRESH_ROW_NOT_FOUND', ApiErrorCode::REFRESH_ROW_NOT_FOUND);
 
                 //refreshToken을 요청한 사용자가 맞는지 확인
                 if ($oldRefreshToken->getUserSeq() !== $userSeq)
-                    throw ApiException::unauthorized('TOKEN_OWNER_MISMATCH', AuthErrorCode::TOKEN_OWNER_MISMATCH);
+                    throw ApiException::unauthorized('TOKEN_OWNER_MISMATCH', ApiErrorCode::TOKEN_OWNER_MISMATCH);
 
                 //replacedDate != null이면 이미 rotate가 발생함
                 //이미 rotate 된 refresh token을 재사용(replay) 시도한 경우
                 if ($oldRefreshToken->isReplaced())
-                    throw ApiException::unauthorized('REFRESH_TOKEN_REPLAY', AuthErrorCode::REFRESH_TOKEN_REPLAY);
+                    throw ApiException::unauthorized('REFRESH_TOKEN_REPLAY', ApiErrorCode::REFRESH_TOKEN_REPLAY);
 
                 //만료일이 현 시각보다 이전이면 만료된 토큰
                 if ($oldRefreshToken->isExpired($now))
-                    throw ApiException::unauthorized('REFRESH_TOKEN_EXPIRED', AuthErrorCode::REFRESH_TOKEN_EXPIRED);
+                    throw ApiException::unauthorized('REFRESH_TOKEN_EXPIRED', ApiErrorCode::REFRESH_TOKEN_EXPIRED);
 
                 //refreshToken과 db에 저장된 암호환된 토큰이 같은지 확인
                 //JWT 검증은 통과했는데(서명 ok) DB에 저장된 해시와 다른 토큰인 경우
                 //도난/토큰 패밀리 꼬임/재사용 공격 의심 케이스
                 if (!$this->refreshTokenHasher->matches($refreshToken, $oldRefreshToken->getHashedToken())) {
-                    throw ApiException::unauthorized('REFRESH_HASH_MISMATCH', AuthErrorCode::REFRESH_HASH_MISMATCH);
+                    throw ApiException::unauthorized('REFRESH_HASH_MISMATCH', ApiErrorCode::REFRESH_HASH_MISMATCH);
                 }
 
                 $oldId = $oldRefreshToken->getId();
                 if ($oldId === null)
-                    throw ApiException::unauthorized('INVALID_TOKEN_ROW_ID', AuthErrorCode::INVALID_TOKEN_ROW_ID);
+                    throw ApiException::unauthorized('INVALID_TOKEN_ROW_ID', ApiErrorCode::INVALID_TOKEN_ROW_ID);
 
                 //이미 교체(replaced)되었음으로 표시, 기존 refreshToken 즉시 무효화
                 $this->refreshTokenRepository->markReplaced($oldId);
@@ -322,12 +322,12 @@ final class JwtService
         } catch (ApiException $e) {
             if (
                 in_array($e->errorCode(), [
-                    AuthErrorCode::REFRESH_TOKEN_EXPIRED,
-                    AuthErrorCode::INVALID_REFRESH_TOKEN,
-                    AuthErrorCode::REFRESH_HASH_MISMATCH,
-                    AuthErrorCode::REFRESH_TOKEN_REPLAY,
-                    AuthErrorCode::REFRESH_ROW_NOT_FOUND,
-                    AuthErrorCode::USER_NOT_FOUND,
+                    ApiErrorCode::REFRESH_TOKEN_EXPIRED,
+                    ApiErrorCode::INVALID_REFRESH_TOKEN,
+                    ApiErrorCode::REFRESH_HASH_MISMATCH,
+                    ApiErrorCode::REFRESH_TOKEN_REPLAY,
+                    ApiErrorCode::REFRESH_ROW_NOT_FOUND,
+                    ApiErrorCode::USER_NOT_FOUND,
                 ], true)
             ) {
                 //$this->endSession();  
@@ -335,7 +335,7 @@ final class JwtService
             throw $e;
         } catch (\Throwable $e) {
             //예상 못한 refresh 실패
-            throw ApiException::unauthorized('REFRESH_UNAUTHORIZED', AuthErrorCode::REFRESH_UNAUTHORIZED);
+            throw ApiException::unauthorized('REFRESH_UNAUTHORIZED', ApiErrorCode::REFRESH_UNAUTHORIZED);
         }
     }
 

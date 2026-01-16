@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\userDetail\service;
 
-use App\auth\ExceptionErrorCode\AuthErrorCode;
+use App\common\ExceptionErrorCode\ApiErrorCode;
 use App\common\Exception\ApiException;
 use App\userDetail\dto\query\UserDetailQuery;
 use App\userDetail\dto\response\UserBasicRes;
@@ -67,7 +67,7 @@ final class UserDetailService
     public function userBasic(int $userSeq): ?UserBasicRes
     {
         if ($userSeq < 0) {
-            ApiException::badRequest("VALIDATION_FAILED", AuthErrorCode::VALIDATION_FAILED);
+            ApiException::badRequest("VALIDATION_FAILED", ApiErrorCode::VALIDATION_FAILED);
         }
 
         if ($this->checkUserExists($userSeq) === null)
@@ -95,7 +95,7 @@ final class UserDetailService
     public function userPrivacy(int $userSeq): ?UserPrivacyRes
     {
         if ($userSeq < 0) {
-            ApiException::badRequest("VALIDATION_FAILED", AuthErrorCode::VALIDATION_FAILED);
+            ApiException::badRequest("VALIDATION_FAILED", ApiErrorCode::VALIDATION_FAILED);
         }
 
 
@@ -124,7 +124,7 @@ final class UserDetailService
     public function userOffice(int $userSeq): ?UserOfficeRes
     {
         if ($userSeq < 0) {
-            ApiException::badRequest("VALIDATION_FAILED", AuthErrorCode::VALIDATION_FAILED);
+            ApiException::badRequest("VALIDATION_FAILED", ApiErrorCode::VALIDATION_FAILED);
         }
 
         if ($this->checkUserExists($userSeq) === null)
@@ -160,7 +160,7 @@ final class UserDetailService
     public function userEtc(int $userSeq): ?UserEtcRes
     {
         if ($userSeq < 0) {
-            ApiException::badRequest("VALIDATION_FAILED", AuthErrorCode::VALIDATION_FAILED);
+            ApiException::badRequest("VALIDATION_FAILED", ApiErrorCode::VALIDATION_FAILED);
         }
 
         if ($this->checkUserExists($userSeq) === null)
@@ -183,7 +183,7 @@ final class UserDetailService
     public function userCareer(int $userSeq): ?UserCareerRes
     {
         if ($userSeq < 0) {
-            ApiException::badRequest("VALIDATION_FAILED", AuthErrorCode::VALIDATION_FAILED);
+            ApiException::badRequest("VALIDATION_FAILED", ApiErrorCode::VALIDATION_FAILED);
         }
 
         if ($this->checkUserExists($userSeq) === null)

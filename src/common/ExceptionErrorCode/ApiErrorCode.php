@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\auth\ExceptionErrorCode;
+namespace App\common\ExceptionErrorCode;
 
-final class AuthErrorCode
+final class ApiErrorCode
 {
     // --------------------------------------------------------------------
     // 400 Bad Request (요청 자체가 잘못됨: 프론트 입력/형식 수정 필요)
