@@ -10,7 +10,7 @@ final class LicenseListItem implements \JsonSerializable
     private int $licenseSeq;
 
     private ?string $name;
-    private ?string $englishName;
+    private ?string $region;
     private ?string $bizno;
     private ?string $ceoName;
 
@@ -22,12 +22,16 @@ final class LicenseListItem implements \JsonSerializable
     private int $safetyEngineerCnt;
     private int $machineProjectCnt;
     private int $safetyProjectCnt;
+    private ?string $managerName;
+    private ?string $managerEmail;
+    private ?string $managerPhoneNumber ;
+    private ?string $officePhoneNumber ;
 
     public function __construct(
         int $num,
         int $licenseSeq,
         ?string $name,
-        ?string $englishName,
+        ?string $region,
         ?string $bizno,
         ?string $ceoName,
         ?string $contractDate,
@@ -36,12 +40,16 @@ final class LicenseListItem implements \JsonSerializable
         int $machineEngineerCnt,
         int $safetyEngineerCnt,
         int $machineProjectCnt,
-        int $safetyProjectCnt
+        int $safetyProjectCnt,
+        ?string $managerName,
+        ?string $managerEmail,
+        ?string $managerPhoneNumber,
+        ?string $officePhoneNumber
     ) {
         $this->num = $num;
         $this->licenseSeq = $licenseSeq;
         $this->name = $name;
-        $this->englishName = $englishName;
+        $this->region = $region;
         $this->bizno = $bizno;
         $this->ceoName = $ceoName;
         $this->contractDate = $contractDate;
@@ -51,6 +59,10 @@ final class LicenseListItem implements \JsonSerializable
         $this->safetyEngineerCnt = $safetyEngineerCnt;
         $this->machineProjectCnt = $machineProjectCnt;
         $this->safetyProjectCnt = $safetyProjectCnt;
+        $this->managerName = $managerName;
+        $this->managerEmail = $managerEmail;
+        $this->managerPhoneNumber = $managerPhoneNumber;
+        $this->officePhoneNumber = $officePhoneNumber;
     }
 
     public function jsonSerialize(): array
@@ -59,7 +71,7 @@ final class LicenseListItem implements \JsonSerializable
             'num' => $this->num,
             'licenseSeq' => $this->licenseSeq,
             'name' => $this->name,
-            'englishName' => $this->englishName,
+            'region' => $this->region,
             'bizno' => $this->bizno,
             'ceoName' => $this->ceoName,
             'contractDate' => $this->contractDate,
@@ -69,6 +81,10 @@ final class LicenseListItem implements \JsonSerializable
             'safetyEngineerCnt' => $this->safetyEngineerCnt,
             'machineProjectCnt' => $this->machineProjectCnt,
             'safetyProjectCnt' => $this->safetyProjectCnt,
+            'managerName' => $this->managerName,
+            'managerEmail' => $this->managerEmail,
+            'managerPhoneNumber' => $this->managerPhoneNumber,
+            'officePhoneNumber' => $this->officePhoneNumber
         ];
     }
 }

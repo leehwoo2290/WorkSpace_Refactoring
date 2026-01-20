@@ -28,14 +28,14 @@ final class LicenseService
 
         $items = [];
         foreach ($rows as $i => $row) {
-           // log_message('error', 'row['.$i.'] = ' . print_r($row, true));
+            //log_message('error', 'row['.$i.'] = ' . print_r($row, true));
             $num = $offset + $i + 1;
 
             $items[] = new LicenseListItem(
                 $num,
                 (int)($row->seq ?? 0),
                 !empty($row->name) ? (string)$row->name : null,
-                !empty($row->name_abbr) ? (string)$row->name_abbr : null,
+                !empty($row->sido) ? (string)$row->sido : null,
                 !empty($row->bizno) ? (string)$row->bizno : null,
                 !empty($row->ceo_name) ? (string)$row->ceo_name : null,
                 !empty($row->contract_date) ? (string)$row->contract_date : null,
@@ -45,6 +45,10 @@ final class LicenseService
                 (int)($row->safety_engineer_cnt ?? 0),
                 (int)($row->machine_project_cnt ?? 0),
                 (int)($row->safety_project_cnt ?? 0),
+                !empty($row->pic) ? (string)$row->pic : null,
+                !empty($row->email) ? (string)$row->email : null,
+                !empty($row->mobile) ? (string)$row->mobile : null,
+                !empty($row->tel) ? (string)$row->tel : null,
             );
         }
 

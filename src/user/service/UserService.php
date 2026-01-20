@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\user\service;
 
+use App\user\dto\UserListLicenseFilterItem;
+use App\user\dto\response\UserListLicenseFilterRes;
 use App\user\dto\response\UserLoginLogListRes;
 use App\user\dto\query\UserLoginLogListQuery;
 use App\user\dto\UserLoginLogItem;
@@ -115,6 +117,23 @@ final class UserService
 
         return new UserListRes($items, $total, $page, $size);
     }
+
+     public function licenseFilter(): UserListLicenseFilterRes
+     {
+
+        $rows = $this->userRepository->findListLicenseFilter();
+
+        $items = [];
+        foreach ($rows as $r) {
+            $items[] = new UserListLicenseFilterItem(
+                (int)($r->license_seq ?? 0),
+                (string)($r->name ?? ''),
+                (string)($r->english_name ?? '')
+            );
+        }
+
+        return new UserListLicenseFilterRes($items);
+     }
 
     private function calcYearsFromDate(?string $date, \DateTimeImmutable $today): ?int
     {

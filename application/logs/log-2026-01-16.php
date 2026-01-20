@@ -509,3 +509,244 @@ ERROR - 2026-01-16 06:07:27 --> 404 Page Not Found: Api/authentication
 ERROR - 2026-01-16 06:36:20 --> 404 Page Not Found: Api/authentication
 ERROR - 2026-01-16 06:36:31 --> [REFRESH] ApiException code=40112 msg=INVALID_PASSWORD
 ERROR - 2026-01-16 06:36:31 --> 404 Page Not Found: Api/authentication
+ERROR - 2026-01-16 07:36:21 --> row[0] = stdClass Object
+(
+    [seq] => 6
+    [name] => (주)와우그로스
+    [name_abbr] => WOW
+    [ceo_name] => 김영진
+    [bizno] => 3208703391
+    [bizType] => 서비스업
+    [bizClass] => 응용소프트웨어개발
+    [contract_date] => 
+    [expire_date] => 9999-12-31
+    [pic] => 김영진
+    [mobile] => 
+    [email] => contract@wowgrowth.co.kr
+    [homepage] => 
+    [tel] => 01030949944
+    [fax] => 
+    [addr1] => 경기도 화성시 봉담읍 와우안길 17
+    [addr2] => 고운첨단과학기술연구원 906호
+    [sido] => 경기도
+    [sigungu] => 화성시
+    [tax_email] => contract@wowgrowth.co.kr
+    [logo_file] => 
+    [max_user_cnt] => 5
+    [remark] => 
+    [reg_time] => 2025-01-17 08:10:52
+    [user_cnt] => 1
+    [machine_engineer_cnt] => 0
+    [safety_engineer_cnt] => 0
+    [machine_project_cnt] => 0
+    [safety_project_cnt] => 30
+)
+
+ERROR - 2026-01-16 07:36:21 --> Argument 9 passed to App\license\dto\LicenseListItem::__construct() must be of the type int, string given, called in C:\xampp\htdocs\workspace_refactoring\src\license\service\LicenseService.php on line 48 | Argument 9 passed to App\license\dto\LicenseListItem::__construct() must be of the type int, string given, called in C:\xampp\htdocs\workspace_refactoring\src\license\service\LicenseService.php on line 48
+#0 C:\xampp\htdocs\workspace_refactoring\src\license\service\LicenseService.php(48): App\license\dto\LicenseListItem->__construct(1, 6, '(\xEC\xA3\xBC)\xEC\x99\x80\xEC\x9A\xB0\xEA\xB7\xB8\xEB...', 'WOW', '(\xEC\xA3\xBC)\xEC\x99\x80\xEC\x9A\xB0\xEA\xB7\xB8\xEB...', '3208703391', '\xEA\xB9\x80\xEC\x98\x81\xEC\xA7\x84', NULL, '9999-12-31', 1, 0, 0, 0, 30)
+#1 C:\xampp\htdocs\workspace_refactoring\application\libraries\LicenseModule.php(41): App\license\service\LicenseService->licenseList(Object(App\license\dto\query\LicenseListQuery))
+#2 C:\xampp\htdocs\workspace_refactoring\application\controllers\license\LicenseController.php(35): LicenseModule->list(Object(App\license\dto\query\LicenseListQuery))
+#3 C:\xampp\htdocs\workspace_refactoring\application\core\BASE_Controller.php(55): LicenseController->list()
+#4 C:\xampp\htdocs\workspace_refactoring\system\core\CodeIgniter.php(533): BASE_Controller->_remap('list', Array)
+#5 C:\xampp\htdocs\workspace_refactoring\index.php(184): require_once('C:\\xampp\\htdocs...')
+#6 {main}
+ERROR - 2026-01-16 07:36:42 --> row[0] = stdClass Object
+(
+    [seq] => 6
+    [name] => (주)와우그로스
+    [name_abbr] => WOW
+    [ceo_name] => 김영진
+    [bizno] => 3208703391
+    [bizType] => 서비스업
+    [bizClass] => 응용소프트웨어개발
+    [contract_date] => 
+    [expire_date] => 9999-12-31
+    [pic] => 김영진
+    [mobile] => 
+    [email] => contract@wowgrowth.co.kr
+    [homepage] => 
+    [tel] => 01030949944
+    [fax] => 
+    [addr1] => 경기도 화성시 봉담읍 와우안길 17
+    [addr2] => 고운첨단과학기술연구원 906호
+    [sido] => 경기도
+    [sigungu] => 화성시
+    [tax_email] => contract@wowgrowth.co.kr
+    [logo_file] => 
+    [max_user_cnt] => 5
+    [remark] => 
+    [reg_time] => 2025-01-17 08:10:52
+    [user_cnt] => 1
+    [machine_engineer_cnt] => 0
+    [safety_engineer_cnt] => 0
+    [machine_project_cnt] => 0
+    [safety_project_cnt] => 30
+)
+
+ERROR - 2026-01-16 07:36:42 --> row[1] = stdClass Object
+(
+    [seq] => 5
+    [name] => 엘림기술원(주)
+    [name_abbr] => ELIMST
+    [ceo_name] => 김남재
+    [bizno] => 5298802749
+    [bizType] => 
+    [bizClass] => 
+    [contract_date] => 
+    [expire_date] => 9999-12-31
+    [pic] => 
+    [mobile] => 
+    [email] => elimsafetytech@gmail.com
+    [homepage] => http://www.elimsafetytech.com/
+    [tel] =>  0513615999
+    [fax] => 0513615998
+    [addr1] => 부산 북구 금곡대로638번길 9-7 라현빌딩 602호
+    [addr2] => 
+    [sido] => 부산광역시
+    [sigungu] => 북구
+    [tax_email] => 
+    [logo_file] => 
+    [max_user_cnt] => 5
+    [remark] => 
+    [reg_time] => 2024-03-06 02:46:32
+    [user_cnt] => 8
+    [machine_engineer_cnt] => 5
+    [safety_engineer_cnt] => 0
+    [machine_project_cnt] => 1
+    [safety_project_cnt] => 30
+)
+
+ERROR - 2026-01-16 07:36:42 --> row[2] = stdClass Object
+(
+    [seq] => 4
+    [name] => 엘림테크원(주)
+    [name_abbr] => ELIMT
+    [ceo_name] => 김남재
+    [bizno] => 4438802784
+    [bizType] => 
+    [bizClass] => 
+    [contract_date] => 
+    [expire_date] => 9999-12-31
+    [pic] => 
+    [mobile] => 
+    [email] => elimtechone@gmail.com
+    [homepage] => http://www.elimtechone.com/
+    [tel] => 0613319001
+    [fax] => 0613319002
+    [addr1] => 전남 나주시 빛가람로 685 비전타워 406호
+    [addr2] => 
+    [sido] => 전라남도
+    [sigungu] => 나주시
+    [tax_email] => 
+    [logo_file] => 
+    [max_user_cnt] => 5
+    [remark] => 
+    [reg_time] => 2024-03-06 02:45:09
+    [user_cnt] => 6
+    [machine_engineer_cnt] => 2
+    [safety_engineer_cnt] => 0
+    [machine_project_cnt] => 2
+    [safety_project_cnt] => 30
+)
+
+ERROR - 2026-01-16 07:36:42 --> row[3] = stdClass Object
+(
+    [seq] => 3
+    [name] => 이엘테크원(주)
+    [name_abbr] => ELTECHONE
+    [ceo_name] => 김순영
+    [bizno] => 5108137684
+    [bizType] => 
+    [bizClass] => 
+    [contract_date] => 
+    [expire_date] => 9999-12-31
+    [pic] => 
+    [mobile] => 
+    [email] => eltechone@daum.net
+    [homepage] => http://eltechone.co.kr/
+    [tel] => 0221359003
+    [fax] => 05080908600
+    [addr1] => 서울 송파구 법원로 114 B동 614호
+    [addr2] => 
+    [sido] => 서울특별시
+    [sigungu] => 송파구
+    [tax_email] => 
+    [logo_file] => 
+    [max_user_cnt] => 5
+    [remark] => 
+    [reg_time] => 2024-03-06 02:42:55
+    [user_cnt] => 5
+    [machine_engineer_cnt] => 0
+    [safety_engineer_cnt] => 0
+    [machine_project_cnt] => 0
+    [safety_project_cnt] => 30
+)
+
+ERROR - 2026-01-16 07:36:42 --> row[4] = stdClass Object
+(
+    [seq] => 2
+    [name] => 이엘엔지니어링(주)
+    [name_abbr] => ELENG
+    [ceo_name] => 김남재
+    [bizno] => 6728801535
+    [bizType] => 
+    [bizClass] => 
+    [contract_date] => 
+    [expire_date] => 9999-12-31
+    [pic] => 
+    [mobile] => 
+    [email] => eleng1535@naver.com
+    [homepage] => http://www.eleng.co.kr/
+    [tel] => 0312127006
+    [fax] => 05080977006
+    [addr1] => 경기도 수원시 영통구 하동 984, 그랜드프라자 6층
+    [addr2] => 
+    [sido] => 경기도
+    [sigungu] => 수원시
+    [tax_email] => 
+    [logo_file] => 
+    [max_user_cnt] => 5
+    [remark] => 
+    [reg_time] => 2024-03-04 04:54:32
+    [user_cnt] => 28
+    [machine_engineer_cnt] => 2
+    [safety_engineer_cnt] => 2
+    [machine_project_cnt] => 0
+    [safety_project_cnt] => 30
+)
+
+ERROR - 2026-01-16 07:36:42 --> row[5] = stdClass Object
+(
+    [seq] => 1
+    [name] => 엘림주식회사
+    [name_abbr] => ELIM
+    [ceo_name] => 김남재
+    [bizno] => 7178600698
+    [bizType] => 먹태
+    [bizClass] => 종종
+    [contract_date] => 
+    [expire_date] => 9999-12-31
+    [pic] => 남상윤
+    [mobile] => 
+    [email] => oasis8600@hanmail.net
+    [homepage] => https://elimsafety.com/
+    [tel] => 0312129001
+    [fax] => 0312129002
+    [addr1] => 경기도 수원시 광교중앙로 248번길 7-7, 5층(하동)
+    [addr2] => 5층
+    [sido] => 경기도
+    [sigungu] => 수원시
+    [tax_email] => 
+    [logo_file] => 
+    [max_user_cnt] => 5
+    [remark] => 
+    [reg_time] => 2024-03-04 04:54:32
+    [user_cnt] => 83
+    [machine_engineer_cnt] => 11
+    [safety_engineer_cnt] => 1
+    [machine_project_cnt] => 1
+    [safety_project_cnt] => 30
+)
+
+ERROR - 2026-01-16 09:10:22 --> 404 Page Not Found: Api/web
+ERROR - 2026-01-16 09:11:36 --> 404 Page Not Found: Api/web

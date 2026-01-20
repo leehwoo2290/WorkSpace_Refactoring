@@ -3,12 +3,15 @@ declare(strict_types=1);
 
 namespace App\user\repository;
 
+use App\common\traits\SortHelperTrait;
 use App\user\dto\query\UserListQuery;
 use App\user\dto\UserListQueryEnumMaps;
 use QueryEnumMapper;
 
 final class UserRepository
 {
+    use SortHelperTrait;
+
     /** @var \CI_DB_query_builder */
     private \CI_DB_query_builder $db;
 
@@ -48,7 +51,8 @@ final class UserRepository
         $this->baseFromJoin();
         $this->applyWhere($query);
 
-        $this->db->order_by('u.seq', 'DESC');
+        //$this->db->order_by('u.seq', 'DESC');
+        $this->applyOrderBy($query);
         $this->db->limit($query->size(), $query->offset());
 
         return $this->db->get()->result();
@@ -194,5 +198,50 @@ final class UserRepository
                 );
             }
         }
+    }
+
+    /**
+     * 정렬 지원(확정 키)
+     * - sortBy: name | licenseName | age | email | joinDate | careerYear
+     * - sortDir: ASC | DESC
+     *
+     * 멀티 정렬:
+     * - /users?sortBy=licenseName,name&sortDir=ASC,DESC
+     */
+    private function applyOrderBy(UserListQuery $query): void
+    {
+        $sorts = $this->extractSorts($query);
+
+        $map = [
+            'name'        => ['type' => 'col', 'value' => 'u.name'],
+            'licenseName' => ['type' => 'col', 'value' => 'l.name'],
+            'email'       => ['type' => 'col', 'value' => 'u.email'],
+            'joinDate'    => ['type' => 'col', 'value' => 'o.join_date'],
+
+            'age'         => ['type' => 'raw', 'value' => 'TIMESTAMPDIFF(YEAR, pr.birthday, CURDATE())'],
+            'careerYear'  => ['type' => 'raw', 'value' => 'TIMESTAMPDIFF(YEAR, o.join_date, IFNULL(o.resign_date, CURDATE()))'],
+        ];
+
+        $this->applySortMap($this->db, $sorts, $map, 'u.seq', 'DESC');
+    }
+
+    /**
+     * @return object[] row: { license_seq, name, english_name }
+     */
+    public function findListLicenseFilter(): array
+    {
+        // NOTE: DTO가 englishName을 string으로 받으므로 NULL이면 빈 문자열로 내림
+        $this->db->select(
+            "\n                license.seq AS license_seq,\n                license.name AS name,\n                IFNULL(license.name_abbr, '') AS english_name\n            ",
+            false
+        );
+        $this->db->from('tb_license license');
+
+
+        // 정렬: 회사명 우선(가나다순), 동명이면 최신 seq
+        $this->db->order_by('license.name', 'ASC');
+        $this->db->order_by('license.seq', 'DESC');
+
+        return $this->db->get()->result();
     }
 }

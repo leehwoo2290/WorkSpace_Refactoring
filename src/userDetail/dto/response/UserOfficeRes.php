@@ -64,7 +64,7 @@ final class UserOfficeRes implements \JsonSerializable
             'insurancesAcquisitionDate' => $this->insurancesAcquisitionDate,
             'insurancesLossDate'        => $this->insurancesLossDate,
 
-            'years' => $this->years,
+            //'years' => $this->years,
 
             'contractYn'  => $this->contractYn,
             'staffCardYn' => $this->staffCardYn,

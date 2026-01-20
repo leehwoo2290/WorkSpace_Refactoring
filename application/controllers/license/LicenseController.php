@@ -5,6 +5,8 @@ use App\common\ApiResult;
 use App\license\dto\query\LicenseListQuery;
 use App\license\dto\response\LicenseListRes;
 
+use App\license\dto\requet\LicenseCreateReq;
+
 class LicenseController extends BASE_Controller
 {
     public LicenseModule $licenseModule;
@@ -13,7 +15,7 @@ class LicenseController extends BASE_Controller
     {
         parent::__construct();
 
-        $this->load->library('LicenseModule', null, 'licenseModule');        
+        $this->load->library('LicenseModule', null, 'licenseModule');
     }
 
     public function list()
@@ -35,6 +37,19 @@ class LicenseController extends BASE_Controller
             $licenseListRes = $this->licenseModule->list($licenseListQuery);
 
             ApiResult::ok($licenseListRes, LicenseListRes::class);
+
+        } catch (\Throwable $e) {
+
+            ApiResult::failThrowable($e, $e->getMessage());
+        }
+    }
+
+    public function create()
+    {
+        try {
+            $licenseCreateReq = $this->requestQueryDtoMapper->jsonRequestDto(LicenseCreateReq::class);
+
+            ApiResult::none();
 
         } catch (\Throwable $e) {
 

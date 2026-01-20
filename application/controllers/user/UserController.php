@@ -10,6 +10,8 @@ use App\user\dto\query\UserLoginLogListQuery;
 use App\user\dto\response\UserListRes;
 use App\user\dto\query\UserListQuery;
 
+use App\user\dto\response\UserListLicenseFilterRes;
+
 class UserController extends BASE_Controller
 {
     public UserModule $userModule;
@@ -79,4 +81,16 @@ class UserController extends BASE_Controller
         }
     }
 
+      public function licenseFilter()
+    {
+        try {
+            $userListLicenseFilterRes = $this->userModule->licenseFilter();
+
+            ApiResult::ok($userListLicenseFilterRes, UserListLicenseFilterRes::class);
+
+        } catch (\Throwable $e) {
+
+            ApiResult::failThrowable($e, $e->getMessage());
+        }
+    }
 }

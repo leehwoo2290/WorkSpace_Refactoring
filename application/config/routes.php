@@ -82,7 +82,8 @@ $route['api/web/audit/login-logs']['get'] = 'user/UserController/logList';
 // License API routes
 $route['api/web/audit/licenses']['get'] = 'license/LicenseController/list';
 
-
+// User licenses filter API routes
+$route['api/web/users/licenseFilter']['get'] = 'user/UserController/licenseFilter';
 
 //---------------------------------------------------------------------------------------------
 $route['api/app/auth/login']['post']   = 'auth/JwtController/login';

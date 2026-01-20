@@ -3,7 +3,7 @@
 use App\auth\dto\response\CsrfTokenRes;
 use App\auth\service\CsrfService;
 use App\common\Exception\ApiException;
-use App\auth\ExceptionErrorCode\ApiErrorCode;
+use App\common\ExceptionErrorCode\ApiErrorCode;
 use App\common\ApiResult;
 
 class CsrfGuard

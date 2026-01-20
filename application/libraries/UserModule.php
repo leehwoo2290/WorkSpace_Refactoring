@@ -1,5 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
+
+
 use App\user\dto\response\UserLoginLogListRes;
 use App\user\dto\query\UserLoginLogListQuery;
 
@@ -26,6 +28,8 @@ use App\userDetail\service\UserDetailService;
 use App\user\repository\UserLoginLogRepository;
 use App\user\repository\UserRepository;
 use App\userDetail\repository\UserDetailRepository;
+
+use App\user\dto\response\UserListLicenseFilterRes;
 
 final class UserModule
 {
@@ -65,7 +69,10 @@ final class UserModule
     {
         return $this->userService->logList($userLoginLogListQuery);
     }
-
+    public function licenseFilter(): UserListLicenseFilterRes
+    {
+        return $this->userService->licenseFilter();
+    }
     public function userList(UserListQuery $userListQuery): UserListRes
     {
         return $this->userService->userList($userListQuery);

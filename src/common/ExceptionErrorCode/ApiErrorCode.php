@@ -71,6 +71,8 @@ final class ApiErrorCode
     //사용자 역할 목록이 비어있음(권한 설정 없음 → 접근 금지)
     public const USER_NO_ROLES = 40313;
 
+    public const FORBIDDEN_ALL_OF_ROLES = 40321; 
+    public const FORBIDDEN_ANY_OF_ROLES = 40322;
     // --------------------------------------------------------------------
     // 500 Internal (서버 내부 오류: 프론트가 해결 불가, 재시도/에러 안내)
 

@@ -94,19 +94,25 @@ final class UserDetailService
     /** privacy row가 없으면 ok(null) 내려주려고 ?UserPrivacyRes 반환 */
     public function userPrivacy(int $userSeq): ?UserPrivacyRes
     {
-        if ($userSeq < 0) {
-            ApiException::badRequest("VALIDATION_FAILED", ApiErrorCode::VALIDATION_FAILED);
+        if ($userSeq <= 0) {
+            throw ApiException::badRequest("VALIDATION_FAILED", ApiErrorCode::VALIDATION_FAILED);
         }
 
-
-        if ($this->checkUserExists($userSeq) === null)
+        if ($this->checkUserExists($userSeq) === null) {
             return null;
+        }
 
         $row = $this->userDetailRepository->findPrivacyRow($userSeq);
-        if ($row === null)
-            return null; // user는 있는데 privacy가 없으면 null data로 OK 내려도 됨(원하면 여기서 new로 만들어도 됨)
+
+        // user는 있는데 privacy row가 없을 수 있음
+        if ($row === null) {
+            $privacy = new UserPrivacyRes();
+            $privacy->foreignYn = 'N'; // 기본 내국인 처리(원하면 null로 둬도 됨)
+            return $privacy;
+        }
 
         $privacy = new UserPrivacyRes();
+
         $privacy->foreignYn = $row->foreignYn ?? 'N';
         $privacy->juminNum = $row->juminNum ?? null;
         $privacy->birthday = $row->birthday ?? null;
@@ -114,9 +120,20 @@ final class UserDetailService
         $privacy->emerNum1 = $row->emerNum1 ?? null;
         $privacy->emerNum2 = $row->emerNum2 ?? null;
         $privacy->addr = $row->addr ?? null;
-        $privacy->sido = $row->sido ?? null;
-        $privacy->sigungu = $row->sigungu ?? null;
-        $privacy->gender = $row->gender ?? null;
+
+        $privacy->educationLevel = $row->educationLevel ?? null;
+        $privacy->educationMajor = $row->educationMajor ?? null;
+
+        $privacy->familyCnt = isset($row->familyCnt) ? (int) $row->familyCnt : null;
+
+        $privacy->carYn = $row->carYn ?? null;          // jsonSerialize에서 carOwned로 나감
+        $privacy->carNumber = $row->carNumber ?? null;
+        $privacy->carTax = isset($row->carTax) ? (int) $row->carTax : null; // jsonSerialize에서 suwonCarReg
+        $privacy->carModel = $row->carModel ?? null;
+
+        $privacy->religion = $row->religion ?? null;
+        $privacy->bankName = $row->bankName ?? null;
+        $privacy->bankNumber = $row->bankNumber ?? null;
 
         return $privacy;
     }
