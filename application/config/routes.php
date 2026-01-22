@@ -65,16 +65,22 @@ $route['api/web/auth/logout']['post']  = 'auth/JwtController/logout';
 
 // User API routes
 $route['api/web/audit/users']['get'] = 'user/UserController/list';
+$route['api/web/user']['post'] = 'user/UserController/add';
 
 // UserDetail API routes
 //$route['api/web/user/']['get'] = 'userDetail/UserDetailController/detail';
-
 $route['api/web/user/(:num)/basic']['get']   = 'userDetail/UserDetailController/basic/$1';
 $route['api/web/user/(:num)/privacy']['get'] = 'userDetail/UserDetailController/privacy/$1';
 $route['api/web/user/(:num)/office']['get']  = 'userDetail/UserDetailController/office/$1';
 $route['api/web/user/(:num)/etc']['get']     = 'userDetail/UserDetailController/etc/$1';
 $route['api/web/user/(:num)/career']['get']  = 'userDetail/UserDetailController/career/$1';
 
+// UserDetail Update API routes
+$route['api/web/user/(:num)/basic']['put']   = 'userDetail/UserDetailController/updateBasic/$1';
+$route['api/web/user/(:num)/privacy']['put'] = 'userDetail/UserDetailController/updatePrivacy/$1';
+$route['api/web/user/(:num)/office']['put']  = 'userDetail/UserDetailController/updateOffice/$1';
+$route['api/web/user/(:num)/career']['put']  = 'userDetail/UserDetailController/updateCareer/$1';
+$route['api/web/user/(:num)/etc']['put']     = 'userDetail/UserDetailController/updateEtc/$1';
 
 // UserLoginLog API routes
 $route['api/web/audit/login-logs']['get'] = 'user/UserController/logList';

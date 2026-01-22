@@ -26,8 +26,8 @@ final class UserListQueryEnumMaps
 
             // tb_user_privacy.foreignYn enum('Y','N')
             'nationality' => [
-                'Y' => 'Y',
-                'N' => 'N',
+                'FOREIGNER' => 'Y',
+                'KOREAN' => 'N',
             ],
 
             // tb_user_office.labor_form enum('상근','비상근')

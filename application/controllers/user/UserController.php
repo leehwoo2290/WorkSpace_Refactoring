@@ -11,6 +11,7 @@ use App\user\dto\response\UserListRes;
 use App\user\dto\query\UserListQuery;
 
 use App\user\dto\response\UserListLicenseFilterRes;
+use App\user\dto\request\UserAddReq;
 
 class UserController extends BASE_Controller
 {
@@ -87,6 +88,34 @@ class UserController extends BASE_Controller
             $userListLicenseFilterRes = $this->userModule->licenseFilter();
 
             ApiResult::ok($userListLicenseFilterRes, UserListLicenseFilterRes::class);
+
+        } catch (\Throwable $e) {
+
+            ApiResult::failThrowable($e, $e->getMessage());
+        }
+    }
+
+    public function add()
+    {
+        /*
+        @Description
+        - [POST] /api/web/users
+        - Header: Authorization: Bearer {accessToken}
+        - Body:
+        - name: string
+        - email: string
+        - role: string
+        - license_seq: int
+        - status: string
+        - 성공: 204 OK (ApiResult::ok)
+        - 실패: 400/401/403/409 (권한/인증/중복)
+        */
+
+        try {
+            $addUserReq = $this->requestQueryDtoMapper->jsonRequestDto(UserAddReq::class);
+            $userId = $this->userModule->addUser($addUserReq);
+
+            ApiResult::none();
 
         } catch (\Throwable $e) {
 

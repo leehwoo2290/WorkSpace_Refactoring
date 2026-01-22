@@ -50,4 +50,12 @@ class ApiException extends \RuntimeException
     {
         return new self(403, $errorCode, $message, $data, $prev);
     }
+
+    // 리소스 상태/제약 충돌
+    // EX) email 중복, 사번 중복, 업데이트 버전 충돌, 이미 존재/이미 처리됨
+    public static function conflict(string $message, int $errorCode, $data = null, ?\Throwable $prev = null): self
+    {
+        return new self(409, $errorCode, $message, $data, $prev);
+    }
+
 }

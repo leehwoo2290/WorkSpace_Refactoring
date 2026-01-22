@@ -16,12 +16,15 @@ use App\user\Repository\UserLoginLogRepository;
 use App\user\Repository\UserRepository;
 use App\common\Exception\ApiException;
 use App\common\ExceptionErrorCode\ApiErrorCode;
+use App\user\dto\request\UserAddReq;
 
 final class UserService
 {
 
     private UserLoginLogRepository $userLoginLogRepository;
     private UserRepository $userRepository;
+
+     private const INITIAL_PW = '1234';
 
     public function __construct(UserLoginLogRepository $userLoginLogRepository, UserRepository $userRepository)
     {
@@ -164,5 +167,33 @@ final class UserService
         } catch (\Throwable $e) {
             return null;
         }
+    }
+
+   public function userAdd(UserAddReq $userAddReq): int
+    {
+        if (
+            !$userAddReq->name() ||
+            !$userAddReq->email() ||
+            !$userAddReq->licenseSeq() ||
+            !$userAddReq->status()
+        ) {
+            throw ApiException::badRequest('VALIDATION_FAILED', ApiErrorCode::VALIDATION_FAILED);
+        }
+
+        $existingUser = $this->userRepository->existsByEmail($userAddReq->email());
+        if ($existingUser) {
+            throw ApiException::conflict('USER_EMAIL_CONFLICT', ApiErrorCode::USER_EMAIL_CONFLICT);
+        }
+
+        $userData = [
+            'name' => $userAddReq->name(),
+            'email' => $userAddReq->email(),
+            'license_seq' => $userAddReq->licenseSeq(),
+            'status' => $userAddReq->status(),
+            'passwd' => password_hash((string)self::INITIAL_PW, PASSWORD_DEFAULT),
+            'remark' => $userAddReq->remark(),
+        ];
+
+        return $this->userRepository->addUser($userData);
     }
 }

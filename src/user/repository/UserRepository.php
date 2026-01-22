@@ -6,16 +6,17 @@ namespace App\user\repository;
 use App\common\traits\SortHelperTrait;
 use App\user\dto\query\UserListQuery;
 use App\user\dto\UserListQueryEnumMaps;
+
 use QueryEnumMapper;
 
 final class UserRepository
 {
     use SortHelperTrait;
 
-    /** @var \CI_DB_query_builder */
-    private \CI_DB_query_builder $db;
+    ///** @var \CI_DB_query_builder */
+    private $db;
 
-    public function __construct(\CI_DB_query_builder $db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -97,14 +98,20 @@ final class UserRepository
             $this->db->group_end();
         }
 
-        // 3) 소속(licenseName): 숫자면 seq, 아니면 license.name
+        // 3) 소속(licenseName): 숫자면 seq, 아니면 license.name 또는 license.name_abbr
         if (!empty($where['licenseName'])) {
-            $v = (string) $where['licenseName'];
-            if (ctype_digit($v))
+            $v = trim((string) $where['licenseName']);
+
+            if (ctype_digit($v)) {
                 $this->db->where('u.license_seq', (int) $v);
-            else
-                $this->db->where('l.name', $v);
+            } else {
+                $this->db->group_start()
+                    ->where('l.name', $v)
+                    ->or_where('l.name_abbr', $v)
+                    ->group_end();
+            }
         }
+
 
         // 4) 부서(department): 숫자면 seq, 아니면 department.name
         if (!empty($where['department'])) {
@@ -213,16 +220,41 @@ final class UserRepository
         $sorts = $this->extractSorts($query);
 
         $map = [
-            'name'        => ['type' => 'col', 'value' => 'u.name'],
+            'name' => ['type' => 'col', 'value' => 'u.name'],
             'licenseName' => ['type' => 'col', 'value' => 'l.name'],
-            'email'       => ['type' => 'col', 'value' => 'u.email'],
-            'joinDate'    => ['type' => 'col', 'value' => 'o.join_date'],
+            'email' => ['type' => 'col', 'value' => 'u.email'],
+            'joinDate' => ['type' => 'col', 'value' => 'o.join_date'],
 
-            'age'         => ['type' => 'raw', 'value' => 'TIMESTAMPDIFF(YEAR, pr.birthday, CURDATE())'],
-            'careerYear'  => ['type' => 'raw', 'value' => 'TIMESTAMPDIFF(YEAR, o.join_date, IFNULL(o.resign_date, CURDATE()))'],
+            'age' => ['type' => 'raw', 'value' => 'TIMESTAMPDIFF(YEAR, pr.birthday, CURDATE())'],
+            'careerYear' => ['type' => 'raw', 'value' => 'TIMESTAMPDIFF(YEAR, o.join_date, IFNULL(o.resign_date, CURDATE()))'],
         ];
 
         $this->applySortMap($this->db, $sorts, $map, 'u.seq', 'DESC');
+    }
+
+    public function existsByEmail(string $email): bool
+    {
+        $row = $this->db->select('u.seq')
+            ->from('tb_user u')
+            ->where('u.email', $email)
+            ->limit(1)
+            ->get()
+            ->row();
+
+        return (bool) $row;
+    }
+
+    public function addUser(array $userData): int
+    {
+        $ok = $this->db->insert('tb_user', $userData);
+        if (!$ok) {
+            $err = $this->db->error(); // ['code'=>..., 'message'=>...]
+            if ((int) ($err['code'] ?? 0) === 1062) {
+                // throw ApiException::conflict('USER_EMAIL_CONFLICT', ApiErrorCode::USER_EMAIL_CONFLICT, $err);
+            }
+            //throw ApiException::internal('DB_INSERT_FAILED', ApiErrorCode::DB_INSERT_FAILED, $err);
+        }
+        return (int) $this->db->insert_id();
     }
 
     /**
@@ -232,13 +264,17 @@ final class UserRepository
     {
         // NOTE: DTO가 englishName을 string으로 받으므로 NULL이면 빈 문자열로 내림
         $this->db->select(
-            "\n                license.seq AS license_seq,\n                license.name AS name,\n                IFNULL(license.name_abbr, '') AS english_name\n            ",
+            "
+            license.seq AS license_seq,
+            license.name AS name,
+            IFNULL(license.name_abbr, '') AS english_name
+        ",
             false
         );
         $this->db->from('tb_license license');
 
-
-        // 정렬: 회사명 우선(가나다순), 동명이면 최신 seq
+        // 정렬: name_abbr(NULL -> '') 우선(가나다순) → 동률이면 회사명 → 그래도 동률이면 최신 seq
+        $this->db->order_by("IFNULL(license.name_abbr, '')", 'ASC', false);
         $this->db->order_by('license.name', 'ASC');
         $this->db->order_by('license.seq', 'DESC');
 

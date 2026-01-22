@@ -1054,3 +1054,62 @@ ERROR - 2026-01-20 05:21:08 --> Severity: error --> Exception: syntax error, une
 ERROR - 2026-01-20 05:21:35 --> Severity: error --> Exception: syntax error, unexpected 'trait' (T_TRAIT), expecting identifier (T_STRING) or '{' C:\xampp\htdocs\workspace_refactoring\src\user\repository\UserRepository.php 6
 ERROR - 2026-01-20 05:21:39 --> Severity: error --> Exception: syntax error, unexpected 'trait' (T_TRAIT), expecting identifier (T_STRING) or '{' C:\xampp\htdocs\workspace_refactoring\src\user\repository\UserRepository.php 6
 ERROR - 2026-01-20 05:26:14 --> 404 Page Not Found: Api/web
+ERROR - 2026-01-20 05:43:20 --> UNKNOWN_QUERY_KEY: sort | UNKNOWN_QUERY_KEY: sort
+#0 C:\xampp\htdocs\workspace_refactoring\src\user\dto\query\UserListQuery.php(97): App\user\dto\query\UserListQuery::checkAllowedKeys(Array)
+#1 C:\xampp\htdocs\workspace_refactoring\application\libraries\RequestQueryDtoJsonMapper.php(67): App\user\dto\query\UserListQuery::fromArray(Array)
+#2 C:\xampp\htdocs\workspace_refactoring\application\controllers\user\UserController.php(44): RequestQueryDtoJsonMapper->queryRequestDto('App\\user\\dto\\qu...')
+#3 C:\xampp\htdocs\workspace_refactoring\application\core\BASE_Controller.php(55): UserController->list()
+#4 C:\xampp\htdocs\workspace_refactoring\system\core\CodeIgniter.php(533): BASE_Controller->_remap('list', Array)
+#5 C:\xampp\htdocs\workspace_refactoring\index.php(184): require_once('C:\\xampp\\htdocs...')
+#6 {main}
+ERROR - 2026-01-20 05:50:29 --> UNKNOWN_QUERY_KEY: sort | UNKNOWN_QUERY_KEY: sort
+#0 C:\xampp\htdocs\workspace_refactoring\src\user\dto\query\UserListQuery.php(97): App\user\dto\query\UserListQuery::checkAllowedKeys(Array)
+#1 C:\xampp\htdocs\workspace_refactoring\application\libraries\RequestQueryDtoJsonMapper.php(67): App\user\dto\query\UserListQuery::fromArray(Array)
+#2 C:\xampp\htdocs\workspace_refactoring\application\controllers\user\UserController.php(44): RequestQueryDtoJsonMapper->queryRequestDto('App\\user\\dto\\qu...')
+#3 C:\xampp\htdocs\workspace_refactoring\application\core\BASE_Controller.php(55): UserController->list()
+#4 C:\xampp\htdocs\workspace_refactoring\system\core\CodeIgniter.php(533): BASE_Controller->_remap('list', Array)
+#5 C:\xampp\htdocs\workspace_refactoring\index.php(184): require_once('C:\\xampp\\htdocs...')
+#6 {main}
+ERROR - 2026-01-20 05:50:33 --> UNKNOWN_QUERY_KEY: sort | UNKNOWN_QUERY_KEY: sort
+#0 C:\xampp\htdocs\workspace_refactoring\src\user\dto\query\UserListQuery.php(97): App\user\dto\query\UserListQuery::checkAllowedKeys(Array)
+#1 C:\xampp\htdocs\workspace_refactoring\application\libraries\RequestQueryDtoJsonMapper.php(67): App\user\dto\query\UserListQuery::fromArray(Array)
+#2 C:\xampp\htdocs\workspace_refactoring\application\controllers\user\UserController.php(44): RequestQueryDtoJsonMapper->queryRequestDto('App\\user\\dto\\qu...')
+#3 C:\xampp\htdocs\workspace_refactoring\application\core\BASE_Controller.php(55): UserController->list()
+#4 C:\xampp\htdocs\workspace_refactoring\system\core\CodeIgniter.php(533): BASE_Controller->_remap('list', Array)
+#5 C:\xampp\htdocs\workspace_refactoring\index.php(184): require_once('C:\\xampp\\htdocs...')
+#6 {main}
+ERROR - 2026-01-20 07:24:57 --> 404 Page Not Found: Api/authentication
+ERROR - 2026-01-20 08:03:41 --> UNKNOWN_QUERY_KEY: sort | UNKNOWN_QUERY_KEY: sort
+#0 C:\xampp\htdocs\workspace_refactoring\src\user\dto\query\UserListQuery.php(97): App\user\dto\query\UserListQuery::checkAllowedKeys(Array)
+#1 C:\xampp\htdocs\workspace_refactoring\application\libraries\RequestQueryDtoJsonMapper.php(67): App\user\dto\query\UserListQuery::fromArray(Array)
+#2 C:\xampp\htdocs\workspace_refactoring\application\controllers\user\UserController.php(44): RequestQueryDtoJsonMapper->queryRequestDto('App\\user\\dto\\qu...')
+#3 C:\xampp\htdocs\workspace_refactoring\application\core\BASE_Controller.php(55): UserController->list()
+#4 C:\xampp\htdocs\workspace_refactoring\system\core\CodeIgniter.php(533): BASE_Controller->_remap('list', Array)
+#5 C:\xampp\htdocs\workspace_refactoring\index.php(184): require_once('C:\\xampp\\htdocs...')
+#6 {main}
+ERROR - 2026-01-20 08:04:24 --> UNKNOWN_QUERY_KEY: sort | UNKNOWN_QUERY_KEY: sort
+#0 C:\xampp\htdocs\workspace_refactoring\src\user\dto\query\UserListQuery.php(97): App\user\dto\query\UserListQuery::checkAllowedKeys(Array)
+#1 C:\xampp\htdocs\workspace_refactoring\application\libraries\RequestQueryDtoJsonMapper.php(67): App\user\dto\query\UserListQuery::fromArray(Array)
+#2 C:\xampp\htdocs\workspace_refactoring\application\controllers\user\UserController.php(44): RequestQueryDtoJsonMapper->queryRequestDto('App\\user\\dto\\qu...')
+#3 C:\xampp\htdocs\workspace_refactoring\application\core\BASE_Controller.php(55): UserController->list()
+#4 C:\xampp\htdocs\workspace_refactoring\system\core\CodeIgniter.php(533): BASE_Controller->_remap('list', Array)
+#5 C:\xampp\htdocs\workspace_refactoring\index.php(184): require_once('C:\\xampp\\htdocs...')
+#6 {main}
+ERROR - 2026-01-20 08:10:05 --> 404 Page Not Found: Api/web
+ERROR - 2026-01-20 08:10:13 --> 404 Page Not Found: Api/web
+ERROR - 2026-01-20 08:34:28 --> UNKNOWN_QUERY_KEY: englishName | UNKNOWN_QUERY_KEY: englishName
+#0 C:\xampp\htdocs\workspace_refactoring\src\user\dto\query\UserListQuery.php(97): App\user\dto\query\UserListQuery::checkAllowedKeys(Array)
+#1 C:\xampp\htdocs\workspace_refactoring\application\libraries\RequestQueryDtoJsonMapper.php(67): App\user\dto\query\UserListQuery::fromArray(Array)
+#2 C:\xampp\htdocs\workspace_refactoring\application\controllers\user\UserController.php(44): RequestQueryDtoJsonMapper->queryRequestDto('App\\user\\dto\\qu...')
+#3 C:\xampp\htdocs\workspace_refactoring\application\core\BASE_Controller.php(55): UserController->list()
+#4 C:\xampp\htdocs\workspace_refactoring\system\core\CodeIgniter.php(533): BASE_Controller->_remap('list', Array)
+#5 C:\xampp\htdocs\workspace_refactoring\index.php(184): require_once('C:\\xampp\\htdocs...')
+#6 {main}
+ERROR - 2026-01-20 08:44:17 --> UNKNOWN_QUERY_KEY: sort | UNKNOWN_QUERY_KEY: sort
+#0 C:\xampp\htdocs\workspace_refactoring\src\user\dto\query\UserListQuery.php(97): App\user\dto\query\UserListQuery::checkAllowedKeys(Array)
+#1 C:\xampp\htdocs\workspace_refactoring\application\libraries\RequestQueryDtoJsonMapper.php(67): App\user\dto\query\UserListQuery::fromArray(Array)
+#2 C:\xampp\htdocs\workspace_refactoring\application\controllers\user\UserController.php(44): RequestQueryDtoJsonMapper->queryRequestDto('App\\user\\dto\\qu...')
+#3 C:\xampp\htdocs\workspace_refactoring\application\core\BASE_Controller.php(55): UserController->list()
+#4 C:\xampp\htdocs\workspace_refactoring\system\core\CodeIgniter.php(533): BASE_Controller->_remap('list', Array)
+#5 C:\xampp\htdocs\workspace_refactoring\index.php(184): require_once('C:\\xampp\\htdocs...')
+#6 {main}

@@ -12,7 +12,7 @@ final class UserListItem implements \JsonSerializable
     private ?string $name;
     private ?string $staffNum;
 
-    private ?string $affiliation;   // 소속(license_name)
+    private ?string $licenseName;   // 소속(license_name)
     private ?string $department;    // 부서명
     private ?string $position;      // 직위명
 
@@ -22,7 +22,7 @@ final class UserListItem implements \JsonSerializable
 
     private ?string $engineerYn;    // 'Y'|'N'
     private ?string $joinDate;      // YYYY-MM-DD
-    private ?int $tenureYears;      // 근속(년)
+    private ?int $careerYear;      // 근속(년)
 
     private ?string $status;
 
@@ -32,7 +32,7 @@ final class UserListItem implements \JsonSerializable
         ?string $role,
         ?string $name,
         ?string $staffNum,
-        ?string $affiliation,
+        ?string $licenseName,
         ?string $department,
         ?string $position,
         ?int $age,
@@ -40,7 +40,7 @@ final class UserListItem implements \JsonSerializable
         ?string $mobile,
         ?string $engineerYn,
         ?string $joinDate,
-        ?int $tenureYears,
+        ?int $careerYear,
         ?string $status
     ) {
         $this->num = $num;
@@ -48,7 +48,7 @@ final class UserListItem implements \JsonSerializable
         $this->role = $role;
         $this->name = $name;
         $this->staffNum = $staffNum;
-        $this->affiliation = $affiliation;
+        $this->licenseName = $licenseName;
         $this->department = $department;
         $this->position = $position;
         $this->age = $age;
@@ -56,7 +56,7 @@ final class UserListItem implements \JsonSerializable
         $this->mobile = $mobile;
         $this->engineerYn = $engineerYn;
         $this->joinDate = $joinDate;
-        $this->tenureYears = $tenureYears;
+        $this->careerYear = $careerYear;
         $this->status = $status;
     }
 
@@ -68,7 +68,7 @@ final class UserListItem implements \JsonSerializable
             'role' => $this->role,
             'name' => $this->name,
             'staffNum' => $this->staffNum,
-            'affiliation' => $this->affiliation,
+            'licenseName' => $this->licenseName,
             'department' => $this->department,
             'position' => $this->position,
             'age' => $this->age,
@@ -76,7 +76,7 @@ final class UserListItem implements \JsonSerializable
             'mobile' => $this->mobile,
             'engineerYn' => $this->engineerYn,
             'joinDate' => $this->joinDate,
-            'tenureYears' => $this->tenureYears,
+            'careerYear' => $this->careerYear,
             'status' => $this->status,
         ];
     }

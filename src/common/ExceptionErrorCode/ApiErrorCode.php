@@ -73,9 +73,15 @@ final class ApiErrorCode
 
     public const FORBIDDEN_ALL_OF_ROLES = 40321; 
     public const FORBIDDEN_ANY_OF_ROLES = 40322;
+
+    // --------------------------------------------------------------------
+    // 409 conflict (email 중복, 사번 중복, 업데이트 버전 충돌, 이미 존재/이미 처리됨)
+    public const USER_EMAIL_CONFLICT = 40901;
+
     // --------------------------------------------------------------------
     // 500 Internal (서버 내부 오류: 프론트가 해결 불가, 재시도/에러 안내)
 
     // 알 수 없는 내부 오류(예상 못한 예외). 서버 로그 확인 필요
     public const INTERNAL_ERROR = 50000;
+    
 }

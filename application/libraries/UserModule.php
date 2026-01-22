@@ -31,6 +31,13 @@ use App\userDetail\repository\UserDetailRepository;
 
 use App\user\dto\response\UserListLicenseFilterRes;
 
+use App\userDetail\dto\request\UserBasicReq;
+use App\userDetail\dto\request\UserPrivacyReq;
+use App\userDetail\dto\request\UserOfficeReq;
+use App\userDetail\dto\request\UserEtcReq;
+use App\userDetail\dto\request\UserCareerReq;
+use App\user\dto\request\UserAddReq;
+
 final class UserModule
 {
     private $CI;
@@ -100,5 +107,30 @@ final class UserModule
     public function userCareer(int $userSeq): UserCareerRes
     {
         return $this->userDetailService->userCareer($userSeq);
+    }
+    public function putUserBasic(int $userSeq, UserBasicReq $userBasicReq)
+    {
+        return $this->userDetailService->putUserBasic($userSeq, $userBasicReq);
+    }
+    public function putUserPrivacy(int $userSeq, UserPrivacyReq $userPrivacyReq)
+    {
+        return $this->userDetailService->putUserPrivacy($userSeq, $userPrivacyReq);
+    }
+    public function putUserOffice(int $userSeq, UserOfficeReq $userOfficeReq)
+    {
+        return $this->userDetailService->putUserOffice($userSeq, $userOfficeReq);
+    }
+    public function putUserCareer(int $userSeq, UserCareerReq $userCareerReq)
+    {
+        return $this->userDetailService->putUserCareer($userSeq, $userCareerReq);
+    }
+    public function putUserEtc(int $userSeq, UserEtcReq $userEtcReq)
+    {
+        return $this->userDetailService->putUserEtc($userSeq, $userEtcReq);
+    }
+
+    public function addUser(UserAddReq $addUserReq): int
+    {
+        return $this->userService->userAdd($addUserReq);
     }
 }

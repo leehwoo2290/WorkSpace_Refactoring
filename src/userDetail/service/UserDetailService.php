@@ -15,6 +15,12 @@ use App\userDetail\dto\response\UserEtcRes;
 use App\userDetail\dto\response\UserCareerRes;
 use App\userDetail\repository\UserDetailRepository;
 
+use App\userDetail\dto\request\UserBasicReq;
+use App\userDetail\dto\request\UserCareerReq;
+use App\userDetail\dto\request\UserEtcReq;
+use App\userDetail\dto\request\UserOfficeReq;
+use App\userDetail\dto\request\UserPrivacyReq;
+
 final class UserDetailService
 {
     private UserDetailRepository $userDetailRepository;
@@ -251,5 +257,31 @@ final class UserDetailService
         $p->income_view = $yn($arr['income_view'] ?? 'N');
 
         return $p;
+    }
+
+    // 탭별 PUT
+    public function putUserBasic(int $userSeq, UserBasicReq $userBasicReq): void
+    {
+        $this->userDetailRepository->updateBasic($userSeq, $userBasicReq);
+    }
+
+    public function putUserPrivacy(int $userSeq, UserPrivacyReq $userPrivacyReq): void
+    {
+        $this->userDetailRepository->updatePrivacy($userSeq, $userPrivacyReq);
+    }
+
+    public function putUserOffice(int $userSeq, UserOfficeReq $userOfficeReq): void
+    {
+        $this->userDetailRepository->updateOffice($userSeq, $userOfficeReq);
+    }
+
+    public function putUserCareer(int $userSeq, UserCareerReq $userCareerReq): void
+    {
+        $this->userDetailRepository->updateCareer($userSeq, $userCareerReq);
+    }
+
+    public function putUserEtc(int $userSeq, UserEtcReq $userEtcReq): void
+    {
+        $this->userDetailRepository->updateEtc($userSeq, $userEtcReq);
     }
 }
