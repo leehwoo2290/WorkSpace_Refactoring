@@ -5,7 +5,7 @@ namespace App\userDetail\dto\request;
 
 final class UserPermissionsReq extends UserDetailBaseReq
 {
-      private ?string $customerMenu;
+    private ?string $customerMenu;
     private ?string $customerDetail;
     private ?string $fmsIdManage;
     private ?string $contractMenu;
@@ -20,12 +20,12 @@ final class UserPermissionsReq extends UserDetailBaseReq
         ?string $counselingMenu,
         ?string $incomeView
     ) {
-        $this->customerMenu   = $customerMenu;
+        $this->customerMenu = $customerMenu;
         $this->customerDetail = $customerDetail;
-        $this->fmsIdManage    = $fmsIdManage;
-        $this->contractMenu   = $contractMenu;
+        $this->fmsIdManage = $fmsIdManage;
+        $this->contractMenu = $contractMenu;
         $this->counselingMenu = $counselingMenu;
-        $this->incomeView     = $incomeView;
+        $this->incomeView = $incomeView;
     }
 
     public static function fromArray(array $data): self
@@ -40,23 +40,29 @@ final class UserPermissionsReq extends UserDetailBaseReq
         );
     }
 
-    public function customerMenu(): ?string   { return $this->customerMenu; }
-    public function customerDetail(): ?string { return $this->customerDetail; }
-    public function fmsIdManage(): ?string    { return $this->fmsIdManage; }
-    public function contractMenu(): ?string   { return $this->contractMenu; }
-    public function counselingMenu(): ?string { return $this->counselingMenu; }
-    public function incomeView(): ?string     { return $this->incomeView; }
-
-    /** service에서 쓰기 편하게 */
-    public function toArray(): array
+    public function customerMenu(): ?string
     {
-        return [
-            'customer_menu'   => $this->customerMenu,
-            'customer_detail' => $this->customerDetail,
-            'fms_id_manage'   => $this->fmsIdManage,
-            'contract_menu'   => $this->contractMenu,
-            'counseling_menu' => $this->counselingMenu,
-            'income_view'     => $this->incomeView,
-        ];
+        return $this->customerMenu;
     }
+    public function customerDetail(): ?string
+    {
+        return $this->customerDetail;
+    }
+    public function fmsIdManage(): ?string
+    {
+        return $this->fmsIdManage;
+    }
+    public function contractMenu(): ?string
+    {
+        return $this->contractMenu;
+    }
+    public function counselingMenu(): ?string
+    {
+        return $this->counselingMenu;
+    }
+    public function incomeView(): ?string
+    {
+        return $this->incomeView;
+    }
+
 }

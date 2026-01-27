@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\auth\entity;
 
+use App\common\repository\WritePayloadBuilder;
 use DateTimeImmutable;
 
 final class RefreshTokenEntity
@@ -37,6 +38,41 @@ final class RefreshTokenEntity
         $this->firstIssuedAt = $firstIssuedAt;
         $this->tokenVersion = $tokenVersion;
         $this->deviceId = $deviceId;
+    }
+
+    public function toDbPayload(WritePayloadBuilder $builder): array
+    {
+        $fmt = static function ($v) {
+            if ($v instanceof DateTimeImmutable)
+                return $v->format('Y-m-d H:i:s');
+            if (is_string($v) && $v !== '')
+                return $v;
+            return null;
+        };
+
+        // NOTE: reg_time은 토큰 최초 발급 시각(first_issued_at)을 그대로 사용
+        // (createToken 호출부에서 now를 넘기기 때문에 insert 시각과 동일하게 수렴)
+        return $builder->build([
+            'userSeq' => $this->userSeq,
+            'tokenId' => $this->tokenId,
+            'hashedToken' => $this->hashedToken,
+            'tokenVersion' => $this->tokenVersion,
+            'firstIssuedAt' => $this->firstIssuedAt,
+            'expiresAt' => $this->expiresAt,
+            'replacedAt' => $this->replacedAt,
+            'deviceId' => $this->deviceId,
+            'regTime' => $this->firstIssuedAt,
+        ], [
+            'userSeq' => ['col' => 'user_seq'],
+            'tokenId' => ['col' => 'token_id'],
+            'hashedToken' => ['col' => 'hashed_token'],
+            'tokenVersion' => ['col' => 'token_version'],
+            'firstIssuedAt' => ['col' => 'first_issued_at', 'transform' => $fmt],
+            'expiresAt' => ['col' => 'expires_date', 'transform' => $fmt],
+            'replacedAt' => ['col' => 'replaced_date', 'transform' => $fmt],
+            'deviceId' => ['col' => 'device_id'],
+            'regTime' => ['col' => 'reg_time', 'transform' => $fmt],
+        ]);
     }
 
     public static function createToken(
@@ -76,13 +112,40 @@ final class RefreshTokenEntity
     }
 
     // getters
-    public function getId(): ?int { return $this->id; }
-    public function getUserSeq(): int { return $this->userSeq; }
-    public function getTokenId(): string { return $this->tokenId; }
-    public function getHashedToken(): string { return $this->hashedToken; }
-    public function getExpiresAt(): DateTimeImmutable { return $this->expiresAt; }
-    public function getReplacedAt(): ?DateTimeImmutable { return $this->replacedAt; }
-    public function getFirstIssuedAt(): DateTimeImmutable { return $this->firstIssuedAt; }
-    public function getTokenVersion(): int { return $this->tokenVersion; }
-    public function getDeviceId(): ?string { return $this->deviceId; }
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+    public function getUserSeq(): int
+    {
+        return $this->userSeq;
+    }
+    public function getTokenId(): string
+    {
+        return $this->tokenId;
+    }
+    public function getHashedToken(): string
+    {
+        return $this->hashedToken;
+    }
+    public function getExpiresAt(): DateTimeImmutable
+    {
+        return $this->expiresAt;
+    }
+    public function getReplacedAt(): ?DateTimeImmutable
+    {
+        return $this->replacedAt;
+    }
+    public function getFirstIssuedAt(): DateTimeImmutable
+    {
+        return $this->firstIssuedAt;
+    }
+    public function getTokenVersion(): int
+    {
+        return $this->tokenVersion;
+    }
+    public function getDeviceId(): ?string
+    {
+        return $this->deviceId;
+    }
 }

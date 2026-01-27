@@ -14,13 +14,15 @@ use App\user\component\UserLoginLogRecoder;
 use App\auth\repository\RefreshTokenRepository;
 use App\auth\repository\UserRoleRepository;
 use App\auth\repository\UserAuthRepository;
-use App\user\Repository\UserLoginLogRepository;
+use App\user\repository\UserLoginLogRepository;
 use App\auth\dto\request\UserLoginReq;
 use App\auth\dto\response\UserLoginRes;
 use App\auth\dto\response\UserMeRes;
 use App\auth\dto\response\JwtTokenRes;
 use App\common\Exception\ApiException;
 use App\common\ExceptionErrorCode\ApiErrorCode;
+
+use App\common\db\DbTransactionRunner;
 
 use DateTimeImmutable;
 
@@ -43,6 +45,7 @@ final class JwtService
     private RefreshTokenRepository $refreshTokenRepository;
     private UserLoginLogRecoder $loginLogRecoder;
     private UserLoginLogRepository $userLoginLogRepository;
+    private DbTransactionRunner $dbTransactionRunner;
 
     public function __construct(
         JwtManager $jwtManager,
@@ -52,7 +55,8 @@ final class JwtService
         UserAuthRepository $authRepository,
         UserLoginLogRepository $userLoginLogRepository,
         RefreshTokenHasher $hasher,
-        RefreshTokenRepository $refreshTokenRepository
+        RefreshTokenRepository $refreshTokenRepository,
+        DbTransactionRunner $dbTransactionRunner
     ) {
         $this->jwtManager = $jwtManager;
         $this->tokenTransport = $transport;
@@ -62,6 +66,7 @@ final class JwtService
         $this->refreshTokenHasher = $hasher;
         $this->refreshTokenRepository = $refreshTokenRepository;
         $this->userLoginLogRepository = $userLoginLogRepository;
+        $this->dbTransactionRunner = $dbTransactionRunner;
 
         $this->loginLogRecoder = new UserLoginLogRecoder($userLoginLogRepository);
         $this->jwtBootstrapper = new JwtBootstrapper($jwtManager, $this, $transport, $userContext, $roleRepository);
@@ -115,6 +120,7 @@ final class JwtService
                 $user->name ?? null,
                 $roles,
                 (string) $user->status,
+                (int) $user->license_seq,
                 (($user->pw_reset ?? 'N') === 'Y'),
                 $jwtTokenRes
             );
@@ -139,33 +145,43 @@ final class JwtService
             throw ApiException::unauthorized('USER_NOT_FOUND', ApiErrorCode::USER_NOT_FOUND);
         }
 
-        //$roles = $this->userRoleRepository->rolesOf($userSeq);
         $deviceId = $this->tokenTransport->getDeviceId();
-
-        if ($deviceId !== null) {
-            $this->refreshTokenRepository->revokeActiveByUserSeqAndDeviceId($userSeq, $deviceId);
-        }
 
         $firstIssuedAt = new DateTimeImmutable('now');
 
-        $jwtTokenPair = $this->jwtManager->generateTokens($userSeq, $roles, $firstIssuedAt);
+        //DB 쓰기( revoke + insert )는 트랜잭션으로 원자성 보장
+        $jwtTokenPair = $this->dbTransactionRunner->run(function () use ($userSeq, $roles, $deviceId, $firstIssuedAt) {
+            if ($deviceId !== null) {
+                $this->refreshTokenRepository->revokeActiveByUserSeqAndDeviceId($userSeq, $deviceId);
+            }
 
-        $refreshTokenEntity = RefreshTokenEntity::createToken(
-            $userSeq,
-            (string) $this->jwtManager->validateRefreshToken($jwtTokenPair->getRefreshToken())->jti,
-            $this->refreshTokenHasher->hash($jwtTokenPair->getRefreshToken()),
-            $firstIssuedAt,
-            (new DateTimeImmutable())->setTimestamp($jwtTokenPair->getRefreshExp()),
-            $jwtTokenPair->getTokenVersion(),
-            $deviceId
-        );
+            $jwtTokenPair = $this->jwtManager->generateTokens($userSeq, $roles, $firstIssuedAt);
 
-        $this->refreshTokenRepository->insert($refreshTokenEntity);
+            $refreshClaims = $this->jwtManager->validateRefreshToken($jwtTokenPair->getRefreshToken());
 
+            $refreshTokenEntity = RefreshTokenEntity::createToken(
+                $userSeq,
+                (string) $refreshClaims->jti,
+                $this->refreshTokenHasher->hash($jwtTokenPair->getRefreshToken()),
+                $firstIssuedAt,
+                (new DateTimeImmutable())->setTimestamp($jwtTokenPair->getRefreshExp()),
+                $jwtTokenPair->getTokenVersion(),
+                $deviceId
+            );
+
+            $this->refreshTokenRepository->insert($refreshTokenEntity);
+
+            return $jwtTokenPair;
+        });
+
+        //커밋 이후에만 클라이언트에 토큰 저장 / 컨텍스트 인증 처리
         $this->tokenTransport->store($jwtTokenPair);
         $this->userContext->authenticate($userSeq, $roles);
 
-        return new JwtTokenRes($jwtTokenPair->getAccessToken(), (int) $jwtTokenPair->getAccessExp());
+        return new JwtTokenRes(
+            $jwtTokenPair->getAccessToken(),
+            (int) $jwtTokenPair->getAccessExp()
+        );
     }
 
     //sha1에서 bcrypt/argon2로 비밀번호 해시 업그레이드 (확정아님)
@@ -211,6 +227,7 @@ final class JwtService
     public function refreshAccessToken(): JwtTokenRes
     {
         $refreshToken = $this->tokenTransport->getRefreshToken();
+        
         if (!$refreshToken) {
             //$this->endSession();
             throw ApiException::unauthorized('NO_REFRESH_TOKEN', ApiErrorCode::NO_REFRESH_TOKEN);
@@ -240,7 +257,7 @@ final class JwtService
 
             //회전(rotate) 처리를 트랜잭션으로 묶음
             //동시 요청/경쟁 조건을 막기 위해 DB 트랜잭션 + row lock
-            $jwtTokenPair = $this->refreshTokenRepository->transaction(function () use ($now, $userSeq, $tokenId, $refreshToken, $roles) {
+            $jwtTokenPair = $this->dbTransactionRunner->run(function () use ($now, $userSeq, $tokenId, $refreshToken, $roles) {
 
                 //기존 Refresh Token row를 잠금
                 //동시에 두 요청이 와도 한쪽이 먼저 처리되면 다른 쪽은 “이미 replaced” 체크에 걸리게 됨

@@ -64,7 +64,7 @@ $route['api/web/auth/logout']['post']  = 'auth/JwtController/logout';
 //$route['api/web/auth/csrf']['get'] = 'auth/CsrfController/csrf';
 
 // User API routes
-$route['api/web/audit/users']['get'] = 'user/UserController/list';
+$route['api/web/users']['get'] = 'user/UserController/list';
 $route['api/web/user']['post'] = 'user/UserController/add';
 
 // UserDetail API routes
@@ -83,13 +83,13 @@ $route['api/web/user/(:num)/career']['put']  = 'userDetail/UserDetailController/
 $route['api/web/user/(:num)/etc']['put']     = 'userDetail/UserDetailController/updateEtc/$1';
 
 // UserLoginLog API routes
-$route['api/web/audit/login-logs']['get'] = 'user/UserController/logList';
+$route['api/web/login-logs']['get'] = 'user/UserController/logList';
 
 // License API routes
-$route['api/web/audit/licenses']['get'] = 'license/LicenseController/list';
+$route['api/web/licenses']['get'] = 'license/LicenseController/list';
 
 // User licenses filter API routes
-$route['api/web/users/licenseFilter']['get'] = 'user/UserController/licenseFilter';
+$route['api/web/licenseFilter']['get'] = 'license/LicenseController/licenseFilter';
 
 //---------------------------------------------------------------------------------------------
 $route['api/app/auth/login']['post']   = 'auth/JwtController/login';

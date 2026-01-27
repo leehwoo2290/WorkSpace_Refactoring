@@ -125,27 +125,4 @@ final class UserEtcReq extends UserDetailBaseReq
     {
         return $this->lastLoginAt;
     }
-
-    public function toArray(): array
-    {
-        return [
-            'etc' => [
-                'benefits' => [
-                    'youthJobLeap' => $this->youthJobLeap,
-                    'youthEmploymentIncentive' => $this->youthEmploymentIncentive,
-                    'youthDigital' => $this->youthDigital,
-                    'seniorInternship' => $this->seniorInternship,
-                    'newMiddleAgedJobs' => $this->newMiddleAgedJobs,
-                ],
-                'incomeTaxReduction' => [
-                    'beginDate' => $this->beginDate,
-                    'endDate' => $this->endDate,
-                    'employedType' => $this->employedType,
-                    'militaryPeriod' => $this->militaryPeriod,
-                ],
-                'registeredAt' => $this->registeredAt,
-                'lastLoginAt' => $this->lastLoginAt,
-            ],
-        ];
-    }
 }

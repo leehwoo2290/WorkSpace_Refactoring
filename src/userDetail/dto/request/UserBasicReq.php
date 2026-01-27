@@ -5,7 +5,7 @@ namespace App\userDetail\dto\request;
 
 final class UserBasicReq extends UserDetailBaseReq
 {
-     private ?string $licenseName;
+    private ?string $licenseName;
     private ?string $name;
     private ?string $role;
     private ?string $status;
@@ -24,14 +24,14 @@ final class UserBasicReq extends UserDetailBaseReq
         ?string $remark,
         ?UserPermissionsReq $permissions
     ) {
-        $this->licenseName  = $licenseName;
-        $this->name         = $name;
-        $this->role         = $role;
-        $this->status       = $status;
-        $this->email        = $email;
-        $this->avatarFile   = $avatarFile;
-        $this->remark       = $remark;
-        $this->permissions  = $permissions;
+        $this->licenseName = $licenseName;
+        $this->name = $name;
+        $this->role = $role;
+        $this->status = $status;
+        $this->email = $email;
+        $this->avatarFile = $avatarFile;
+        $this->remark = $remark;
+        $this->permissions = $permissions;
     }
 
     public static function fromArray(array $data): self
@@ -53,27 +53,37 @@ final class UserBasicReq extends UserDetailBaseReq
             $perm
         );
     }
-
-    public function licenseName(): ?string { return $this->licenseName; }
-    public function name(): ?string        { return $this->name; }
-    public function role(): ?string        { return $this->role; }
-    public function status(): ?string      { return $this->status; }
-    public function email(): ?string       { return $this->email; }
-    public function avatarFile(): ?string  { return $this->avatarFile; }
-    public function remark(): ?string      { return $this->remark; }
-    public function permissions(): ?UserPermissionsReq { return $this->permissions; }
-
-    public function toArray(): array
+    public function licenseName(): ?string
     {
-        return [
-            'licenseName'  => $this->licenseName,
-            'name'         => $this->name,
-            'role'         => $this->role,
-            'status'       => $this->status,
-            'email'        => $this->email,
-            'avatarFile'   => $this->avatarFile,
-            'remark'       => $this->remark,
-            'permissions'  => $this->permissions ? $this->permissions->toArray() : null,
-        ];
+        return $this->licenseName;
     }
+    public function name(): ?string
+    {
+        return $this->name;
+    }
+    public function role(): ?string
+    {
+        return $this->role;
+    }
+    public function status(): ?string
+    {
+        return $this->status;
+    }
+    public function email(): ?string
+    {
+        return $this->email;
+    }
+    public function avatarFile(): ?string
+    {
+        return $this->avatarFile;
+    }
+    public function remark(): ?string
+    {
+        return $this->remark;
+    }
+    public function permissions(): ?UserPermissionsReq
+    {
+        return $this->permissions;
+    }
+
 }

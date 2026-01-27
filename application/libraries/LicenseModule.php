@@ -3,6 +3,8 @@
 use App\license\dto\query\LicenseListQuery;
 
 use App\license\dto\response\LicenseListRes;
+use App\license\dto\response\UserListLicenseFilterRes;
+
 use App\license\repository\LicenseRepository;
 use App\license\service\LicenseService;
 
@@ -41,6 +43,10 @@ final class LicenseModule
         return $this->licenseService->licenseList($licenseListQuery);
     }
 
+    public function licenseFilter(): UserListLicenseFilterRes
+    {
+        return $this->licenseService->licenseFilter();
+    }
     // ====== 아래는 레거시(M_license + dashboard/upload License) 기준으로 "추가될 수 있는" 모듈 API 스켈레톤 ======
     // 필요할 때 DTO/Service만 맞춰서 구현해 붙이면 됨.
 

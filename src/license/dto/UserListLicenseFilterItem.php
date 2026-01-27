@@ -1,25 +1,25 @@
 <?php
 declare(strict_types=1);
 
-namespace App\user\dto;
+namespace App\license\dto;
 
 
 final class UserListLicenseFilterItem implements \JsonSerializable
 {
     private int $licenseSeq;
     private string $name;
-    private string $englishName;
+   // private string $englishName;
     //private int $userCnt;
 
     public function __construct(
         int $licenseSeq,
-        string $name,
-        string $englishName
+        string $name
+       // string $englishName
         //int $userCnt
     ) {
         $this->licenseSeq = $licenseSeq;
         $this->name = $name;
-        $this->englishName = $englishName;
+        //$this->englishName = $englishName;
        // $this->userCnt = $userCnt;
     }
 
@@ -28,7 +28,7 @@ final class UserListLicenseFilterItem implements \JsonSerializable
         return [
             'licenseSeq' => $this->licenseSeq,
             'name' => $this->name,
-            'englishName' => $this->englishName,
+            //'englishName' => $this->englishName,
             //'userCnt' => $this->userCnt,
         ];
     }

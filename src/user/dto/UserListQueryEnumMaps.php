@@ -45,11 +45,11 @@ final class UserListQueryEnumMaps
             // tb_user_office.contract_type varchar(50) (프로젝트 DB 값에 맞게 조정 가능)
             'contract_type' => [
                 'REGULAR'      => '정규직',
-                'CONTRACT_1Y'  => '계약직',
-                'CONTRACT_2Y'  => '계약직',
-                'NON_REGULAR'  => '비정규직',
+                'CONTRACT_1Y'  => '계약직1년',
+                'CONTRACT_2Y'  => '계약직2년',
+                'NON_REGULAR'  => '무기계약직',
                 'DAILY'        => '일용직',
-                'TEMPORARY'    => '임시직',
+                'TEMPORARY'    => '단기시급',
             ],
 
             // tb_office_position.name (DB에 저장된 한글 직급명과 맞춰야 함)

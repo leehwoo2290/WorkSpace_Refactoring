@@ -6,7 +6,11 @@ namespace App\license\service;
 use App\license\dto\query\LicenseListQuery;
 use App\license\dto\response\LicenseListRes;
 use App\license\dto\LicenseListItem;
-use App\license\Repository\LicenseRepository;
+
+use App\license\dto\UserListLicenseFilterItem;
+use App\license\dto\response\UserListLicenseFilterRes;
+
+use App\license\repository\LicenseRepository;
 
 final class LicenseService
 {
@@ -33,25 +37,43 @@ final class LicenseService
 
             $items[] = new LicenseListItem(
                 $num,
-                (int)($row->seq ?? 0),
-                !empty($row->name) ? (string)$row->name : null,
-                !empty($row->sido) ? (string)$row->sido : null,
-                !empty($row->bizno) ? (string)$row->bizno : null,
-                !empty($row->ceo_name) ? (string)$row->ceo_name : null,
-                !empty($row->contract_date) ? (string)$row->contract_date : null,
-                !empty($row->expire_date) ? (string)$row->expire_date : null,
-                (int)($row->user_cnt ?? 0),
-                (int)($row->machine_engineer_cnt ?? 0),
-                (int)($row->safety_engineer_cnt ?? 0),
-                (int)($row->machine_project_cnt ?? 0),
-                (int)($row->safety_project_cnt ?? 0),
-                !empty($row->pic) ? (string)$row->pic : null,
-                !empty($row->email) ? (string)$row->email : null,
-                !empty($row->mobile) ? (string)$row->mobile : null,
-                !empty($row->tel) ? (string)$row->tel : null,
+                (int) ($row->seq ?? 0),
+                !empty($row->name) ? (string) $row->name : null,
+                !empty($row->sido) ? (string) $row->sido : null,
+                !empty($row->bizno) ? (string) $row->bizno : null,
+                !empty($row->ceo_name) ? (string) $row->ceo_name : null,
+                !empty($row->contract_date) ? (string) $row->contract_date : null,
+                !empty($row->expire_date) ? (string) $row->expire_date : null,
+                (int) ($row->user_cnt ?? 0),
+                (int) ($row->machine_engineer_cnt ?? 0),
+                (int) ($row->safety_engineer_cnt ?? 0),
+                (int) ($row->machine_project_cnt ?? 0),
+                (int) ($row->safety_project_cnt ?? 0),
+                !empty($row->pic) ? (string) $row->pic : null,
+                !empty($row->email) ? (string) $row->email : null,
+                !empty($row->mobile) ? (string) $row->mobile : null,
+                !empty($row->tel) ? (string) $row->tel : null,
             );
         }
 
         return new LicenseListRes($items, $total, $page, $size);
     }
+
+    public function licenseFilter(): UserListLicenseFilterRes
+    {
+
+        $rows = $this->licenseRepository->findListLicenseFilter();
+
+        $items = [];
+        foreach ($rows as $r) {
+            $items[] = new UserListLicenseFilterItem(
+                (int) ($r->license_seq ?? 0),
+                (string) ($r->name ?? '')
+                //(string) ($r->english_name ?? '')
+            );
+        }
+
+        return new UserListLicenseFilterRes($items);
+    }
+
 }

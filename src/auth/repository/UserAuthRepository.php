@@ -3,25 +3,17 @@ declare(strict_types=1);
 
 namespace App\auth\repository;
 
-final class UserAuthRepository
-{
-    private $db;
+use App\common\repository\BaseTableRepository;
 
-    public function __construct( $db)
-    {
-        $this->db = $db;
-    }
+final class UserAuthRepository extends BaseTableRepository
+{
+    protected const TABLE = 'tb_user';
+    protected const PK    = 'seq';
 
     public function findByEmail(string $email): ?object
     {
-        $row = $this->db->select('*')
-            ->from('tb_user')
-            ->where('email', $email)
-            ->limit(1)
-            ->get()
-            ->row();
-
-        return $row ?: null;
+        // UNIQUE(email) 전제: 단건
+        return $this->findOneWhere(['email' => $email]);
     }
 
     /**
@@ -30,9 +22,7 @@ final class UserAuthRepository
      */
     public function updatePasswordHash(int $userSeq, string $newHash): void
     {
-        $this->db->set('passwd', $newHash)
-            ->where('seq', $userSeq)
-            ->limit(1)
-            ->update('tb_user');
+        // BaseTableRepository::updateByPk()는 내부에서 updateWhereOrThrow로 예외를 표준화함
+        $this->updateByPk($userSeq, ['passwd' => $newHash]);
     }
 }

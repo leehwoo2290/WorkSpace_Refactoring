@@ -7,17 +7,17 @@ class CsrfController extends BASE_Controller
 {
     public CsrfGuard $csrfGuard;
 
+    /*
+     @Description
+     - [GET] /api/web/auth/csrf
+     - NOTE: application/config/routes.php에서 현재 주석처리됨 (활성화 필요)
+     - Response: CsrfTokenRes
+     - Set-Cookie: csrf_cookie (또는 CsrfGuard 설정값)
+     - 성공: 200 OK (ApiResult::ok)
+     - 실패: 500 (서버)
+     */
     public function csrf()
     {
-        /*
-       @Description
-       [GET] /api/web/auth/csrf
-       - 목적: CSRF 더블서브밋 토큰 발급
-       - 응답: 200 OK (ApiResult::ok)
-       - 부가: csrf_cookie 쿠키가 세팅되고,
-              응답 data.token 값을 X-CSRF-TOKEN 헤더로 이후 요청에 보냄
-        */
-
         try {
             $this->load->library('CsrfGuard', null, 'csrfGuard');
             $csrfTokenRes = $this->csrfGuard->generateToken();

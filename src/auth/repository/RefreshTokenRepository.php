@@ -4,43 +4,47 @@ declare(strict_types=1);
 namespace App\auth\repository;
 
 use App\auth\entity\RefreshTokenEntity;
-use DateTimeImmutable;
-use Exception;
 
-final class RefreshTokenRepository
+use App\common\repository\BaseRepository;
+use App\common\repository\WritePayloadBuilder;
+
+use DateTimeImmutable;
+
+
+final class RefreshTokenRepository extends BaseRepository
 {
-    private $db; // CI_DB_query_builder
+
     private string $table = 'tb_user_refresh_token';
 
-    public function __construct($ciDb)
-    {
-        $this->db = $ciDb;
-    }
-
-    public function transaction(callable $fn)
-    {
-        $this->db->trans_begin();
-        try {
-            $result = $fn();
-            if ($this->db->trans_status() === false) {
-                throw new Exception('DB transaction failed');
-            }
-            $this->db->trans_commit();
-            return $result;
-        } catch (\Throwable $e) {
-            $this->db->trans_rollback();
-            throw $e;
-        }
-    }
+    // public function transaction(callable $fn)
+    // {
+    //     $this->db->trans_begin();
+    //     try {
+    //         $result = $fn();
+    //         if ($this->db->trans_status() === false) {
+    //             throw new Exception('DB transaction failed');
+    //         }
+    //         $this->db->trans_commit();
+    //         return $result;
+    //     } catch (\Throwable $e) {
+    //         $this->db->trans_rollback();
+    //         throw $e;
+    //     }
+    // }
 
     public function findByTokenIdForUpdate(string $tokenId): ?RefreshTokenEntity
     {
         $sql = "SELECT * FROM {$this->table} WHERE token_id = ? FOR UPDATE";
-        $q = $this->db->query($sql, [$tokenId]);
-        if ($q->num_rows() <= 0)
+        $q = $this->queryWith($sql, [$tokenId]);
+
+        if ($q->num_rows() <= 0) {
             return null;
+        }
 
         $r = $q->row_array();
+        if (!$r) {
+            return null;
+        }
 
         return RefreshTokenEntity::reconstitute(
             (int) $r['seq'],
@@ -57,39 +61,45 @@ final class RefreshTokenRepository
 
     public function insert(RefreshTokenEntity $token): int
     {
-        $this->db->insert($this->table, [
-            'user_seq' => $token->getUserSeq(),
-            'token_id' => $token->getTokenId(),
-            'hashed_token' => $token->getHashedToken(),
-            'token_version' => $token->getTokenVersion(),
-            'first_issued_at' => $token->getFirstIssuedAt()->format('Y-m-d H:i:s'),
-            'expires_date' => $token->getExpiresAt()->format('Y-m-d H:i:s'),
-            'replaced_date' => null,
-            'device_id' => $token->getDeviceId(),
-            'reg_time' => date('Y-m-d H:i:s'),
-        ]);
-        return (int) $this->db->insert_id();
+        $builder = new WritePayloadBuilder();
+        $data = $token->toDbPayload($builder);
+
+        return $this->insertOrThrow($this->table, $data);
     }
 
     public function markReplaced(int $id): void
     {
-        $this->db->where('seq', $id);
-        $this->db->update($this->table, [
-            'replaced_date' => date('Y-m-d H:i:s'),
-            'update_time' => date('Y-m-d H:i:s'),
-        ]);
+        $this->updateOrThrow(
+            $this->table,
+            [
+                'replaced_date' => date('Y-m-d H:i:s'),
+                'update_time' => date('Y-m-d H:i:s'),
+            ],
+            function () use ($id): void {
+                $this->db->where('seq', $id);
+                $this->db->limit(1);
+            }
+        );
     }
 
     public function revokeAllByUserSeq(int $userSeq): void
     {
-        $this->db->where('user_seq', $userSeq);
-        $this->db->delete($this->table);
+        $this->deleteOrThrow(
+            $this->table,
+            function () use ($userSeq): void {
+                $this->db->where('user_seq', $userSeq);
+            }
+        );
     }
 
     public function revokeByTokenId(string $tokenId): void
     {
-        $this->db->where('token_id', $tokenId);
-        $this->db->delete($this->table);
+        $this->deleteOrThrow(
+            $this->table,
+            function () use ($tokenId): void {
+                $this->db->where('token_id', $tokenId);
+            }
+        );
     }
 
     /**
@@ -98,17 +108,20 @@ final class RefreshTokenRepository
      */
     public function revokeActiveByUserSeqAndDeviceId(int $userSeq, ?string $deviceId): void
     {
-        $this->db->where('user_seq', $userSeq);
+        $this->deleteOrThrow(
+            $this->table,
+            function () use ($userSeq, $deviceId): void {
+                $this->db->where('user_seq', $userSeq);
 
-        if ($deviceId !== null) {
-            $this->db->where('device_id', $deviceId);
-        } else {
-            // device_id가 없던 구버전 토큰까지 같이 정리(선택)
-            $this->db->where('device_id IS NULL', null, false);
-        }
+                if ($deviceId !== null) {
+                    $this->db->where('device_id', $deviceId);
+                } else {
+                    $this->db->where('device_id IS NULL', null, false);
+                }
 
-        $this->db->where('replaced_date IS NULL', null, false);
-        $this->db->delete($this->table);
+                $this->db->where('replaced_date IS NULL', null, false);
+            }
+        );
     }
 
     /**
@@ -121,12 +134,17 @@ final class RefreshTokenRepository
     {
         $retention = max(0, $replacedRetentionDays);
 
-        $sql = "DELETE FROM {$this->table}
-                WHERE expires_date < NOW()
-                   OR (replaced_date IS NOT NULL AND replaced_date < DATE_SUB(NOW(), INTERVAL ? DAY))
-                LIMIT ?";
+        // 안전장치: LIMIT 0이면 아무 것도 안 지우니 최소 1로
+        $limit = max(1, $limit);
 
-        $this->db->query($sql, [$retention, $limit]);
+        $sql = "DELETE FROM {$this->table}
+            WHERE expires_date < NOW()
+               OR (replaced_date IS NOT NULL AND replaced_date < DATE_SUB(NOW(), INTERVAL ? DAY))
+            LIMIT ?";
+
+        // BaseRepository::queryWith() 내부에서 resetQuery()를 강제함
+        $this->queryWith($sql, [$retention, $limit]);
+
         return (int) $this->db->affected_rows();
     }
 }

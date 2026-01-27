@@ -140,7 +140,7 @@ final class UserPrivacyReq extends UserDetailBaseReq
     {
         return $this->toYnOrNull($this->carOwned);
     }
-    
+
     public function carNumber(): ?string
     {
         return $this->carNumber;
@@ -201,27 +201,5 @@ final class UserPrivacyReq extends UserDetailBaseReq
         }
 
         return $digits;
-    }
-    public function toArray(): array
-    {
-        return [
-            'nationality' => $this->nationality,
-            'juminNum' => $this->juminNum,
-            'birthday' => $this->birthday,
-            'phoneNumber' => $this->phoneNumber,
-            'emergency1' => $this->emergency1,
-            'emergency2' => $this->emergency2,
-            'address' => $this->address,
-            'educationLevel' => $this->educationLevel,
-            'educationMajor' => $this->educationMajor,
-            'familyCnt' => $this->familyCnt,
-            'carOwned' => $this->carOwned,
-            'carNumber' => $this->carNumber,
-            'suwonCarReg' => $this->suwonCarReg,
-            'carModel' => $this->carModel,
-            'religion' => $this->religion,
-            'bankName' => $this->bankName,
-            'bankNumber' => $this->bankNumber,
-        ];
     }
 }

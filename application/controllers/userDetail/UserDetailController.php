@@ -29,6 +29,16 @@ class UserDetailController extends BASE_Controller
         $this->load->library('UserModule', null, 'userModule');
     }
 
+    /*
+     @Description
+     - [GET] /api/web/user (예: /api/web/user?userSeq=123)
+     - NOTE: application/config/routes.php에서 현재 주석처리됨 (필요 시 라우트 추가/활성화)
+     - Header: Authorization: Bearer {accessToken}
+     - Query: UserDetailQuery (query string)
+     - Response: UserDetailRes
+     - 성공: 200 OK (ApiResult::ok)
+     - 실패: 401/403/404/500 (인증/권한/대상없음/서버)
+     */
     public function detail()
     {
         try {
@@ -43,6 +53,13 @@ class UserDetailController extends BASE_Controller
         }
     }
 
+    /*
+     @Description
+     - [GET] /api/web/user/(:num)/basic
+     - Header: Authorization: Bearer {accessToken}
+     - 성공: 200 OK (ApiResult::ok)
+     - 실패: 401/403/404/500 (인증/권한/대상없음/서버)
+     */
     public function basic(int $userSeq): void
     {
         try {
@@ -56,6 +73,13 @@ class UserDetailController extends BASE_Controller
         }
     }
 
+    /*
+     @Description
+     - [GET] /api/web/user/(:num)/privacy
+     - Header: Authorization: Bearer {accessToken}
+     - 성공: 200 OK (ApiResult::ok)
+     - 실패: 401/403/404/500 (인증/권한/대상없음/서버)
+     */
     public function privacy(int $userSeq): void
     {
         try {
@@ -69,6 +93,13 @@ class UserDetailController extends BASE_Controller
         }
     }
 
+      /*
+     @Description
+     - [GET] /api/web/user/(:num)/office
+     - Header: Authorization: Bearer {accessToken}
+     - 성공: 200 OK (ApiResult::ok)
+     - 실패: 401/403/404/500 (인증/권한/대상없음/서버)
+     */
     public function office(int $userSeq): void
     {
         try {
@@ -82,6 +113,13 @@ class UserDetailController extends BASE_Controller
         }
     }
 
+     /*
+     @Description
+     - [GET] /api/web/user/(:num)/career
+     - Header: Authorization: Bearer {accessToken}
+     - 성공: 200 OK (ApiResult::ok)
+     - 실패: 401/403/404/500 (인증/권한/대상없음/서버)
+     */
     public function career(int $userSeq): void
     {
         try {
@@ -95,6 +133,13 @@ class UserDetailController extends BASE_Controller
         }
     }
 
+    /*
+     @Description
+     - [GET] /api/web/user/(:num)/etc
+     - Header: Authorization: Bearer {accessToken}
+     - 성공: 200 OK (ApiResult::ok)
+     - 실패: 401/403/404/500 (인증/권한/대상없음/서버)
+     */
     public function etc(int $userSeq): void
     {
         try {
@@ -108,6 +153,15 @@ class UserDetailController extends BASE_Controller
         }
     }
 
+    /*
+     @Description
+     - [PUT] /api/web/user/(:num)/basic
+     - Header: Authorization: Bearer {accessToken}
+     - Header: X-CSRF-TOKEN: {csrfToken} (cookie: csrf_cookie)
+     - Body(JSON): UserBasicReq
+     - 성공: 204 No Content (ApiResult::none)
+     - 실패: 400/401/404/500 (요청/인증/대상없음/서버)
+     */
     public function updateBasic(int $userSeq): void
     {
         try {
@@ -122,6 +176,15 @@ class UserDetailController extends BASE_Controller
         }
     }
 
+    /*
+     @Description
+     - [PUT] /api/web/user/(:num)/privacy
+     - Header: Authorization: Bearer {accessToken}
+     - Header: X-CSRF-TOKEN: {csrfToken} (cookie: csrf_cookie)
+     - Body(JSON): UserPrivacyReq
+     - 성공: 204 No Content (ApiResult::none)
+     - 실패: 400/401/404/500 (요청/인증/대상없음/서버)
+     */
     public function updatePrivacy(int $userSeq): void
     {
         try {
@@ -150,6 +213,15 @@ class UserDetailController extends BASE_Controller
         }
     }
 
+    /*
+     @Description
+     - [PUT] /api/web/user/(:num)/office
+     - Header: Authorization: Bearer {accessToken}
+     - Header: X-CSRF-TOKEN: {csrfToken} (cookie: csrf_cookie)
+     - Body(JSON): UserOfficeReq
+     - 성공: 204 No Content (ApiResult::none)
+     - 실패: 400/401/404/500 (요청/인증/대상없음/서버)
+     */
     public function updateCareer(int $userSeq): void
     {
         try {
@@ -164,6 +236,15 @@ class UserDetailController extends BASE_Controller
         }
     }
 
+     /*
+     @Description
+     - [PUT] /api/web/user/(:num)/career
+     - Header: Authorization: Bearer {accessToken}
+     - Header: X-CSRF-TOKEN: {csrfToken} (cookie: csrf_cookie)
+     - Body(JSON): UserCareerReq
+     - 성공: 204 No Content (ApiResult::none)
+     - 실패: 400/401/404/500 (요청/인증/대상없음/서버)
+     */
     public function updateEtc(int $userSeq): void
     {
         try {

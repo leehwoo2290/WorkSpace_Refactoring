@@ -3,29 +3,28 @@ declare(strict_types=1);
 
 namespace App\auth\repository;
 
+use App\common\repository\BaseTableRepository;
 
-final class UserRoleRepository
+final class UserRoleRepository extends BaseTableRepository
 {
-    private $db;
-
-    public function __construct($ciDb)
-    {
-        $this->db = $ciDb;
-    }
+    protected const TABLE = 'tb_user';
+    protected const PK = 'seq';
 
     public function exists(int $userSeq): bool
     {
-        $q = $this->db->query('SELECT seq FROM tb_user WHERE seq = ? LIMIT 1', [$userSeq]);
-        return ($q->num_rows() > 0);
+        return $this->existsWhere(['seq' => $userSeq]);
     }
 
+    /** @return string[] */
     public function rolesOf(int $userSeq): array
     {
-        $q = $this->db->query('SELECT role FROM tb_user WHERE seq = ? LIMIT 1', [$userSeq]);
-        if ($q->num_rows() <= 0) return ['User'];
+        $row = $this->findByPk($userSeq, ['role']);
 
-        $row = $q->row();
-        $role = $row->role ?? 'User';
+        if (!$row) {
+            return ['User'];
+        }
+
+        $role = isset($row->role) && (string) $row->role !== '' ? (string) $row->role : 'User';
         return [$role];
     }
 }

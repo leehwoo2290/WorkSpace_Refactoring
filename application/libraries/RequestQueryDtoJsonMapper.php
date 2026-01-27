@@ -46,6 +46,11 @@ final class RequestQueryDtoJsonMapper
     {
         $payload = $this->jsonPayload($requiredBody);
 
+        // log_message('error', 'jsonPayload=' . json_encode(
+        //     $payload,
+        //     JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        // ));
+
         if (!is_callable([$dtoClass, 'fromArray'])) {
             throw new RuntimeException("DTO_CLASS_INVALID: {$dtoClass}");
         }

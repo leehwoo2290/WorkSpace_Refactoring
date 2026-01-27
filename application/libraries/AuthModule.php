@@ -4,7 +4,7 @@
 
 use App\auth\service\JwtService;
 use App\auth\component\JwtManager;
-use App\auth\component\JwtBootstrapper;
+
 use App\auth\component\RefreshTokenHasher;
 use App\auth\component\TokenTransport;
 use App\user\component\UserContext;
@@ -16,6 +16,8 @@ use App\auth\repository\UserRoleRepository;
 use App\auth\repository\UserAuthRepository;
 use App\auth\repository\RefreshTokenRepository;
 use App\user\repository\UserLoginLogRepository;
+
+use App\common\db\DbTransactionRunner;
 
 /**
  * AuthModule (구 JwtLibrary)
@@ -34,12 +36,11 @@ class AuthModule
     private RefreshTokenRepository $refreshTokenRepository;
     private UserContext $userContext;
     private TokenTransport $tokenTransport;
-    private JwtBootstrapper $jwtBootstrapper;
     private UserRoleRepository $userRoleRepository;
     private UserAuthRepository $userAuthRepository;
     private UserLoginLogRepository $userLoginLogRepository;
     private JwtService $jwtService;
-   
+    private DbTransactionRunner $dbTransactionRunner;
 
 
     public function __construct()
@@ -81,6 +82,8 @@ class AuthModule
 
         $this->userLoginLogRepository = new UserLoginLogRepository($this->CI->db);
 
+        $dbTransactionRunner = new DbTransactionRunner($this->CI->db);
+
         $this->jwtService = new JwtService(
             $this->jwtManager, 
             $this->tokenTransport, 
@@ -89,7 +92,9 @@ class AuthModule
             $this->userAuthRepository, 
             $this->userLoginLogRepository, 
             $this->refreshTokenHasher, 
-            $this->refreshTokenRepository);
+            $this->refreshTokenRepository,
+            $dbTransactionRunner
+        );
     }
 
     /** @return UserContext */

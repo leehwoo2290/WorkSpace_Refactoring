@@ -13,6 +13,7 @@ use App\userDetail\dto\response\UserPermissionsRes;
 use App\userDetail\dto\response\UserPrivacyRes;
 use App\userDetail\dto\response\UserEtcRes;
 use App\userDetail\dto\response\UserCareerRes;
+
 use App\userDetail\repository\UserDetailRepository;
 
 use App\userDetail\dto\request\UserBasicReq;
@@ -21,13 +22,23 @@ use App\userDetail\dto\request\UserEtcReq;
 use App\userDetail\dto\request\UserOfficeReq;
 use App\userDetail\dto\request\UserPrivacyReq;
 
+use App\common\db\DbTransactionRunner;
+
+use App\userDetail\entity\UserBasicUpdateEntity;
+use App\userDetail\entity\UserCareerUpdateEntity;
+use App\userDetail\entity\UserEtcUpdateEntity;
+use App\userDetail\entity\UserOfficeUpdateEntity;
+use App\userDetail\entity\UserPrivacyUpdateEntity;
+
 final class UserDetailService
 {
     private UserDetailRepository $userDetailRepository;
+    private DbTransactionRunner $dbTransactionRunner;
 
-    public function __construct(UserDetailRepository $userDetailRepository)
+    public function __construct(UserDetailRepository $userDetailRepository, DbTransactionRunner $dbTransactionRunner)
     {
         $this->userDetailRepository = $userDetailRepository;
+        $this->dbTransactionRunner = $dbTransactionRunner;
     }
 
 
@@ -36,52 +47,56 @@ final class UserDetailService
         return $this->userDetailRepository->existsUser($userSeq) ? true : null;
     }
 
-    public function userDetail(UserDetailQuery $query): ?UserDetailRes
-    {
-        $row = $this->userDetailRepository->findDetailRow($query->userSeq());
+    // public function userDetail(UserDetailQuery $query): ?UserDetailRes
+    // {
+    //     $row = $this->userDetailRepository->findDetailRow($query->userSeq());
 
-        /** 없으면 null 반환(Controller에서 404 처리) */
-        if ($row === null)
-            return null;
+    //     /** 없으면 null 반환(Controller에서 404 처리) */
+    //     if ($row === null)
+    //         return null;
 
-        $basic = new UserBasicRes(
-            $row->licenseName ?? null,
-            $row->name ?? null,
-            $row->role ?? null,
-            $row->status ?? null,
-            $row->email ?? null,
-            $row->avatarFile ?? null,
-            $row->remark ?? null,
-            $this->permissionsFromConfig($row->configJson ?? null)
-        );
+    //     $basic = new UserBasicRes(
+    //         $row->licenseName ?? null,
+    //         $row->name ?? null,
+    //         $row->role ?? null,
+    //         $row->status ?? null,
+    //         $row->email ?? null,
+    //         $row->avatarFile ?? null,
+    //         $row->remark ?? null,
+    //         $this->permissionsFromConfig($row->configJson ?? null)
+    //     );
 
-        $office = null;
-        $privacy = null;
-        $career = null;
-        $etc = null;
+    //     $office = null;
+    //     $privacy = null;
+    //     $career = null;
+    //     $etc = null;
 
-        // etc/career: 테이블/필드 확정되면 채우기 (지금은 null 허용)
-        return new UserDetailRes(
-            $basic,
-            $office,
-            $etc,
-            $privacy,
-            $career,
-        );
-    }
+    //     // etc/career: 테이블/필드 확정되면 채우기 (지금은 null 허용)
+    //     return new UserDetailRes(
+    //         $basic,
+    //         $office,
+    //         $etc,
+    //         $privacy,
+    //         $career,
+    //     );
+    // }
 
     public function userBasic(int $userSeq): ?UserBasicRes
     {
         if ($userSeq < 0) {
-            ApiException::badRequest("VALIDATION_FAILED", ApiErrorCode::VALIDATION_FAILED);
+            throw ApiException::badRequest("VALIDATION_FAILED", ApiErrorCode::VALIDATION_FAILED);
         }
 
         if ($this->checkUserExists($userSeq) === null)
             return null;
 
         $row = $this->userDetailRepository->findBasicRow($userSeq);
-        if ($row === null)
-            return null;
+
+        if ($row === null) {
+            throw ApiException::notFound("USER_NOT_FOUND", ApiErrorCode::RESOURCE_NOT_FOUND, [
+                'userSeq' => $userSeq,
+            ]);
+        }
 
         $basic = new UserBasicRes();
         $basic->licenseName = $row->licenseName ?? null;
@@ -147,25 +162,29 @@ final class UserDetailService
     public function userOffice(int $userSeq): ?UserOfficeRes
     {
         if ($userSeq < 0) {
-            ApiException::badRequest("VALIDATION_FAILED", ApiErrorCode::VALIDATION_FAILED);
+            throw ApiException::badRequest("VALIDATION_FAILED", ApiErrorCode::VALIDATION_FAILED);
         }
 
         if ($this->checkUserExists($userSeq) === null)
             return null;
 
         $row = $this->userDetailRepository->findOfficeRow($userSeq);
-        if ($row === null)
-            return null;
+
+        if ($row === null) {
+            return new UserOfficeRes();
+        }
 
         $office = new UserOfficeRes();
         $office->staffNum = $row->staffNum ?? null;
-        $office->departmentName = $row->departmentName ?? null;
-        $office->positionName = $row->positionName ?? null;
+        $office->departmentName = $row->departmentNameMapped ?? null;
+
+        $office->positionName = $row->positionNameMapped ?? null;
+        $office->apprentice = $row->apprentice ?? null;
 
         $office->contractYn = $row->contractYn ?? null;
         $office->staffCardYn = $row->staffCardYn ?? null;
         $office->fieldworkYn = $row->fieldworkYn ?? null;
-        $office->engineerYn = $row->engineerYn ?? null;
+        //$office->engineerYn = $row->engineerYn ?? null;
 
         $office->joinDate = $row->joinDate ?? null;
         $office->resignDate = $row->resignDate ?? null;
@@ -180,33 +199,10 @@ final class UserDetailService
         return $office;
     }
 
-    public function userEtc(int $userSeq): ?UserEtcRes
-    {
-        if ($userSeq < 0) {
-            ApiException::badRequest("VALIDATION_FAILED", ApiErrorCode::VALIDATION_FAILED);
-        }
-
-        if ($this->checkUserExists($userSeq) === null)
-            return null;
-
-        $row = $this->userDetailRepository->findEtcRow($userSeq);
-        if ($row === null)
-            return null;
-
-        $etc = new UserEtcRes();
-        $etc->groupInsuranceYn = $row->groupInsuranceYn ?? 'N';
-        $etc->incomeTaxReductionBeginDate = $row->incomeTaxReductionBeginDate ?? null;
-        $etc->incomeTaxReductionEndDate = $row->incomeTaxReductionEndDate ?? null;
-        $etc->employedType = $row->employedType ?? null;
-        $etc->militaryPeriod = $row->militaryPeriod ?? null;
-
-        return $etc;
-    }
-
     public function userCareer(int $userSeq): ?UserCareerRes
     {
         if ($userSeq < 0) {
-            ApiException::badRequest("VALIDATION_FAILED", ApiErrorCode::VALIDATION_FAILED);
+            throw ApiException::badRequest("VALIDATION_FAILED", ApiErrorCode::VALIDATION_FAILED);
         }
 
         if ($this->checkUserExists($userSeq) === null)
@@ -215,8 +211,9 @@ final class UserDetailService
         $row = $this->userDetailRepository->findCareerRow($userSeq);
 
         // user는 있는데 privacy가 없으면 data:null로 내려도 됨(스펙에 맞게)
-        if ($row === null)
-            return null;
+        if ($row === null) {
+            return new UserCareerRes();
+        }
 
         $career = new UserCareerRes();
         $career->jobField = $row->jobField ?? null;
@@ -229,6 +226,37 @@ final class UserDetailService
         return $career;
     }
 
+
+    public function userEtc(int $userSeq): ?UserEtcRes
+    {
+        if ($userSeq < 0) {
+            throw ApiException::badRequest("VALIDATION_FAILED", ApiErrorCode::VALIDATION_FAILED);
+        }
+
+        if ($this->checkUserExists($userSeq) === null)
+            return null;
+
+        $row = $this->userDetailRepository->findEtcRow($userSeq);
+       
+        if ($row === null) {
+            return new UserEtcRes();
+        }
+
+        $etc = new UserEtcRes();
+        $etc->youthJobLeap = $row->youthJobLeap ?? null;
+        $etc->youthEmploymentIncentive = $row->youthEmploymentIncentive ?? null;
+        $etc->youthDigital = $row->youthDigital ?? null;
+        $etc->seniorInternship = $row->seniorInternship ?? null;
+        $etc->newMiddleAgedJobs = $row->newMiddleAgedJobs ?? null;
+
+        $etc->groupInsuranceYn = $row->groupInsuranceYn ?? 'N';
+        $etc->incomeTaxReductionBeginDate = $row->incomeTaxReductionBeginDate ?? null;
+        $etc->incomeTaxReductionEndDate = $row->incomeTaxReductionEndDate ?? null;
+        $etc->employedType = $row->employedType ?? null;
+        $etc->militaryPeriod = $row->militaryPeriod ?? null;
+
+        return $etc;
+    }
 
     private function permissionsFromConfig(?string $json): UserPermissionsRes
     {
@@ -262,26 +290,33 @@ final class UserDetailService
     // 탭별 PUT
     public function putUserBasic(int $userSeq, UserBasicReq $userBasicReq): void
     {
-        $this->userDetailRepository->updateBasic($userSeq, $userBasicReq);
+        $entity = UserBasicUpdateEntity::fromReq($userBasicReq);
+        $this->userDetailRepository->updateBasic($userSeq, $entity);
     }
 
     public function putUserPrivacy(int $userSeq, UserPrivacyReq $userPrivacyReq): void
     {
-        $this->userDetailRepository->updatePrivacy($userSeq, $userPrivacyReq);
+        $entity = UserPrivacyUpdateEntity::fromReq($userPrivacyReq);
+        $this->userDetailRepository->updatePrivacy($userSeq, $entity);
     }
 
     public function putUserOffice(int $userSeq, UserOfficeReq $userOfficeReq): void
     {
-        $this->userDetailRepository->updateOffice($userSeq, $userOfficeReq);
+        $entity = UserOfficeUpdateEntity::fromReq($userOfficeReq);
+        $this->userDetailRepository->updateOffice($userSeq, $entity);
     }
 
     public function putUserCareer(int $userSeq, UserCareerReq $userCareerReq): void
     {
-        $this->userDetailRepository->updateCareer($userSeq, $userCareerReq);
+        $this->dbTransactionRunner->run(function () use ($userSeq, $userCareerReq): void {
+            $entity = UserCareerUpdateEntity::fromReq($userCareerReq);
+            $this->userDetailRepository->updateCareer($userSeq, $entity);
+        });
     }
 
     public function putUserEtc(int $userSeq, UserEtcReq $userEtcReq): void
     {
-        $this->userDetailRepository->updateEtc($userSeq, $userEtcReq);
+        $entity = UserEtcUpdateEntity::fromReq($userEtcReq);
+        $this->userDetailRepository->updateEtc($userSeq, $entity);
     }
 }

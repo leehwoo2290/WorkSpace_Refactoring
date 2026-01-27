@@ -58,4 +58,15 @@ class ApiException extends \RuntimeException
         return new self(409, $errorCode, $message, $data, $prev);
     }
 
+    //리소스 없음
+    public static function notFound(string $message, int $errorCode, $data = null, ?\Throwable $prev = null): self
+    {
+        return new self(404, $errorCode, $message, $data, $prev);
+    }
+
+    //서버 내부 오류
+    public static function internal(string $message, int $errorCode, $data = null, ?\Throwable $prev = null): self
+    {
+        return new self(500, $errorCode, $message, $data, $prev);
+    }
 }

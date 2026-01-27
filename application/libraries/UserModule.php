@@ -29,14 +29,14 @@ use App\user\repository\UserLoginLogRepository;
 use App\user\repository\UserRepository;
 use App\userDetail\repository\UserDetailRepository;
 
-use App\user\dto\response\UserListLicenseFilterRes;
-
 use App\userDetail\dto\request\UserBasicReq;
 use App\userDetail\dto\request\UserPrivacyReq;
 use App\userDetail\dto\request\UserOfficeReq;
 use App\userDetail\dto\request\UserEtcReq;
 use App\userDetail\dto\request\UserCareerReq;
 use App\user\dto\request\UserAddReq;
+
+use App\common\db\DbTransactionRunner;
 
 final class UserModule
 {
@@ -47,7 +47,7 @@ final class UserModule
 
     private UserLoginLogRepository $userLoginLogRepository;
     private UserDetailRepository $userDetailRepository;
-
+    private DbTransactionRunner $dbTransactionRunner;
     public function __construct()
     {
         $this->CI = &get_instance();
@@ -69,17 +69,16 @@ final class UserModule
         $this->userDetailRepository = new UserDetailRepository($this->CI->db);
 
         $this->userService = new UserService($this->userLoginLogRepository, $this->userRepository);
-        $this->userDetailService = new UserDetailService($this->userDetailRepository);
+
+         $dbTransactionRunner = new DbTransactionRunner($this->CI->db);
+        $this->userDetailService = new UserDetailService($this->userDetailRepository, $dbTransactionRunner);
     }
 
     public function logList(UserLoginLogListQuery $userLoginLogListQuery): UserLoginLogListRes
     {
         return $this->userService->logList($userLoginLogListQuery);
     }
-    public function licenseFilter(): UserListLicenseFilterRes
-    {
-        return $this->userService->licenseFilter();
-    }
+    
     public function userList(UserListQuery $userListQuery): UserListRes
     {
         return $this->userService->userList($userListQuery);
@@ -129,8 +128,8 @@ final class UserModule
         return $this->userDetailService->putUserEtc($userSeq, $userEtcReq);
     }
 
-    public function addUser(UserAddReq $addUserReq): int
+    public function addUser(UserAddReq $addUserReq)
     {
-        return $this->userService->userAdd($addUserReq);
+        $this->userService->userAdd($addUserReq);
     }
 }

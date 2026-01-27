@@ -5,7 +5,7 @@ namespace App\userDetail\dto\request;
 
 final class UserOfficeReq extends UserDetailBaseReq
 {
-private ?string $staffNum;
+    private ?string $staffNum;
 
     private ?string $department;
     private ?string $team;
@@ -90,46 +90,72 @@ private ?string $staffNum;
         );
     }
 
-    public function staffNum(): ?string { return $this->staffNum; }
-    public function department(): ?string { return $this->department; }
-    public function team(): ?string { return $this->team; }
-    public function task(): ?string { return $this->task; }
-    public function position(): ?string { return $this->position; }
-
-    public function contractType(): ?string { return $this->contractType; }
-    public function apprentice(): ?string { return $this->apprentice; }
-    public function workForm(): ?string { return $this->workForm; }
-    public function laborForm(): ?string { return $this->laborForm; }
-
-    public function joinDate(): ?string { return $this->joinDate; }
-    public function resignDate(): ?string { return $this->resignDate; }
-
-    public function insurancesAcquisitionDate(): ?string { return $this->insurancesAcquisitionDate; }
-    public function insurancesLossDate(): ?string { return $this->insurancesLossDate; }
-
-    public function contractYn(): ?string { return $this->contractYn; }
-    public function staffCardYn(): ?string { return $this->staffCardYn; }
-    public function fieldworkYn(): ?string { return $this->fieldworkYn; }
-
-    public function toArray(): array
+    public function staffNum(): ?string
     {
-        return [
-            'staffNum' => $this->staffNum,
-            'department' => $this->department,
-            'team' => $this->team,
-            'task' => $this->task,
-            'position' => $this->position,
-            'contractType' => $this->contractType,
-            'apprentice' => $this->apprentice,
-            'workForm' => $this->workForm,
-            'laborForm' => $this->laborForm,
-            'joinDate' => $this->joinDate,
-            'resignDate' => $this->resignDate,
-            'insurancesAcquisitionDate' => $this->insurancesAcquisitionDate,
-            'insurancesLossDate' => $this->insurancesLossDate,
-            'contractYn' => $this->contractYn,
-            'staffCardYn' => $this->staffCardYn,
-            'fieldworkYn' => $this->fieldworkYn,
-        ];
+        return $this->staffNum;
+    }
+    public function department(): ?string
+    {
+        return $this->department;
+    }
+    public function team(): ?string
+    {
+        return $this->team;
+    }
+    public function task(): ?string
+    {
+        return $this->task;
+    }
+    public function position(): ?string
+    {
+        return $this->position;
+    }
+
+    public function contractType(): ?string
+    {
+        return $this->contractType;
+    }
+    public function apprentice(): ?string
+    {
+        return $this->apprentice;
+    }
+    public function workForm(): ?string
+    {
+        return $this->workForm;
+    }
+    public function laborForm(): ?string
+    {
+        return $this->laborForm;
+    }
+
+    public function joinDate(): ?string
+    {
+        return $this->joinDate;
+    }
+    public function resignDate(): ?string
+    {
+        return $this->resignDate;
+    }
+
+    public function insurancesAcquisitionDate(): ?string
+    {
+        return $this->insurancesAcquisitionDate;
+    }
+    public function insurancesLossDate(): ?string
+    {
+        return $this->insurancesLossDate;
+    }
+
+    public function contractYn(): ?string
+    {
+        return $this->contractYn;
+    }
+    public function staffCardYn(): ?string
+    {
+        return $this->staffCardYn;
+    }
+    public function fieldworkYn(): ?string
+    {
+        return $this->fieldworkYn;
     }
 }

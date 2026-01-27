@@ -57,10 +57,10 @@ final class ApiErrorCode
     // 403 Forbidden (권한/정책 위반: 로그인 여부와 무관하게 접근 금지)
 
     // 쿠키/헤더 불일치 or 누락
-    public const CSRF_FAILED = 40301; 
-    
+    public const CSRF_FAILED = 40301;
+
     // Origin/Referer 허용 실패(옵션)
-    public const CSRF_FORBIDDEN_ORIGIN = 40302; 
+    public const CSRF_FORBIDDEN_ORIGIN = 40302;
 
     //사용자 상태가 Normal이 아님(휴면/탈퇴/비활성 등 정책상 로그인/접근 불가)
     public const USER_NOT_ACTIVE = 40311;
@@ -71,17 +71,30 @@ final class ApiErrorCode
     //사용자 역할 목록이 비어있음(권한 설정 없음 → 접근 금지)
     public const USER_NO_ROLES = 40313;
 
-    public const FORBIDDEN_ALL_OF_ROLES = 40321; 
+    public const FORBIDDEN_ALL_OF_ROLES = 40321;
     public const FORBIDDEN_ANY_OF_ROLES = 40322;
 
     // --------------------------------------------------------------------
-    // 409 conflict (email 중복, 사번 중복, 업데이트 버전 충돌, 이미 존재/이미 처리됨)
+// 404 Not Found (요청한 리소스가 없음)
+    public const RESOURCE_NOT_FOUND = 40401;
+
+    // --------------------------------------------------------------------
+    // 409 conflict - DB/제약 충돌
     public const USER_EMAIL_CONFLICT = 40901;
+    public const DB_DUPLICATE_KEY = 40990;
+    public const DB_FOREIGN_KEY_CONSTRAINT = 40991;
 
     // --------------------------------------------------------------------
     // 500 Internal (서버 내부 오류: 프론트가 해결 불가, 재시도/에러 안내)
+    public const DB_WRITE_FAILED = 50010;
+    public const DB_QUERY_FAILED = 50011;
+    public const DB_INVALID_IDENTIFIER = 50012;
 
     // 알 수 없는 내부 오류(예상 못한 예외). 서버 로그 확인 필요
     public const INTERNAL_ERROR = 50000;
-    
+
+    public const DB_INSERT_FAILED = 50013;
+    public const DB_UPDATE_FAILED = 50014;
+    public const DB_DELETE_FAILED = 50015;
+
 }

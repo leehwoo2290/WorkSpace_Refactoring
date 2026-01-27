@@ -6,8 +6,8 @@ $config['jwt'] = [
     'refresh_secret' => getenv('JWT_REFRESH_SECRET') ?: 'CHANGE_ME_REFRESH_SECRET_32B_PLUS',
 
     // ms가 아니라 seconds로 관리(내부에서 ms로 바꾸지 않음)
-    'access_ttl'  => 30,//15 * 60,        // 15분
-    'refresh_ttl' => 90,//14 * 24 * 3600, // 14일 (firstIssuedAt 기준 고정)
+    'access_ttl'  => 10,//15 * 60,        // 15분
+    'refresh_ttl' => 14 * 24 * 3600, // 14일 (firstIssuedAt 기준 고정)
 
     // 웹 쿠키 옵션
     'cookie' => [

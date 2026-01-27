@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\user\dto\response;
+namespace App\license\dto\response;
 
-use App\user\dto\UserListLicenseFilterItem;
+use App\license\dto\UserListLicenseFilterItem;
 
 final class UserListLicenseFilterRes implements \JsonSerializable
 {

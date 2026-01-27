@@ -12,21 +12,22 @@ use App\auth\dto\request\UserLoginReq;
 class JwtController extends BASE_Controller
 {
 
+    /*
+     @Description
+     - [POST] /api/web/auth/login
+     - [POST] /api/app/auth/login
+     - Header(웹): X-CSRF-TOKEN: {csrfToken} (cookie: csrf_cookie)
+     - Header(Optional): X-Device-Id: {deviceId} (or cookie: _device)
+     - Body(JSON): UserLoginReq
+     - 성공: 201 Created (ApiResult::created)
+     - 실패: 400/401/403/500 (요청/인증/CSRF/서버)
+     */
     public function login()
     {
-        /*
-      @Description
-      - [POST] /api/web/auth/login
-      - 필요: X-CSRF-TOKEN 헤더 (= csrf_cookie 쿠키 값과 동일)
-      - Body(JSON): { "email": "...", "password": "..." }
-      - 성공: 201 Created (ApiResult::created)
-      - 실패: ApiResult::fail(에러코드, 메시지, httpStatus)
-        */
-
         try {
             $userLoginReq = $this->requestQueryDtoMapper->jsonRequestDto(UserLoginReq::class, true);
             $userLoginRes = $this->authModule->loginByCredentials($userLoginReq);
-
+             log_message('error', json_encode($userLoginRes, JSON_UNESCAPED_UNICODE));
             ApiResult::created($userLoginRes, UserLoginRes::class);
 
         } catch (\Throwable $e) {
@@ -35,15 +36,16 @@ class JwtController extends BASE_Controller
         }
     }
 
+    /*
+     @Description
+     - [GET] /api/web/auth/me
+     - [GET] /api/app/auth/me
+     - Header: Authorization: Bearer {accessToken}
+     - 성공: 200 OK (ApiResult::ok)
+     - 실패: 401/403/500 (인증/권한/서버)
+     */
     public function me()
     {
-        /*
-       @Description
-       - [GET] /api/web/auth/me
-       - 성공: 200 OK (ApiResult::ok)
-       - 인증: accessToken 쿠키 기반
-        */
-
         try {
             $userMeRes = $this->authModule->me();
 
@@ -56,20 +58,22 @@ class JwtController extends BASE_Controller
     }
 
 
+     /*
+     @Description
+     - [POST] /api/web/auth/refresh
+     - [POST] /api/app/auth/refresh
+     - [ANY] /api/jwt/refresh
+     - Header(웹): X-CSRF-TOKEN: {csrfToken} (cookie: csrf_cookie)
+     - RefreshToken: Cookie(웹)=refreshToken(HttpOnly) / Header(앱)=X-Refresh-Token
+     - Header(Optional): X-Device-Id: {deviceId} (or cookie: _device)
+     - 성공: 201 Created (ApiResult::created)
+     - 실패: 401/403/500 (인증/CSRF/서버)
+     */
     public function refresh()
     {
-        /*
-        @Description
-        - [POST] /api/web/auth/refresh
-        - 필요: X-CSRF-TOKEN 헤더 (= csrf_cookie 쿠키 값과 동일)
-        - 인증: refreshToken 쿠키 기반
-        - 성공: 201 Created (ApiResult::created)
-        */
-
         try {
             $jwtTokenRes = $this->authModule->refreshAccessToken();
-
-            //보안상 위험 때문에 refresh token은 노출하지 않는다. 현재는 테스트용
+           
             ApiResult::created($jwtTokenRes, JwtTokenRes::class);
 
         } catch (\Throwable $e) {
@@ -78,15 +82,19 @@ class JwtController extends BASE_Controller
         }
     }
 
+     /*
+     @Description
+     - [POST] /api/web/auth/logout
+     - [POST] /api/app/auth/logout
+     - [ANY] /api/jwt/logout
+     - Header(웹): X-CSRF-TOKEN: {csrfToken} (cookie: csrf_cookie)
+     - RefreshToken: Cookie(웹)=refreshToken(HttpOnly) / Header(앱)=X-Refresh-Token
+     - Header(Optional): X-Device-Id: {deviceId} (or cookie: _device)
+     - 성공: 204 No Content (ApiResult::none)
+     - 실패: 403/500 (CSRF/서버)
+     */
     public function logout()
     {
-        /*
-        @Description
-        - [POST] /api/web/auth/logout
-        - 필요: X-CSRF-TOKEN 헤더 (= csrf_cookie 쿠키 값과 동일)
-        - 성공: 204 No Content (ApiResult::none)
-        */
-
         try {
             $this->authModule->logout();
 

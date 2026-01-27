@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace App\userDetail\dto\request;
+
 final class UserCareerReq extends UserDetailBaseReq
 {
     private ?string $jobField;
@@ -29,13 +30,28 @@ final class UserCareerReq extends UserDetailBaseReq
 
     public static function fromArray(array $data): self
     {
+        $pre = self::pick($data, 'preJoinExperienceMonth', 'pre_join_experience_month');
+        $pre = is_array($pre) ? $pre : [];
+
+        // 1) 최상위 키 우선
+        $same = self::pick($data, 'industrySameMonth', 'industry_same_month');
+        $other = self::pick($data, 'industryOtherMonth', 'industry_other_month');
+
+        // 2) 없으면 preJoinExperienceMonth 안에서 찾기
+        if ($same === null) {
+            $same = self::pick($pre, 'industrySameMonth', 'industry_same_month');
+        }
+        if ($other === null) {
+            $other = self::pick($pre, 'industryOtherMonth', 'industry_other_month');
+        }
+
         return new self(
             self::toStrOrNull(self::pick($data, 'jobField', 'job_field')),
             self::toStrOrNull(self::pick($data, 'jobGrade', 'job_grade')),
             self::toStrOrNull(self::pick($data, 'certNum1', 'cert_num1')),
             self::toStrOrNull(self::pick($data, 'certNum2', 'cert_num2')),
-            self::toIntOrNull(self::pick($data, 'industrySameMonth', 'industry_same_month')),
-            self::toIntOrNull(self::pick($data, 'industryOtherMonth', 'industry_other_month')),
+            self::toIntOrNull($same),
+            self::toIntOrNull($other),
         );
     }
 
@@ -62,17 +78,5 @@ final class UserCareerReq extends UserDetailBaseReq
     public function industryOtherMonth(): ?int
     {
         return $this->industryOtherMonth;
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'jobField' => $this->jobField,
-            'jobGrade' => $this->jobGrade,
-            'certNum1' => $this->certNum1,
-            'certNum2' => $this->certNum2,
-            'industrySameMonth' => $this->industrySameMonth,
-            'industryOtherMonth' => $this->industryOtherMonth,
-        ];
     }
 }

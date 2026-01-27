@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\user\entity;
 
+use App\common\repository\WritePayloadBuilder;
 use DateTimeImmutable;
 
 final class UserLoginLogEntity
@@ -48,6 +49,40 @@ final class UserLoginLogEntity
         $this->deviceId = $deviceId;
     }
 
+     public function toDbPayload(WritePayloadBuilder $builder): array
+    {
+        return $builder->build([
+            'email'       => $this->email,
+            'passwd'      => $this->passwd,
+            'success'     => $this->success,
+            'domain'      => $this->domain,
+            'ipAddr'      => $this->ipAddr,
+            'userAgent'   => $this->userAgent,
+            'countryCode' => $this->countryCode,
+            'language'    => $this->language,
+            'isMobile'    => $this->isMobile,
+            'deviceId'    => $this->deviceId,
+            'regTime'     => $this->regTime,
+        ], [
+            'email'       => ['col' => 'email'],
+            'passwd'      => ['col' => 'passwd'],
+            'success'     => ['col' => 'success'],
+            'domain'      => ['col' => 'domain'],
+            'ipAddr'      => ['col' => 'ip_addr'],
+            'userAgent'   => ['col' => 'user_agent'],
+            'countryCode' => ['col' => 'country_code'],
+            'language'    => ['col' => 'language'],
+            'isMobile'    => ['col' => 'is_mobile'],
+            'deviceId'    => ['col' => 'device_id'],
+            'regTime'     => [
+                'col' => 'reg_time',
+                'transform' => static function ($v) {
+                    if ($v instanceof DateTimeImmutable) return $v->format('Y-m-d H:i:s');
+                    return null;
+                },
+            ],
+        ]);
+    }
     // getters
     public function seq(): ?int { return $this->seq; }
     public function email(): string { return $this->email; }

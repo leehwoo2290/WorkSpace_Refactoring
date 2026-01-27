@@ -9,8 +9,8 @@ final class UserLoginRes implements \JsonSerializable
     private ?string $name;
     /** @var string[] */
     private array $roles;
-
     private string $status;
+    private int $licenseSeq;
     private bool $pwResetRequired;
     private JwtTokenRes $jwtTokenRes;       //로그인 시 프론트 accesstoken 세팅에 필요
 
@@ -23,6 +23,7 @@ final class UserLoginRes implements \JsonSerializable
         ?string $name,
         array $roles,
         string $status,
+        int $licenseSeq,
         bool $pwResetRequired,
         JwtTokenRes $jwtTokenRes
     ) {
@@ -31,6 +32,7 @@ final class UserLoginRes implements \JsonSerializable
         $this->name = $name;
         $this->roles = $roles;
         $this->status = $status;
+        $this->licenseSeq = $licenseSeq;
         $this->pwResetRequired = $pwResetRequired;
         $this->jwtTokenRes = $jwtTokenRes;
     }
@@ -43,6 +45,7 @@ final class UserLoginRes implements \JsonSerializable
             'name' => $this->name,
             'roles' => $this->roles,
             'status' => $this->status,
+            'licenseSeq' => $this->licenseSeq,
             'pwResetRequired' => $this->pwResetRequired,
             'jwtTokenRes' => $this->jwtTokenRes,
         ];

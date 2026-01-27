@@ -10,7 +10,6 @@ use App\user\dto\query\UserLoginLogListQuery;
 use App\user\dto\response\UserListRes;
 use App\user\dto\query\UserListQuery;
 
-use App\user\dto\response\UserListLicenseFilterRes;
 use App\user\dto\request\UserAddReq;
 
 class UserController extends BASE_Controller
@@ -24,23 +23,16 @@ class UserController extends BASE_Controller
         $this->load->library('UserModule', null, 'userModule');
     }
 
+    /*
+     @Description
+     - [GET] /api/web/audit/users
+     - Header: Authorization: Bearer {accessToken}
+     - Query: UserListQuery (query string)
+     - 성공: 200 OK (ApiResult::ok)
+     - 실패: 401/403/500 (인증/권한/서버)
+     */
     public function list()
     {
-        /*
-        @Description
-        - [GET] /api/web/audit/users
-        - Header: Authorization: Bearer {accessToken}
-        - Query:
-        - page: int (default 1)
-        - size: int (default 20)
-        - searchKeyword: string (이름/이메일/사번 부분검색)
-        - role: '' | 'User' | 'Staff' | 'Manager' | 'Admin' | 'SuperAdmin'
-        - status: '' | 'Pending' | 'Normal' | 'Quit'
-        - engineerYn: '' | 'Y' | 'N'
-        - 성공: 200 OK (ApiResult::ok)
-        - 실패: 401/403 (권한/인증)
-        */
-
         try {
             $userListQuery = $this->requestQueryDtoMapper->queryRequestDto(UserListQuery::class);
             $userListRes = $this->userModule->userList($userListQuery);
@@ -53,23 +45,16 @@ class UserController extends BASE_Controller
         }
     }
 
+    /*
+    @Description
+    - [GET] /api/web/audit/login-logs
+    - Header: Authorization: Bearer {accessToken}
+    - Query: UserLoginLogListQuery (query string)
+    - 성공: 200 OK (ApiResult::ok)
+    - 실패: 401/403/500 (인증/권한/서버)
+    */
     public function logList()
     {
-        /*
-        @Description
-        - [GET] /api/web/audit/login-logs
-        - Header: Authorization: Bearer {accessToken}
-        - Query:
-          - page: int (default 1)
-          - size: int (default 20)
-          - email: string (부분검색)
-          - success: '' | 'Y' | 'N'
-          - from: YYYY-MM-DD
-          - to: YYYY-MM-DD
-        - 성공: 200 OK (ApiResult::ok)
-        - 실패: 401/403 (권한/인증)
-        */
-
         try {
             $userLoginLogListReq = $this->requestQueryDtoMapper->queryRequestDto(UserLoginLogListQuery::class);
             $userLoginLogListRes = $this->userModule->logList($userLoginLogListReq);
@@ -82,38 +67,21 @@ class UserController extends BASE_Controller
         }
     }
 
-      public function licenseFilter()
-    {
-        try {
-            $userListLicenseFilterRes = $this->userModule->licenseFilter();
-
-            ApiResult::ok($userListLicenseFilterRes, UserListLicenseFilterRes::class);
-
-        } catch (\Throwable $e) {
-
-            ApiResult::failThrowable($e, $e->getMessage());
-        }
-    }
-
+     /*
+     @Description
+     - [POST] /api/web/user
+     - Header: Authorization: Bearer {accessToken}
+     - Header: X-CSRF-TOKEN: {csrfToken} (cookie: csrf_cookie)
+     - Body(JSON): UserAddReq
+     - 성공: 204 No Content (ApiResult::none)
+     - 실패: 400/401/403/409/500 (요청/인증/CSRF/중복/서버)
+     */
     public function add()
     {
-        /*
-        @Description
-        - [POST] /api/web/users
-        - Header: Authorization: Bearer {accessToken}
-        - Body:
-        - name: string
-        - email: string
-        - role: string
-        - license_seq: int
-        - status: string
-        - 성공: 204 OK (ApiResult::ok)
-        - 실패: 400/401/403/409 (권한/인증/중복)
-        */
-
         try {
             $addUserReq = $this->requestQueryDtoMapper->jsonRequestDto(UserAddReq::class);
-            $userId = $this->userModule->addUser($addUserReq);
+            //$userId = $this->userModule->addUser($addUserReq);
+            $this->userModule->addUser($addUserReq);
 
             ApiResult::none();
 

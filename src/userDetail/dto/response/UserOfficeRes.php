@@ -11,10 +11,10 @@ final class UserOfficeRes implements \JsonSerializable
     public ?string $departmentName = null;  // join: department.name as department
 
     //public ?int $teamSeq = null;            // office.team_seq
-    public ?string $teamName = null;        
+   // public ?string $teamName = null;        
 
     //public ?int $taskSeq = null;            // office.task_seq
-    public ?string $taskName = null;       
+    //public ?string $taskName = null;       
 
     //public ?int $positionSeq = null;        // office.position_seq
     public ?string $positionName = null;   
@@ -49,8 +49,6 @@ final class UserOfficeRes implements \JsonSerializable
             // 'position'   => ['seq' => $this->positionSeq,   'name' => $this->positionName],
 
             'department' => $this->departmentName,
-            'team'   => $this->teamName,
-            'task'     => $this->taskName,
             'position'    => $this->positionName,
 
             'contractType' => $this->contractType,

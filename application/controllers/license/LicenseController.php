@@ -5,7 +5,7 @@ use App\common\ApiResult;
 use App\license\dto\query\LicenseListQuery;
 use App\license\dto\response\LicenseListRes;
 
-use App\license\dto\requet\LicenseCreateReq;
+use App\license\dto\response\UserListLicenseFilterRes;
 
 class LicenseController extends BASE_Controller
 {
@@ -18,20 +18,17 @@ class LicenseController extends BASE_Controller
         $this->load->library('LicenseModule', null, 'licenseModule');
     }
 
+    /*
+     @Description
+     - [GET] /api/web/audit/licenses
+     - Header: Authorization: Bearer {accessToken}
+     - Query: LicenseListQuery (query string)
+     - Response: LicenseListRes
+     - 성공: 200 OK (ApiResult::ok)
+     - 실패: 401/403/500 (인증/권한/서버)
+     */
     public function list()
     {
-        /*
-        @Description 
-        - [GET] /api/web/audit/licenses
-        - Header: Authorization: Bearer {accessToken}
-        - Query:
-        - page: int (default 1)
-        - size: int (default 20)
-        - searchKeyword: string (업체명/사업자번호/대표자명 부분검색)
-        - 성공: 200 OK (ApiResult::ok)
-        - 실패: 401/403 (권한/인증)
-        */
-
         try {
             $licenseListQuery = $this->requestQueryDtoMapper->queryRequestDto(LicenseListQuery::class);
             $licenseListRes = $this->licenseModule->list($licenseListQuery);
@@ -44,16 +41,36 @@ class LicenseController extends BASE_Controller
         }
     }
 
-    public function create()
+    /*
+  @Description
+  - [GET] /api/web/users/licenseFilter
+  - Header: Authorization: Bearer {accessToken}
+  - 성공: 200 OK (ApiResult::ok)
+  - 실패: 401/403/500 (인증/권한/서버)
+  */
+    public function licenseFilter()
     {
         try {
-            $licenseCreateReq = $this->requestQueryDtoMapper->jsonRequestDto(LicenseCreateReq::class);
+            $userListLicenseFilterRes = $this->licenseModule->licenseFilter();
 
-            ApiResult::none();
+            ApiResult::ok($userListLicenseFilterRes, UserListLicenseFilterRes::class);
 
         } catch (\Throwable $e) {
 
             ApiResult::failThrowable($e, $e->getMessage());
         }
     }
+
+    // public function create()
+    // {
+    //     try {
+    //         $licenseCreateReq = $this->requestQueryDtoMapper->jsonRequestDto(LicenseCreateReq::class);
+
+    //         ApiResult::none();
+
+    //     } catch (\Throwable $e) {
+
+    //         ApiResult::failThrowable($e, $e->getMessage());
+    //     }
+    // }
 }
