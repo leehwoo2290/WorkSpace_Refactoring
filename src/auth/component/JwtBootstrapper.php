@@ -6,7 +6,7 @@ namespace App\auth\component;
 use App\auth\repository\UserRoleRepository;
 use App\auth\service\JwtService;
 use App\auth\component\TokenTransport;
-use App\user\component\UserContext;
+use App\user\common\UserContext;
 
 final class JwtBootstrapper
 {

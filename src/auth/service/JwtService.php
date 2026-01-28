@@ -5,16 +5,16 @@ namespace App\auth\service;
 
 use App\auth\component\JwtManager;
 use App\auth\component\TokenTransport;
-use App\user\component\UserContext;
+use App\user\common\UserContext;
 use App\auth\component\JwtBootstrapper;
 use App\auth\dto\JwtTokenPair;
 use App\auth\entity\RefreshTokenEntity;
 use App\auth\component\RefreshTokenHasher;
-use App\user\component\UserLoginLogRecoder;
+use App\loginLog\component\UserLoginLogRecoder;
 use App\auth\repository\RefreshTokenRepository;
 use App\auth\repository\UserRoleRepository;
 use App\auth\repository\UserAuthRepository;
-use App\user\repository\UserLoginLogRepository;
+use App\loginLog\repository\UserLoginLogRepository;
 use App\auth\dto\request\UserLoginReq;
 use App\auth\dto\response\UserLoginRes;
 use App\auth\dto\response\UserMeRes;
@@ -87,7 +87,7 @@ final class JwtService
     {
         $user = $this->userAuthRepository->findByEmail($userLoginReq->email());
         $deviceId = $this->tokenTransport->getDeviceId();
-
+ log_message('error', 'loginByCredentials1' . json_encode($userLoginReq, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         try {
             if (!$user)
                 throw ApiException::unauthorized('USER_NOT_FOUND', ApiErrorCode::USER_NOT_FOUND);

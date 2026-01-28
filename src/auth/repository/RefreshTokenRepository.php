@@ -7,6 +7,7 @@ use App\auth\entity\RefreshTokenEntity;
 
 use App\common\repository\BaseRepository;
 use App\common\repository\WritePayloadBuilder;
+use App\common\ExceptionErrorCode\ApiErrorCode;
 
 use DateTimeImmutable;
 
@@ -34,8 +35,9 @@ final class RefreshTokenRepository extends BaseRepository
 
     public function findByTokenIdForUpdate(string $tokenId): ?RefreshTokenEntity
     {
+        // CI3 QueryBuilder로는 FOR UPDATE를 깔끔하게 붙이기 어려워 raw SQL 사용
         $sql = "SELECT * FROM {$this->table} WHERE token_id = ? FOR UPDATE";
-        $q = $this->queryWith($sql, [$tokenId]);
+        $q = $this->queryOrThrow($sql, [$tokenId]);
 
         if ($q->num_rows() <= 0) {
             return null;
@@ -59,10 +61,26 @@ final class RefreshTokenRepository extends BaseRepository
         );
     }
 
+    // public function insert(RefreshTokenEntity $token): int
+    // {
+    //     $builder = new WritePayloadBuilder();
+    //     $data = $token->toDbPayload($builder);
+
+    //     return $this->insertOrThrow($this->table, $data);
+    // }
     public function insert(RefreshTokenEntity $token): int
     {
-        $builder = new WritePayloadBuilder();
-        $data = $token->toDbPayload($builder);
+        $data = [
+            'user_seq' => $token->getUserSeq(),
+            'token_id' => $token->getTokenId(),
+            'hashed_token' => $token->getHashedToken(),
+            'token_version' => $token->getTokenVersion(),
+            'first_issued_at' => $token->getFirstIssuedAt()->format('Y-m-d H:i:s'),
+            'expires_date' => $token->getExpiresAt()->format('Y-m-d H:i:s'),
+            'replaced_date' => null,
+            'device_id' => $token->getDeviceId(),
+            'reg_time' => date('Y-m-d H:i:s'),
+        ];
 
         return $this->insertOrThrow($this->table, $data);
     }
@@ -137,14 +155,19 @@ final class RefreshTokenRepository extends BaseRepository
         // 안전장치: LIMIT 0이면 아무 것도 안 지우니 최소 1로
         $limit = max(1, $limit);
 
+        // CI3 QB delete+limit 조합이 DB/버전에 따라 애매해서 raw SQL로 고정
         $sql = "DELETE FROM {$this->table}
-            WHERE expires_date < NOW()
-               OR (replaced_date IS NOT NULL AND replaced_date < DATE_SUB(NOW(), INTERVAL ? DAY))
-            LIMIT ?";
+        WHERE expires_date < NOW()
+           OR (replaced_date IS NOT NULL AND replaced_date < DATE_SUB(NOW(), INTERVAL ? DAY))
+        LIMIT ?";
 
-        // BaseRepository::queryWith() 내부에서 resetQuery()를 강제함
-        $this->queryWith($sql, [$retention, $limit]);
-
-        return (int) $this->db->affected_rows();
+        return $this->execOrThrow(
+            $sql,
+            [$retention, $limit],
+            null,
+            null,
+            'DB_DELETE_FAILED',
+            ApiErrorCode::DB_DELETE_FAILED
+        );
     }
 }

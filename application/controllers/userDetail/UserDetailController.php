@@ -2,20 +2,20 @@
 
 use App\common\ApiResult;
 
-use App\userDetail\dto\response\UserDetailRes;
-use App\userDetail\dto\query\UserDetailQuery;
+use App\user\detail\dto\response\UserDetailRes;
+use App\user\detail\dto\query\UserDetailQuery;
 
-use App\userDetail\dto\response\UserBasicRes;
-use App\userDetail\dto\response\UserPrivacyRes;
-use App\userDetail\dto\response\UserOfficeRes;
-use App\userDetail\dto\response\UserEtcRes;
-use App\userDetail\dto\response\UserCareerRes;
+use App\user\detail\dto\response\UserBasicRes;
+use App\user\detail\dto\response\UserPrivacyRes;
+use App\user\detail\dto\response\UserOfficeRes;
+use App\user\detail\dto\response\UserEtcRes;
+use App\user\detail\dto\response\UserCareerRes;
 
-use App\userDetail\dto\request\UserBasicReq;
-use App\userDetail\dto\request\UserPrivacyReq;
-use App\userDetail\dto\request\UserOfficeReq;
-use App\userDetail\dto\request\UserEtcReq;
-use App\userDetail\dto\request\UserCareerReq;
+use App\user\detail\dto\request\UserBasicReq;
+use App\user\detail\dto\request\UserPrivacyReq;
+use App\user\detail\dto\request\UserOfficeReq;
+use App\user\detail\dto\request\UserEtcReq;
+use App\user\detail\dto\request\UserCareerReq;
 
 class UserDetailController extends BASE_Controller
 {

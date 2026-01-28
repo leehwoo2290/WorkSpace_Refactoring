@@ -91,6 +91,10 @@ $route['api/web/licenses']['get'] = 'license/LicenseController/list';
 // User licenses filter API routes
 $route['api/web/licenseFilter']['get'] = 'license/LicenseController/licenseFilter';
 
+
+// SafetyProject API routes
+$route['api/web/safety']['get'] = 'safety/SafetyProjectController/list';
+
 //---------------------------------------------------------------------------------------------
 $route['api/app/auth/login']['post']   = 'auth/JwtController/login';
 $route['api/app/auth/me']['get']      = 'auth/JwtController/me';

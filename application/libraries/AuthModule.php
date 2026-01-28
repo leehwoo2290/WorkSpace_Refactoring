@@ -7,7 +7,7 @@ use App\auth\component\JwtManager;
 
 use App\auth\component\RefreshTokenHasher;
 use App\auth\component\TokenTransport;
-use App\user\component\UserContext;
+use App\user\common\UserContext;
 use App\auth\dto\response\JwtTokenRes;
 use App\auth\dto\request\UserLoginReq;
 use App\auth\dto\response\UserLoginRes;
@@ -15,7 +15,7 @@ use App\auth\dto\response\UserMeRes;
 use App\auth\repository\UserRoleRepository;
 use App\auth\repository\UserAuthRepository;
 use App\auth\repository\RefreshTokenRepository;
-use App\user\repository\UserLoginLogRepository;
+use App\loginLog\repository\UserLoginLogRepository;
 
 use App\common\db\DbTransactionRunner;
 
@@ -110,6 +110,7 @@ class AuthModule
 
     public function loginByCredentials(UserLoginReq $userLoginReq): UserLoginRes
     {
+         log_message('error', 'loginByCredentials0' . json_encode($userLoginReq, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         return $this->jwtService->loginByCredentials($userLoginReq);
     }
 

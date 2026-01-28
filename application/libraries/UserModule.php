@@ -2,39 +2,39 @@
 
 
 
-use App\user\dto\response\UserLoginLogListRes;
-use App\user\dto\query\UserLoginLogListQuery;
+use App\loginLog\dto\response\UserLoginLogListRes;
+use App\loginLog\dto\query\UserLoginLogListQuery;
 
-use App\user\dto\response\UserListRes;
-use App\user\dto\query\UserListQuery;
+use App\user\getList\dto\response\UserListRes;
+use App\user\getList\dto\query\UserListQuery;
 
-use App\userDetail\dto\query\UserDetailQuery;
-use App\userDetail\dto\response\UserDetailRes;
+use App\user\detail\dto\query\UserDetailQuery;
+use App\user\detail\dto\response\UserDetailRes;
 
-use App\userDetail\dto\response\UserBasicRes;
+use App\user\detail\dto\response\UserBasicRes;
 
-use App\userDetail\dto\response\UserPrivacyRes;
+use App\user\detail\dto\response\UserPrivacyRes;
 
-use App\userDetail\dto\response\UserOfficeRes;
+use App\user\detail\dto\response\UserOfficeRes;
 
-use App\userDetail\dto\response\UserEtcRes;
+use App\user\detail\dto\response\UserEtcRes;
 
-use App\userDetail\dto\response\UserCareerRes;
+use App\user\detail\dto\response\UserCareerRes;
 
 
-use App\user\service\UserService;
-use App\userDetail\service\UserDetailService;
+use App\user\common\service\UserService;
+use App\user\detail\service\UserDetailService;
 
-use App\user\repository\UserLoginLogRepository;
-use App\user\repository\UserRepository;
-use App\userDetail\repository\UserDetailRepository;
+use App\loginLog\repository\UserLoginLogRepository;
+use App\user\common\repository\UserRepository;
+use App\user\detail\repository\UserDetailRepository;
 
-use App\userDetail\dto\request\UserBasicReq;
-use App\userDetail\dto\request\UserPrivacyReq;
-use App\userDetail\dto\request\UserOfficeReq;
-use App\userDetail\dto\request\UserEtcReq;
-use App\userDetail\dto\request\UserCareerReq;
-use App\user\dto\request\UserAddReq;
+use App\user\detail\dto\request\UserBasicReq;
+use App\user\detail\dto\request\UserPrivacyReq;
+use App\user\detail\dto\request\UserOfficeReq;
+use App\user\detail\dto\request\UserEtcReq;
+use App\user\detail\dto\request\UserCareerReq;
+use App\user\add\dto\request\UserAddReq;
 
 use App\common\db\DbTransactionRunner;
 

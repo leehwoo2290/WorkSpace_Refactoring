@@ -38,14 +38,16 @@ final class FilterManager
     public function likeAny(array $cols, $rawKeyword): void
     {
         $q = $this->norm($rawKeyword);
-        if ($q === '' || empty($cols)) return;
+        if ($q === '' || empty($cols))
+            return;
 
         $this->db->group_start();
         $first = true;
 
         foreach ($cols as $col) {
             $col = trim((string) $col);
-            if ($col === '') continue;
+            if ($col === '')
+                continue;
 
             if ($first) {
                 $this->db->like($col, $q);
@@ -62,7 +64,8 @@ final class FilterManager
     public function whereEq(string $col, $raw): void
     {
         $v = $this->norm($raw);
-        if ($v === '') return;
+        if ($v === '')
+            return;
 
         $this->db->where($col, $v);
     }
@@ -71,7 +74,8 @@ final class FilterManager
     public function whereEqInt(string $col, $raw): void
     {
         $v = $this->norm($raw);
-        if ($v === '' || !ctype_digit($v)) return;
+        if ($v === '' || !ctype_digit($v))
+            return;
 
         $this->db->where($col, (int) $v);
     }
@@ -84,10 +88,12 @@ final class FilterManager
     public function whereEnum(string $col, array $maps, string $mapKey, $raw, bool $strict = true): void
     {
         $v = $this->norm($raw);
-        if ($v === '') return;
+        if ($v === '')
+            return;
 
         $mapped = QueryEnumMapper::map($maps, $mapKey, $v, $strict);
-        if (trim((string) $mapped) === '') return;
+        if (trim((string) $mapped) === '')
+            return;
 
         $this->db->where($col, $mapped);
     }
@@ -116,7 +122,8 @@ final class FilterManager
     public function whereMonth(string $dateCol, $month): void
     {
         $m = (int) $month;
-        if ($m < 1 || $m > 12) return;
+        if ($m < 1 || $m > 12)
+            return;
 
         $expr = 'MONTH(' . $dateCol . ') = ' . $m;
         $this->db->where($expr, null, false);
@@ -130,11 +137,58 @@ final class FilterManager
     public function whereCareerYearsGte(string $joinDateCol, string $resignDateCol, $years): void
     {
         $y = (int) $years;
-        if ($y < 0) return;
+        if ($y < 0)
+            return;
 
         $expr =
             'TIMESTAMPDIFF(YEAR, ' . $joinDateCol . ', IFNULL(' . $resignDateCol . ', CURDATE())) >= ' . $y;
 
         $this->db->where($expr, null, false);
     }
+
+    /**
+     * enum 매핑 후 likeAny 적용
+     * - 예: region 값(enum or 문자열)을 addr/sido/sigungu LIKE 검색에 사용
+     */
+    public function likeAnyEnum(array $cols, array $maps, string $mapKey, $raw, bool $strict = false): void
+    {
+        $v = $this->norm($raw);
+        if ($v === '' || empty($cols))
+            return;
+
+        $mapped = QueryEnumMapper::map($maps, $mapKey, $v, $strict);
+        if (trim((string) $mapped) === '')
+            return;
+
+        $this->likeAny($cols, $mapped);
+    }
+
+    /**
+     * 숫자면 ID 컬럼(where = int), 아니면 enum 매핑 후 name 컬럼(where =)
+     * - 예: department/position 필터(숫자면 seq, 문자열이면 enum→한글명 매핑 후 d.name/p.name 비교)
+     */
+    public function whereIdOrMappedName(
+        string $idCol,
+        string $nameCol,
+        array $maps,
+        string $mapKey,
+        $raw,
+        bool $strict = false
+    ): void {
+        $v = $this->norm($raw);
+        if ($v === '')
+            return;
+
+        if (ctype_digit($v)) {
+            $this->db->where($idCol, (int) $v);
+            return;
+        }
+
+        $mapped = QueryEnumMapper::map($maps, $mapKey, $v, $strict);
+        if (trim((string) $mapped) === '')
+            return;
+
+        $this->db->where($nameCol, $mapped);
+    }
+
 }

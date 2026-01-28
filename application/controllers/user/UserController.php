@@ -4,13 +4,13 @@
 
 use App\common\ApiResult;
 
-use App\user\dto\response\UserLoginLogListRes;
-use App\user\dto\query\UserLoginLogListQuery;
+use App\loginLog\dto\response\UserLoginLogListRes;
+use App\loginLog\dto\query\UserLoginLogListQuery;
 
-use App\user\dto\response\UserListRes;
-use App\user\dto\query\UserListQuery;
+use App\user\getList\dto\response\UserListRes;
+use App\user\getList\dto\query\UserListQuery;
 
-use App\user\dto\request\UserAddReq;
+use App\user\add\dto\request\UserAddReq;
 
 class UserController extends BASE_Controller
 {

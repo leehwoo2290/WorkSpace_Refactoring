@@ -40,11 +40,11 @@ abstract class BaseRepository
     }
 
     /**
-     * Read helper
+     * 조회(SELECT) 공통 래퍼
      *
-     * - 모든 SELECT 계열에서도 resetQuery()를 강제해서 Query Builder 누적을 방지
-     * - build() 안에서 select/from/join/where/limit 등을 구성하고,
-     *   마지막에는 get()->row()를 호출할 수 있는 상태로 만들어야 함.
+     * - 모든 SELECT 계열에서 resetQuery()를 강제해 Query Builder 상태 누적을 방지
+     * - $build() 안에서 select/from/join/where/limit 등을 구성하고,
+     *   마지막에 get()->row()가 가능한 상태로 만들면 됨
      *
      * @param callable():void $build
      */
@@ -78,19 +78,6 @@ abstract class BaseRepository
         $build();
 
         return (bool) $this->db->get()->row();
-    }
-
-    /**
-     * Raw query helper
-     * - SELECT ... FOR UPDATE 같은 Query Builder로 만들기 까다로운 쿼리에서 사용
-     *
-     * @param mixed[] $binds
-     * @return mixed CI_DB_result
-     */
-    protected function queryWith(string $sql, array $binds = [])
-    {
-        $this->resetQuery();
-        return $this->db->query($sql, $binds);
     }
 
     /** @param callable():mixed $fn */
@@ -182,22 +169,29 @@ abstract class BaseRepository
     /**
      * user_seq UNIQUE/PK 기준 upsert
      * - $data: user_seq 제외한 나머지 컬럼=>값
-     * 값이 없을때도 있음 ex) 최초의 경우 아직 userDetailPrivacy 생성전이라 없는경우
+     * - 값이 없을 때도 있음(예: 최초에는 detail row를 아직 안 만들었거나, 실제로 업데이트할 값이 없음)
+     *
+     * 규칙:
+     * - raw write는 execOrThrow()로만 실행해서 “조용히 실패”를 원천 차단
+     * - DB 에러(중복키/외래키 포함)는 throwDbWriteException 규칙을 그대로 따름
      */
     public function upsertByUserSeq(string $table, int $userSeq, array $data): void
     {
-        // 1) 업데이트할 게 없으면 아무 것도 안 함
+        // 1) 업데이트할 게 없으면 아무 것도 안 함(기존 동작 유지)
         if (empty($data)) {
             return;
         }
 
-        // 2) Query Builder 상태 누적 방지
-        $this->resetQuery();
-
+        // 테이블/컬럼명 안전성 확보
         $this->assertIdent($table);
 
         // user_seq는 인자로 받은 userSeq만 신뢰
         unset($data['user_seq']);
+
+        // user_seq 외에 실제 컬럼이 하나도 없으면 upsert 의미가 없으니 종료
+        if (empty($data)) {
+            return;
+        }
 
         // 컬럼 구성: user_seq + data keys
         $cols = array_merge(['user_seq'], array_keys($data));
@@ -221,7 +215,6 @@ abstract class BaseRepository
 
         // 업데이트 컬럼이 0개면 upsert SQL이 깨지므로 방지
         if (empty($updates)) {
-            // 사실상 "row가 없으면 insert만" 이지만, 요구가 없으니 그냥 종료(무해)
             return;
         }
 
@@ -232,37 +225,22 @@ abstract class BaseRepository
             "VALUES ({$placeholders}) " .
             "ON DUPLICATE KEY UPDATE " . implode(', ', $updates);
 
-        $this->db->query($sql, $binds);
+        // 중복키(1062)가 “다른 UNIQUE 컬럼 충돌”로도 발생할 수 있으니 메시지에 테이블을 포함
+        $dupCode = defined(ApiErrorCode::class . '::DB_DUPLICATE_KEY')
+            ? ApiErrorCode::DB_DUPLICATE_KEY
+            : ApiErrorCode::INTERNAL_ERROR;
 
-        $err = $this->db->error();
-        $code = (int) ($err['code'] ?? 0);
-
-        if ($code !== 0) {
-            // 1062: duplicate key → 409로 승격 가능
-            if ($code === 1062) {
-                throw ApiException::conflict(
-                    "DB_DUPLICATE_KEY: {$table}",
-                    defined(ApiErrorCode::class . '::DB_DUPLICATE_KEY') ? ApiErrorCode::DB_DUPLICATE_KEY : ApiErrorCode::INTERNAL_ERROR,
-                    $err
-                );
-            }
-
-            // 1451/1452: FK constraint
-            if ($code === 1451 || $code === 1452) {
-                throw ApiException::conflict(
-                    "DB_FOREIGN_KEY_CONSTRAINT: {$table}",
-                    defined(ApiErrorCode::class . '::DB_FOREIGN_KEY_CONSTRAINT') ? ApiErrorCode::DB_FOREIGN_KEY_CONSTRAINT : ApiErrorCode::INTERNAL_ERROR,
-                    $err
-                );
-            }
-
-            throw ApiException::internal(
-                "DB_UPSERT_FAILED: {$table} code={$code}",
-                defined(ApiErrorCode::class . '::DB_WRITE_FAILED') ? ApiErrorCode::DB_WRITE_FAILED : ApiErrorCode::INTERNAL_ERROR,
-                $err
-            );
-        }
+        // execOrThrow()가 resetQuery + error 검사 + 표준 예외 처리까지 전부 담당
+        $this->execOrThrow(
+            $sql,
+            $binds,
+            "DB_DUPLICATE_KEY: {$table}",
+            $dupCode,
+            "DB_UPSERT_FAILED: {$table}",
+            defined(ApiErrorCode::class . '::DB_WRITE_FAILED') ? ApiErrorCode::DB_WRITE_FAILED : ApiErrorCode::INTERNAL_ERROR
+        );
     }
+
 
     //영숫자/언더스코어만 허용해서 위험한 문자 차단
     protected function assertIdent(string $name): void
@@ -379,7 +357,7 @@ abstract class BaseRepository
         });
     }
 
-    /** Row preset helper (array) */
+    /** RowPreset 단건 조회 helper (row_array 반환) */
     protected function rowArrayByPreset(RowPresetInterface $preset, $query): ?array
     {
         return $this->rowArrayWith(function () use ($preset, $query): void {
@@ -395,7 +373,7 @@ abstract class BaseRepository
         });
     }
 
-    /** Exists preset helper */
+    /** RowPreset 존재 여부 helper */
     protected function existsByPreset(RowPresetInterface $preset, $query): bool
     {
         return $this->existsWith(function () use ($preset, $query): void {
@@ -405,6 +383,61 @@ abstract class BaseRepository
             $preset->applyWhere($this->db, $query);
 
             $this->db->limit(1);
+        });
+    }
+
+    /**
+     * Raw SQL 조회(SELECT) 실행 래퍼 (예외 표준화)
+     *
+     * - resetQuery()를 강제해 Query Builder 상태 누적을 방지
+     * - $this->db->error()를 확인해, 실패 시 ApiException으로 통일해서 던짐
+     *
+     * @return mixed CI_DB_result
+     */
+    protected function queryOrThrow(
+        string $sql,
+        array $binds = [],
+        string $failMessage = 'DB_QUERY_FAILED',
+        int $failErrorCode = ApiErrorCode::DB_QUERY_FAILED
+    ) {
+        $this->resetQuery();
+
+        $q = $this->db->query($sql, $binds);
+
+        $err = (array) $this->db->error();
+        if ($q === false || (int) ($err['code'] ?? 0) !== 0) {
+            throw ApiException::internal($failMessage, $failErrorCode, $err);
+        }
+
+        return $q;
+    }
+
+    /**
+     * Raw SQL 쓰기(INSERT/UPDATE/DELETE) 실행 래퍼 (예외 표준화)
+     *
+     * - resetQuery()를 강제해 Query Builder 상태 누적을 방지
+     * - $this->db->error()를 확인해, 실패 시 throwDbWriteException() 경유로 예외를 통일
+     *   (중복키/외래키 등도 insertOrThrow/updateOrThrow와 동일한 규칙)
+     * - 성공 시 affected_rows()를 반환
+     */
+
+    protected function execOrThrow(
+        string $sql,
+        array $binds = [],
+        ?string $dupMessage = null,
+        ?int $dupErrorCode = null,
+        string $failMessage = 'DB_WRITE_FAILED',
+        int $failErrorCode = ApiErrorCode::DB_WRITE_FAILED
+    ): int {
+        return (int) $this->writeWith(function () use ($sql, $binds, $dupMessage, $dupErrorCode, $failMessage, $failErrorCode): int {
+            $q = $this->db->query($sql, $binds);
+
+            $err = (array) $this->db->error();
+            if ($q === false || (int) ($err['code'] ?? 0) !== 0) {
+                $this->throwDbWriteException($failMessage, $failErrorCode, $err, $dupMessage, $dupErrorCode);
+            }
+
+            return (int) $this->db->affected_rows();
         });
     }
 }

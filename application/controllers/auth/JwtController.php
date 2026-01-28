@@ -25,6 +25,7 @@ class JwtController extends BASE_Controller
     public function login()
     {
         try {
+            log_message('error', 'loginloginlogin');
             $userLoginReq = $this->requestQueryDtoMapper->jsonRequestDto(UserLoginReq::class, true);
             $userLoginRes = $this->authModule->loginByCredentials($userLoginReq);
              log_message('error', json_encode($userLoginRes, JSON_UNESCAPED_UNICODE));

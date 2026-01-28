@@ -217,3 +217,39 @@ ERROR - 2026-01-27 08:47:52 --> UNKNOWN_QUERY_KEY: licenseSeq | UNKNOWN_QUERY_KE
 #4 C:\xampp\htdocs\workspace_refactoring\system\core\CodeIgniter.php(533): BASE_Controller->_remap('list', Array)
 #5 C:\xampp\htdocs\workspace_refactoring\index.php(184): require_once('C:\\xampp\\htdocs...')
 #6 {main}
+ERROR - 2026-01-27 09:26:01 --> 404 Page Not Found: Api/web
+ERROR - 2026-01-27 09:26:13 --> Query error: Table 'eleng_dev_copy.tb_safety_project_engineer' doesn't exist - Invalid query: SELECT COUNT(*) AS `numrows`
+FROM `tb_safety_project` `sp`
+LEFT JOIN `tb_license` `l` ON `l`.`seq` = `sp`.`license_seq`
+LEFT JOIN (SELECT
+  spe.safety_project_seq AS project_seq,
+  GROUP_CONCAT(u.name ORDER BY u.name SEPARATOR ', ') AS engineer_name
+FROM tb_safety_project_engineer spe
+JOIN tb_user u ON u.seq = spe.engineer_seq
+WHERE spe.deleted = 'N'
+GROUP BY spe.safety_project_seq) eng ON eng.project_seq = sp.seq
+WHERE `sp`.`deleted` = 'N'
+ERROR - 2026-01-27 09:29:08 --> UNKNOWN_QUERY_KEY: licenseSeq | UNKNOWN_QUERY_KEY: licenseSeq
+#0 C:\xampp\htdocs\workspace_refactoring\src\user\dto\query\UserListQuery.php(97): App\user\dto\query\UserListQuery::checkAllowedKeys(Array)
+#1 C:\xampp\htdocs\workspace_refactoring\application\libraries\RequestQueryDtoJsonMapper.php(72): App\user\dto\query\UserListQuery::fromArray(Array)
+#2 C:\xampp\htdocs\workspace_refactoring\application\controllers\user\UserController.php(37): RequestQueryDtoJsonMapper->queryRequestDto('App\\user\\dto\\qu...')
+#3 C:\xampp\htdocs\workspace_refactoring\application\core\BASE_Controller.php(55): UserController->list()
+#4 C:\xampp\htdocs\workspace_refactoring\system\core\CodeIgniter.php(533): BASE_Controller->_remap('list', Array)
+#5 C:\xampp\htdocs\workspace_refactoring\index.php(184): require_once('C:\\xampp\\htdocs...')
+#6 {main}
+ERROR - 2026-01-27 09:46:25 --> UNKNOWN_QUERY_KEY: licenseSeq | UNKNOWN_QUERY_KEY: licenseSeq
+#0 C:\xampp\htdocs\workspace_refactoring\src\user\dto\query\UserListQuery.php(97): App\user\dto\query\UserListQuery::checkAllowedKeys(Array)
+#1 C:\xampp\htdocs\workspace_refactoring\application\libraries\RequestQueryDtoJsonMapper.php(72): App\user\dto\query\UserListQuery::fromArray(Array)
+#2 C:\xampp\htdocs\workspace_refactoring\application\controllers\user\UserController.php(37): RequestQueryDtoJsonMapper->queryRequestDto('App\\user\\dto\\qu...')
+#3 C:\xampp\htdocs\workspace_refactoring\application\core\BASE_Controller.php(55): UserController->list()
+#4 C:\xampp\htdocs\workspace_refactoring\system\core\CodeIgniter.php(533): BASE_Controller->_remap('list', Array)
+#5 C:\xampp\htdocs\workspace_refactoring\index.php(184): require_once('C:\\xampp\\htdocs...')
+#6 {main}
+ERROR - 2026-01-27 09:46:28 --> UNKNOWN_QUERY_KEY: licenseSeq | UNKNOWN_QUERY_KEY: licenseSeq
+#0 C:\xampp\htdocs\workspace_refactoring\src\user\dto\query\UserListQuery.php(97): App\user\dto\query\UserListQuery::checkAllowedKeys(Array)
+#1 C:\xampp\htdocs\workspace_refactoring\application\libraries\RequestQueryDtoJsonMapper.php(72): App\user\dto\query\UserListQuery::fromArray(Array)
+#2 C:\xampp\htdocs\workspace_refactoring\application\controllers\user\UserController.php(37): RequestQueryDtoJsonMapper->queryRequestDto('App\\user\\dto\\qu...')
+#3 C:\xampp\htdocs\workspace_refactoring\application\core\BASE_Controller.php(55): UserController->list()
+#4 C:\xampp\htdocs\workspace_refactoring\system\core\CodeIgniter.php(533): BASE_Controller->_remap('list', Array)
+#5 C:\xampp\htdocs\workspace_refactoring\index.php(184): require_once('C:\\xampp\\htdocs...')
+#6 {main}
