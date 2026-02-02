@@ -13,9 +13,6 @@ use App\user\getList\dto\query\UserListQuery;
 use App\user\getList\repository\preset\UserListPreset;
 use App\user\add\entity\UserAddEntity;
 
-/**
- * Signed-off-by: 이현우
- */
 final class UserRepository extends PresetListRepository
 {
     protected function preset(): ListPresetInterface

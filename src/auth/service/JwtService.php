@@ -87,7 +87,7 @@ final class JwtService
     {
         $user = $this->userAuthRepository->findByEmail($userLoginReq->email());
         $deviceId = $this->tokenTransport->getDeviceId();
- log_message('error', 'loginByCredentials1' . json_encode($userLoginReq, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
         try {
             if (!$user)
                 throw ApiException::unauthorized('USER_NOT_FOUND', ApiErrorCode::USER_NOT_FOUND);

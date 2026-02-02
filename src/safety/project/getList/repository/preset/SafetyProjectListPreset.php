@@ -7,6 +7,10 @@ use App\common\repository\FilterManager;
 use App\common\repository\preset\ListPresetInterface;
 use App\common\traits\SortHelperTrait;
 
+use App\safety\common\SafetyEnumMaps;
+
+use EnumMapper;
+
 /**
  * SafetyProjectListPreset
  *
@@ -41,7 +45,7 @@ final class SafetyProjectListPreset implements ListPresetInterface
     public function selectCols(): array
     {
         $sp = self::A_PROJECT;
-        $l  = self::A_LICENSE;
+        $l = self::A_LICENSE;
         $ft = self::A_FACILITY_TYPE;
         $eng = self::A_ENG_AGG;
 
@@ -69,7 +73,7 @@ final class SafetyProjectListPreset implements ListPresetInterface
     public function baseFromJoin($db): void
     {
         $sp = self::A_PROJECT;
-        $l  = self::A_LICENSE;
+        $l = self::A_LICENSE;
         $ft = self::A_FACILITY_TYPE;
         $eng = self::A_ENG_AGG;
 
@@ -85,7 +89,6 @@ final class SafetyProjectListPreset implements ListPresetInterface
         $db->join('(' . $this->engineerAggSql() . ") $eng", "$eng.project_seq = $sp.seq", 'left', false);
     }
 
-    /** @param mixed $db */
     public function applyWhere($db, $query): void
     {
         if (!is_object($query) || !method_exists($query, 'makeWhere')) {
@@ -96,34 +99,51 @@ final class SafetyProjectListPreset implements ListPresetInterface
         $where = (array) $query->makeWhere();
 
         $f = new FilterManager($db);
+        $maps = SafetyEnumMaps::maps();
 
         $sp = self::A_PROJECT;
-        $l  = self::A_LICENSE;
+        $l = self::A_LICENSE;
 
         // 기본: 삭제 제외
         $db->where("$sp.deleted", 'N');
 
-        // status
-        $f->whereEq("$sp.status", $where['status'] ?? null);
+        // status (projectStatus -> DB status 매핑)
+        $statusRaw = trim((string) (($where['projectStatus'] ?? ($where['status'] ?? ''))));
+
+        if ($statusRaw !== '') {
+            $mapped = EnumMapper::map($maps, 'safety_status', $statusRaw);
+            $db->where("$sp.status", $mapped);
+        }
+
+        // checkType (inspectionType -> DB checkType 매핑)
+        $checkTypeRaw = trim((string) (($where['inspectionType'] ?? ($where['checkType'] ?? ''))));
+
+        if ($checkTypeRaw !== '') {
+            $mapped = EnumMapper::map($maps, 'safety_checkType', $checkTypeRaw);
+            $db->where("$sp.check_type", $mapped);
+        }
 
         // licenseSeq
         $f->whereEqInt("$sp.license_seq", $where['licenseSeq'] ?? null);
 
-        // region (시도/시군구/주소 LIKE)
-        $f->likeAny(["$sp.sido", "$sp.sigungu", "$sp.addr"], $where['region'] ?? null);
+        // region (시도/시군구/주소 LIKE) - pr 조인 없으니 sp 기준으로
+        $f->likeAnyEnum(
+            ["$sp.addr", "$sp.sido", "$sp.sigungu"],
+            $maps,
+            'region',
+            $where['region'] ?? null,
+            false
+        );
 
         // 날짜 필터(현장 시작/종료)
-        if (!empty($where['filedBeginDate'])) {
-            $db->where("$sp.field_bgn_dt >=", (string) $where['filedBeginDate']);
+        if (!empty($where['fieldBeginDate'])) {
+            $db->where("$sp.field_bgn_dt >=", (string) $where['fieldBeginDate']);
         }
         if (!empty($where['fieldEndDate'])) {
             $db->where("$sp.field_end_dt <=", (string) $where['fieldEndDate']);
         }
 
-        // engineerSeq 참여 필터
-        // - 스키마상 sm.engineer_seq는 tb_safety_engineer.seq를 가리키지만,
-        //   프론트/기존 코드에서 tb_user.seq를 전달하는 경우도 있어
-        //   (engineer_seq == v OR engineer.user_seq == v) 둘 다 허용.
+        // engineerSeq 참여 필터 (기존 유지)
         if (!empty($where['engineerSeq']) && ctype_digit((string) $where['engineerSeq'])) {
             $engineerSeq = (int) $where['engineerSeq'];
 
@@ -131,14 +151,14 @@ final class SafetyProjectListPreset implements ListPresetInterface
             $se = self::T_ENGINEER;
             $u = self::T_USER;
 
-            $existsSql = "EXISTS (\n"
-                . "  SELECT 1\n"
-                . "    FROM {$mans} sm\n"
-                . "    JOIN {$se} se ON se.seq = sm.engineer_seq AND se.deleted = 'N'\n"
-                . "    JOIN {$u} u ON u.seq = se.user_seq AND u.status != 'Quit'\n"
-                . "   WHERE sm.project_seq = {$sp}.seq\n"
-                . "     AND (sm.engineer_seq = {$engineerSeq} OR se.user_seq = {$engineerSeq})\n"
-                . ")";
+            $existsSql = "EXISTS (
+            SELECT 1
+              FROM {$mans} sm
+              JOIN {$se} se ON se.seq = sm.engineer_seq AND se.deleted = 'N'
+              JOIN {$u}  u  ON u.seq = se.user_seq AND u.status != 'Quit'
+             WHERE sm.project_seq = {$sp}.seq
+               AND (sm.engineer_seq = {$engineerSeq} OR se.user_seq = {$engineerSeq})
+        )";
 
             $db->where($existsSql, null, false);
         }
@@ -146,14 +166,14 @@ final class SafetyProjectListPreset implements ListPresetInterface
         // searchKeyword (업체명 등)
         $f->likeAny(
             [
-                "$l.name",
-                "$l.name_abbr",
+                //"$l.name",
+                //"$l.name_abbr",
                 "$sp.place_name",
-                "$sp.manager_name",
-                "$sp.unique_id",
-                "$sp.building_id",
-                "$sp.addr",
-                "$sp.report_no",
+                //"$sp.manager_name",
+                //"$sp.unique_id",
+                //"$sp.building_id",
+                //"$sp.addr",
+                //"$sp.report_no",
             ],
             $where['searchKeyword'] ?? null
         );
@@ -165,27 +185,48 @@ final class SafetyProjectListPreset implements ListPresetInterface
         $sorts = $this->extractSorts($query);
 
         $sp = self::A_PROJECT;
-        $l  = self::A_LICENSE;
+        $l = self::A_LICENSE;
 
         $map = [
-            'filedBeginDate' => ['type' => 'col', 'value' => "$sp.field_bgn_dt"],
-            'fieldEndDate'   => ['type' => 'col', 'value' => "$sp.field_end_dt"],
-            'reportDate'     => ['type' => 'col', 'value' => "$sp.report_dt"],
-            'licenseName'    => ['type' => 'col', 'value' => "$l.name"],
-            'grossArea'      => ['type' => 'col', 'value' => "$sp.gross_area"],
+            'fieldBeginDate' => ['type' => 'col', 'value' => "$sp.field_bgn_dt"],
+            'fieldEndDate' => ['type' => 'col', 'value' => "$sp.field_end_dt"],
+            'reportDate' => ['type' => 'col', 'value' => "$sp.report_dt"],
+            'licenseName' => ['type' => 'col', 'value' => "$l.name"],
+            'grossArea' => ['type' => 'col', 'value' => "$sp.gross_area"],
         ];
 
         $this->applySortMap($db, $sorts, $map, "$sp.seq", 'DESC');
     }
 
-    /** 참여기술진을 "A / B / C" 형태로 합쳐서 project_seq 단위로 반환 */
+    /** 참여기술진을 JSON 객체 배열 문자열로(project_seq 단위) 반환 */
     private function engineerAggSql(): string
     {
         $mans = self::T_MANS;
         $se = self::T_ENGINEER;
         $u = self::T_USER;
 
-        // MySQL: GROUP_CONCAT
-        return "\n            SELECT\n                sm.project_seq AS project_seq,\n                GROUP_CONCAT(DISTINCT u.name ORDER BY u.name SEPARATOR ' / ') AS engineer_name\n            FROM {$mans} sm\n            JOIN {$se} se ON se.seq = sm.engineer_seq AND se.deleted = 'N'\n            JOIN {$u} u ON u.seq = se.user_seq AND u.status != 'Quit'\n            GROUP BY sm.project_seq\n        ";
+        // 결과 예: [{"name":"홍길동"},{"name":"김철수"}]
+        return "\n            SELECT
+                sm.project_seq AS project_seq,
+                CONCAT(
+                    '[',
+                    IFNULL(
+                        GROUP_CONCAT(
+                            DISTINCT CONCAT(
+                                '{\"name\":', JSON_QUOTE(u.name),
+                                '}'
+                            )
+                            ORDER BY u.name SEPARATOR ','
+                        ),
+                        ''
+                    ),
+                    ']'
+                ) AS engineer_name
+            FROM {$mans} sm
+            JOIN {$se} se ON se.seq = sm.engineer_seq AND se.deleted = 'N'
+            JOIN {$u} u ON u.seq = se.user_seq AND u.status != 'Quit'
+            GROUP BY sm.project_seq
+        ";
     }
+
 }

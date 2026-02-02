@@ -10,13 +10,13 @@ final class SafetyProjectListItem implements \JsonSerializable
     private ?string $checkType;       // 점검 종류
     private ?string $region;          // 지역
     private ?string $placeName;       // 건물명
-    private ?string $filedBeginDate;  // 현장 시작일 (※ 필드명이 filed로 되어있음)
+    private ?string $fieldBeginDate;  // 현장 시작일 (※ 필드명이 filed로 되어있음)
     private ?string $fieldEndDate;    // 현장 종료일
     private ?string $reportDate;      // 보고서 종료일
     private ?string $facilityType;    // 건축물 구분
     private ?string $jong;            // 종별
     private ?string $licenseName;     // 점검업체
-    private ?string $engineerName;    // 참여 기술진(콤마 구분)
+    private ?string $engineers;    // 참여 기술진(콤마 구분)
     private ?int $grossArea;          // 연면적
 
     public function __construct(
@@ -25,13 +25,13 @@ final class SafetyProjectListItem implements \JsonSerializable
         ?string $checkType,
         ?string $region,
         ?string $placeName,
-        ?string $filedBeginDate,
+        ?string $fieldBeginDate,
         ?string $fieldEndDate,
         ?string $reportDate,
         ?string $facilityType,
         ?string $jong,
         ?string $licenseName,
-        ?string $engineerName,
+        ?string $engineers,
         ?int $grossArea
     ) {
         $this->num = $num;
@@ -39,13 +39,13 @@ final class SafetyProjectListItem implements \JsonSerializable
         $this->checkType = $checkType;
         $this->region = $region;
         $this->placeName = $placeName;
-        $this->filedBeginDate = $filedBeginDate;
+        $this->fieldBeginDate = $fieldBeginDate;
         $this->fieldEndDate = $fieldEndDate;
         $this->reportDate = $reportDate;
         $this->facilityType = $facilityType;
         $this->jong = $jong;
         $this->licenseName = $licenseName;
-        $this->engineerName = $engineerName;
+        $this->engineers = $engineers;
         $this->grossArea = $grossArea;
     }
 
@@ -57,13 +57,13 @@ final class SafetyProjectListItem implements \JsonSerializable
             'checkType' => $this->checkType,
             'region' => $this->region,
             'placeName' => $this->placeName,
-            'filedBeginDate' => $this->filedBeginDate,
+            'fieldBeginDate' => $this->fieldBeginDate,
             'fieldEndDate' => $this->fieldEndDate,
             'reportDate' => $this->reportDate,
             'facilityType' => $this->facilityType,
             'jong' => $this->jong,
             'licenseName' => $this->licenseName,
-            'engineerName' => $this->engineerName,
+            'engineers' => $this->engineers,
             'grossArea' => $this->grossArea,
         ];
     }

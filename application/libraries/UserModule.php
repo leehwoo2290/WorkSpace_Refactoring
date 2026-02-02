@@ -70,7 +70,7 @@ final class UserModule
 
         $this->userService = new UserService($this->userLoginLogRepository, $this->userRepository);
 
-         $dbTransactionRunner = new DbTransactionRunner($this->CI->db);
+        $dbTransactionRunner = new DbTransactionRunner($this->CI->db);
         $this->userDetailService = new UserDetailService($this->userDetailRepository, $dbTransactionRunner);
     }
 

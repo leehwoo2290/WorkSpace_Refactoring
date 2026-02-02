@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\user\detail\dto\request;
 
-final class UserPermissionsReq extends UserDetailBaseReq
+use App\common\dto\ReqDtoBase;
+
+final class UserPermissionsReq extends ReqDtoBase
 {
     private ?string $customerMenu;
     private ?string $customerDetail;

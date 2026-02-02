@@ -61,29 +61,29 @@ final class RefreshTokenRepository extends BaseRepository
         );
     }
 
-    // public function insert(RefreshTokenEntity $token): int
-    // {
-    //     $builder = new WritePayloadBuilder();
-    //     $data = $token->toDbPayload($builder);
-
-    //     return $this->insertOrThrow($this->table, $data);
-    // }
     public function insert(RefreshTokenEntity $token): int
     {
-        $data = [
-            'user_seq' => $token->getUserSeq(),
-            'token_id' => $token->getTokenId(),
-            'hashed_token' => $token->getHashedToken(),
-            'token_version' => $token->getTokenVersion(),
-            'first_issued_at' => $token->getFirstIssuedAt()->format('Y-m-d H:i:s'),
-            'expires_date' => $token->getExpiresAt()->format('Y-m-d H:i:s'),
-            'replaced_date' => null,
-            'device_id' => $token->getDeviceId(),
-            'reg_time' => date('Y-m-d H:i:s'),
-        ];
+        $builder = new WritePayloadBuilder();
+        $data = $token->toDbPayload($builder);
 
         return $this->insertOrThrow($this->table, $data);
     }
+    // public function insert(RefreshTokenEntity $token): int
+    // {
+    //     $data = [
+    //         'user_seq' => $token->getUserSeq(),
+    //         'token_id' => $token->getTokenId(),
+    //         'hashed_token' => $token->getHashedToken(),
+    //         'token_version' => $token->getTokenVersion(),
+    //         'first_issued_at' => $token->getFirstIssuedAt()->format('Y-m-d H:i:s'),
+    //         'expires_date' => $token->getExpiresAt()->format('Y-m-d H:i:s'),
+    //         'replaced_date' => null,
+    //         'device_id' => $token->getDeviceId(),
+    //         'reg_time' => date('Y-m-d H:i:s'),
+    //     ];
+
+    //     return $this->insertOrThrow($this->table, $data);
+    // }
 
     public function markReplaced(int $id): void
     {

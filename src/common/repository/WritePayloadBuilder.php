@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\common\repository;
 
-use QueryEnumMapper;
+use EnumMapper;
 
 /**
  * WritePayloadBuilder
@@ -41,7 +41,7 @@ final class WritePayloadBuilder
                 $strict = (bool)($rule['enum']['strict'] ?? true);
 
                 if ($mapKey !== '' && $val !== null && $val !== '') {
-                    $val = QueryEnumMapper::map($maps, $mapKey, $val, $strict);
+                    $val = EnumMapper::map($maps, $mapKey, $val, $strict);
                 }
             }
 

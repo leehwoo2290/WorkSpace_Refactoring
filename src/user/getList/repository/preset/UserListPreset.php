@@ -8,8 +8,8 @@ use App\common\repository\UserJoinBuilder;
 use App\common\repository\preset\ListPresetInterface;
 use App\common\traits\SortHelperTrait;
 
-use App\user\common\UserQueryEnumMaps;
-use QueryEnumMapper;
+use App\user\common\UserEnumMaps;
+use EnumMapper;
 
 /**
  * UserListPreset
@@ -64,7 +64,7 @@ final class UserListPreset implements ListPresetInterface
         $where = (array) $query->makeWhere();
 
         $f = new FilterManager($db);
-        $maps = UserQueryEnumMaps::maps();
+        $maps = UserEnumMaps::maps();
 
         // 1) 통합 검색(현재 name만)
         $f->likeAny(['u.name'], $where['name'] ?? '');
@@ -95,10 +95,10 @@ final class UserListPreset implements ListPresetInterface
         // - status=QUIT 요청 시: QUIT만 조회
         $statusRaw = trim((string) ($where['status'] ?? ''));
         if ($statusRaw === '') {
-            $quit = QueryEnumMapper::map($maps, 'user_status', 'QUIT', false);
+            $quit = EnumMapper::map($maps, 'user_status', 'QUIT', false);
             $db->where('u.status !=', $quit);
         } else {
-            $mapped = QueryEnumMapper::map($maps, 'user_status', $statusRaw, false);
+            $mapped = EnumMapper::map($maps, 'user_status', $statusRaw, false);
             $f->whereEq('u.status', $mapped);
         }
 

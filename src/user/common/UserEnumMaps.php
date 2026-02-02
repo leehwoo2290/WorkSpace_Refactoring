@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\user\common;
 
-final class UserQueryEnumMaps
+final class UserEnumMaps
 {
     /**
      * @return array<string, array<string,string>>

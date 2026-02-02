@@ -5,8 +5,9 @@ namespace App\user\detail\dto\request;
 
 use App\common\Exception\ApiException;
 use App\common\ExceptionErrorCode\ApiErrorCode;
+use App\common\dto\ReqDtoBase;
 
-final class UserPrivacyReq extends UserDetailBaseReq
+final class UserPrivacyReq extends ReqDtoBase
 {
     private ?string $nationality;
     private ?string $juminNum;

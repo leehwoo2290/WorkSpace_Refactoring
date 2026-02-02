@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\user\detail\dto\request;
 
-final class UserOfficeReq extends UserDetailBaseReq
+use App\common\dto\ReqDtoBase;
+
+final class UserOfficeReq extends ReqDtoBase
 {
     private ?string $staffNum;
 

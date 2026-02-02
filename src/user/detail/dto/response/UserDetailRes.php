@@ -35,4 +35,5 @@ final class UserDetailRes implements \JsonSerializable
             'career'  => $this->career ? $this->career->jsonSerialize() : null,
         ];
     }
+    
 }

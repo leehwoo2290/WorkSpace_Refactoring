@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\user\detail\dto\request;
 
-final class UserBasicReq extends UserDetailBaseReq
+use App\common\dto\ReqDtoBase;
+
+final class UserBasicReq extends ReqDtoBase
 {
     private ?string $licenseName;
     private ?string $name;

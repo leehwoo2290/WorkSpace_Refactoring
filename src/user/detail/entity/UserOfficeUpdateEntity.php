@@ -5,8 +5,8 @@ namespace App\user\detail\entity;
 
 use App\common\repository\WritePayloadBuilder;
 use App\user\detail\dto\request\UserOfficeReq;
-use App\user\common\UserQueryEnumMaps;
-use QueryEnumMapper;
+use App\user\common\UserEnumMaps;
+use EnumMapper;
 
 /**
  * UserOfficeUpdateCommand
@@ -70,14 +70,14 @@ final class UserOfficeUpdateEntity
 
     public static function fromReq(UserOfficeReq $req): self
     {
-        $maps = UserQueryEnumMaps::maps();
+        $maps = UserEnumMaps::maps();
 
-        $contractType = QueryEnumMapper::map($maps, 'contract_type', $req->contractType(), true);
-        $workForm = QueryEnumMapper::map($maps, 'work_form', $req->workForm(), true);
-        $laborForm = QueryEnumMapper::map($maps, 'labor_form', $req->laborForm(), true);
+        $contractType = EnumMapper::map($maps, 'contract_type', $req->contractType(), true);
+        $workForm = EnumMapper::map($maps, 'work_form', $req->workForm(), true);
+        $laborForm = EnumMapper::map($maps, 'labor_form', $req->laborForm(), true);
 
-        $department = QueryEnumMapper::map($maps, 'office_department', $req->department(), true);
-        $position = QueryEnumMapper::map($maps, 'office_position', $req->position(), true);
+        $department = EnumMapper::map($maps, 'office_department', $req->department(), true);
+        $position = EnumMapper::map($maps, 'office_position', $req->position(), true);
 
         return new self(
             $req->staffNum(),

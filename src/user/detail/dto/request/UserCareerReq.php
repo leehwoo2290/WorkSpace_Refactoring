@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\user\detail\dto\request;
 
-final class UserCareerReq extends UserDetailBaseReq
+use App\common\dto\ReqDtoBase;
+
+final class UserCareerReq extends ReqDtoBase
 {
     private ?string $jobField;
     private ?string $jobGrade;

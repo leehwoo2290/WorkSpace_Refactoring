@@ -94,6 +94,25 @@ $route['api/web/licenseFilter']['get'] = 'license/LicenseController/licenseFilte
 
 // SafetyProject API routes
 $route['api/web/safety']['get'] = 'safety/SafetyProjectController/list';
+$route['api/web/safety']['post'] = 'safety/SafetyProjectController/add';
+
+// SafetyProjectAutocomplete API routes
+$route['api/web/safety/autocomplete']['get'] = 'safety/SafetyProjectController/autocompleteList';
+
+// SafetyEngineer API routes
+$route['api/web/safety/engineers']['get'] = 'safety/SafetyEngineerController/list';
+$route['api/web/safety/engineer']['post'] = 'safety/SafetyEngineerController/add';
+
+// SafetyEngineer detail
+$route['api/web/safety/engineer/(:num)']['GET']  = 'safety/SafetyEngineerController/detail/$1';
+
+// SafetyEngineer update
+$route['api/web/safety/engineer/(:num)']['PUT']  = 'safety/SafetyEngineerController/update/$1';
+
+
+// User licenses filter API routes
+$route['api/web/safetyEngineerFilter']['get'] = 'safety/SafetyEngineerController/safetyEngineerFilter';
+
 
 //---------------------------------------------------------------------------------------------
 $route['api/app/auth/login']['post']   = 'auth/JwtController/login';

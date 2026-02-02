@@ -72,5 +72,4 @@ final class RequestQueryDtoJsonMapper
         return $dtoClass::fromArray($query);
     }
 
-
 }

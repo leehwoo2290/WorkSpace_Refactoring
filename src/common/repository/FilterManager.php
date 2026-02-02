@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\common\repository;
 
-use QueryEnumMapper;
+use EnumMapper;
 
 /**
  * FilterManager
@@ -91,7 +91,7 @@ final class FilterManager
         if ($v === '')
             return;
 
-        $mapped = QueryEnumMapper::map($maps, $mapKey, $v, $strict);
+        $mapped = EnumMapper::map($maps, $mapKey, $v, $strict);
         if (trim((string) $mapped) === '')
             return;
 
@@ -136,8 +136,25 @@ final class FilterManager
      */
     public function whereCareerYearsGte(string $joinDateCol, string $resignDateCol, $years): void
     {
-        $y = (int) $years;
-        if ($y < 0)
+        // 값이 아예 없으면 필터 적용 X
+        if ($years === null)
+            return;
+
+        $raw = trim((string) $years);
+
+        // 빈값/undefined/null 문자열이면 필터 적용 X
+        if ($raw === '' || strtolower($raw) === 'null' || strtolower($raw) === 'undefined') {
+            return;
+        }
+
+        // 숫자만 허용 (0,1,2... 형태)
+        if (!ctype_digit($raw))
+            return;
+
+        $y = (int) $raw;
+
+        // 0은 "필터 없음"으로 취급 (0년 이상은 사실상 전체라 의미 없음)
+        if ($y <= 0)
             return;
 
         $expr =
@@ -156,7 +173,7 @@ final class FilterManager
         if ($v === '' || empty($cols))
             return;
 
-        $mapped = QueryEnumMapper::map($maps, $mapKey, $v, $strict);
+        $mapped = EnumMapper::map($maps, $mapKey, $v, $strict);
         if (trim((string) $mapped) === '')
             return;
 
@@ -184,7 +201,7 @@ final class FilterManager
             return;
         }
 
-        $mapped = QueryEnumMapper::map($maps, $mapKey, $v, $strict);
+        $mapped = EnumMapper::map($maps, $mapKey, $v, $strict);
         if (trim((string) $mapped) === '')
             return;
 

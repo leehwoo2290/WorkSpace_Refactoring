@@ -7,7 +7,7 @@ use App\common\repository\FilterManager;
 use App\common\repository\UserJoinBuilder;
 use App\common\repository\preset\ListPresetInterface;
 
-use App\user\common\UserQueryEnumMaps;
+use App\user\common\UserEnumMaps;
 
 /**
  * UserLoginLogListPreset
@@ -59,7 +59,7 @@ final class UserLoginLogListPreset implements ListPresetInterface
         $where = (array) $query->makeWhere();
 
         $f = new FilterManager($db);
-        $maps = UserQueryEnumMaps::maps();
+        $maps = UserEnumMaps::maps();
 
         $f->likeAny(['log.email'], $where['searchKeyWord'] ?? '');
         $f->whereEnum('log.success', $maps, 'yn', $where['success'] ?? null);
@@ -70,6 +70,6 @@ final class UserLoginLogListPreset implements ListPresetInterface
     public function applyOrderBy($db, $query): void
     {
         $db->order_by('log.reg_time', 'DESC');
-        $db->order_by('log.seq', 'DESC');
+        //$db->order_by('log.seq', 'DESC');
     }
 }

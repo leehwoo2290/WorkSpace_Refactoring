@@ -12,8 +12,8 @@ final class UserOfficeRowPreset implements RowPresetInterface
     {
         return [
             'o.staff_num AS staffNum',
-            'd.name AS departmentNameMapped',
-            'p.name AS positionNameMapped',
+            'd.name AS department',
+            'p.name AS position',
             'o.apprentice AS apprentice',
             'o.contract_type AS contractType',
             'o.contract_yn AS contractYn',

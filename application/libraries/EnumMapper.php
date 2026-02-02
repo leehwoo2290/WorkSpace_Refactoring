@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-final class QueryEnumMapper
+final class EnumMapper
 {
     /**
      * @param array<string, array<string,string>> $maps

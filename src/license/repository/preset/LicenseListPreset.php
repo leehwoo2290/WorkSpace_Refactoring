@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\license\repository\preset;
 
 use App\common\repository\preset\ListPresetInterface;
-use QueryEnumMapper;
+use EnumMapper;
 
 /**
  * LicenseListPreset
@@ -75,14 +75,14 @@ final class LicenseListPreset implements ListPresetInterface
         if (!empty($where['region'])) {
             $db->where(
                 'license.region',
-                QueryEnumMapper::map($maps, 'license_region', (string) $where['region'], false)
+                EnumMapper::map($maps, 'license_region', (string) $where['region'], false)
             );
         }
 
         if (!empty($where['status'])) {
             $db->where(
                 'license.status',
-                QueryEnumMapper::map($maps, 'license_status', (string) $where['status'], false)
+                EnumMapper::map($maps, 'license_status', (string) $where['status'], false)
             );
         }
     }

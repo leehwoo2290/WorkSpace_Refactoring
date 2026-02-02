@@ -110,7 +110,6 @@ class AuthModule
 
     public function loginByCredentials(UserLoginReq $userLoginReq): UserLoginRes
     {
-         log_message('error', 'loginByCredentials0' . json_encode($userLoginReq, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         return $this->jwtService->loginByCredentials($userLoginReq);
     }
 

@@ -16,11 +16,12 @@ final class SafetyProjectListQuery implements HttpQueryDto
 
     // filters/search
     private ?string $status;         // 진행 상태
+    private ?string $checkType;                 // 점검 종류
     private ?int $licenseSeq;        // 점검업체 seq
     private ?int $engineerSeq;       // 점검자/기술자 seq (참여기술진 필터)
     private ?string $region;         // 지역
     private ?string $searchKeyword;  // 검색(업체명 등)
-    private ?string $filedBeginDate; // 점검 시작일 (yyyy-mm-dd)
+    private ?string $fieldBeginDate; // 점검 시작일 (yyyy-mm-dd)
     private ?string $fieldEndDate;   // 점검 종료일 (yyyy-mm-dd)
 
     /**
@@ -31,11 +32,12 @@ final class SafetyProjectListQuery implements HttpQueryDto
         int $size,
         array $sorts,
         ?string $status,
+        ?string $checkType,
         ?int $licenseSeq,
         ?int $engineerSeq,
         ?string $region,
         ?string $searchKeyword,
-        ?string $filedBeginDate,
+        ?string $fieldBeginDate,
         ?string $fieldEndDate
     ) {
         $this->page = $page > 0 ? $page : 1;
@@ -44,6 +46,7 @@ final class SafetyProjectListQuery implements HttpQueryDto
         $this->sorts = $sorts;
 
         $this->status = self::normStr($status);
+        $this->checkType = self::normStr($checkType);
 
         $this->licenseSeq = ($licenseSeq !== null && $licenseSeq > 0) ? $licenseSeq : null;
         $this->engineerSeq = ($engineerSeq !== null && $engineerSeq > 0) ? $engineerSeq : null;
@@ -51,12 +54,27 @@ final class SafetyProjectListQuery implements HttpQueryDto
         $this->region = self::normStr($region);
         $this->searchKeyword = self::normStr($searchKeyword);
 
-        $this->filedBeginDate = self::normStr($filedBeginDate);
+        $this->fieldBeginDate = self::normStr($fieldBeginDate);
         $this->fieldEndDate = self::normStr($fieldEndDate);
     }
 
     public static function fromArray(array $query): self
     {
+        if (!array_key_exists('status', $query) && array_key_exists('projectStatus', $query)) {
+            $query['status'] = $query['projectStatus'];
+        }
+        unset($query['projectStatus']);
+
+        if (!array_key_exists('searchKeyword', $query) && array_key_exists('placeName', $query)) {
+            $query['searchKeyword'] = $query['placeName'];
+        }
+        unset($query['placeName']);
+
+        if (!array_key_exists('checkType', $query) && array_key_exists('inspectionType', $query)) {
+            $query['checkType'] = $query['inspectionType'];
+        }
+        unset($query['inspectionType']);
+
         self::checkAllowedKeys($query);
 
         $page = isset($query['page']) ? max(1, (int) $query['page']) : 1;
@@ -65,13 +83,14 @@ final class SafetyProjectListQuery implements HttpQueryDto
         $sorts = self::parseSorts($query['sortBy'] ?? null, $query['sortDir'] ?? null);
 
         $status = self::getStr($query, 'status');
+        $checkType = self::getStr($query, 'checkType');
         $licenseSeq = self::getInt($query, 'licenseSeq');
         $engineerSeq = self::getInt($query, 'engineerSeq');
 
         $region = self::getStr($query, 'region');
         $searchKeyword = self::getStr($query, 'searchKeyword');
 
-        $filedBeginDate = self::getStr($query, 'filedBeginDate'); // 스펙 그대로(오타 포함)
+        $fieldBeginDate = self::getStr($query, 'fieldBeginDate');
         $fieldEndDate = self::getStr($query, 'fieldEndDate');
 
         return new self(
@@ -79,11 +98,12 @@ final class SafetyProjectListQuery implements HttpQueryDto
             $size,
             $sorts,
             $status,
+            $checkType,
             $licenseSeq,
             $engineerSeq,
             $region,
             $searchKeyword,
-            $filedBeginDate,
+            $fieldBeginDate,
             $fieldEndDate
         );
     }
@@ -91,15 +111,18 @@ final class SafetyProjectListQuery implements HttpQueryDto
     private static function checkAllowedKeys(array $query): void
     {
         $allowed = [
-            'page', 'size',
-            'sortBy', 'sortDir',
+            'page',
+            'size',
+            'sortBy',
+            'sortDir',
 
             'status',
+            'checkType',
             'licenseSeq',
             'engineerSeq',
             'region',
             'searchKeyword',
-            'filedBeginDate',
+            'fieldBeginDate',
             'fieldEndDate',
         ];
 
@@ -110,12 +133,24 @@ final class SafetyProjectListQuery implements HttpQueryDto
         }
     }
 
-    public function page(): int { return $this->page; }
-    public function size(): int { return $this->size; }
-    public function offset(): int { return ($this->page - 1) * $this->size; }
+    public function page(): int
+    {
+        return $this->page;
+    }
+    public function size(): int
+    {
+        return $this->size;
+    }
+    public function offset(): int
+    {
+        return ($this->page - 1) * $this->size;
+    }
 
     /** @return array<int, array{by:string, dir:string}> */
-    public function sorts(): array { return $this->sorts; }
+    public function sorts(): array
+    {
+        return $this->sorts;
+    }
 
     public function makeWhere(): array
     {
@@ -129,20 +164,30 @@ final class SafetyProjectListQuery implements HttpQueryDto
             $where['sorts'] = $this->sorts;
         }
 
-        if ($this->status !== null)        $where['status'] = $this->status;
-        if ($this->licenseSeq !== null)    $where['licenseSeq'] = $this->licenseSeq;
-        if ($this->engineerSeq !== null)   $where['engineerSeq'] = $this->engineerSeq;
-        if ($this->region !== null)        $where['region'] = $this->region;
-        if ($this->searchKeyword !== null) $where['searchKeyword'] = $this->searchKeyword;
-        if ($this->filedBeginDate !== null)$where['filedBeginDate'] = $this->filedBeginDate;
-        if ($this->fieldEndDate !== null)  $where['fieldEndDate'] = $this->fieldEndDate;
+        if ($this->status !== null)
+            $where['status'] = $this->status;
+         if ($this->checkType !== null)
+            $where['checkType'] = $this->checkType;
+        if ($this->licenseSeq !== null)
+            $where['licenseSeq'] = $this->licenseSeq;
+        if ($this->engineerSeq !== null)
+            $where['engineerSeq'] = $this->engineerSeq;
+        if ($this->region !== null)
+            $where['region'] = $this->region;
+        if ($this->searchKeyword !== null)
+            $where['searchKeyword'] = $this->searchKeyword;
+        if ($this->fieldBeginDate !== null)
+            $where['fieldBeginDate'] = $this->fieldBeginDate;
+        if ($this->fieldEndDate !== null)
+            $where['fieldEndDate'] = $this->fieldEndDate;
 
         return $where;
     }
 
     private static function normStr(?string $v): ?string
     {
-        if ($v === null) return null;
+        if ($v === null)
+            return null;
         $t = trim($v);
         return $t === '' ? null : $t;
     }
@@ -157,7 +202,8 @@ final class SafetyProjectListQuery implements HttpQueryDto
         $bys = self::parseList($rawSortBy);
         $dirs = self::parseList($rawSortDir);
 
-        if (empty($bys)) return [];
+        if (empty($bys))
+            return [];
 
         $out = [];
         foreach ($bys as $i => $byRaw) {
@@ -165,8 +211,10 @@ final class SafetyProjectListQuery implements HttpQueryDto
             $dir = 'ASC';
 
             if (!empty($dirs)) {
-                if (count($dirs) === 1) $dir = self::normSortDir($dirs[0]);
-                else $dir = isset($dirs[$i]) ? self::normSortDir($dirs[$i]) : 'ASC';
+                if (count($dirs) === 1)
+                    $dir = self::normSortDir($dirs[0]);
+                else
+                    $dir = isset($dirs[$i]) ? self::normSortDir($dirs[$i]) : 'ASC';
             }
 
             $out[] = ['by' => $by, 'dir' => $dir];
@@ -177,22 +225,25 @@ final class SafetyProjectListQuery implements HttpQueryDto
     /** @return string[] */
     private static function parseList($v): array
     {
-        if ($v === null) return [];
+        if ($v === null)
+            return [];
 
         $parts = [];
         if (is_array($v)) {
             foreach ($v as $item) {
-                foreach (explode(',', (string)$item) as $p) {
+                foreach (explode(',', (string) $item) as $p) {
                     $p = trim($p);
-                    if ($p !== '') $parts[] = $p;
+                    if ($p !== '')
+                        $parts[] = $p;
                 }
             }
             return $parts;
         }
 
-        foreach (explode(',', trim((string)$v)) as $p) {
+        foreach (explode(',', trim((string) $v)) as $p) {
             $p = trim($p);
-            if ($p !== '') $parts[] = $p;
+            if ($p !== '')
+                $parts[] = $p;
         }
 
         return $parts;
@@ -201,7 +252,8 @@ final class SafetyProjectListQuery implements HttpQueryDto
     private static function normSortDir(string $v): string
     {
         $t = strtoupper(trim($v));
-        if ($t === '') $t = 'ASC';
+        if ($t === '')
+            $t = 'ASC';
         if ($t !== 'ASC' && $t !== 'DESC') {
             throw new InvalidArgumentException("INVALID_SORT_DIR: {$t}");
         }
@@ -215,19 +267,24 @@ final class SafetyProjectListQuery implements HttpQueryDto
     private static function normSortBy(string $v): string
     {
         $t = trim($v);
-        if ($t === '') throw new InvalidArgumentException('INVALID_SORT_BY: (empty)');
+        if ($t === '')
+            throw new InvalidArgumentException('INVALID_SORT_BY: (empty)');
 
         $lower = strtolower($t);
 
-        // 변형/스네이크/오타 약간 흡수
-        if ($lower === 'fieldbegindate')  $t = 'filedBeginDate'; // fieldBeginDate로 와도 filedBeginDate로 정규화
-        if ($lower === 'filedbegindate')  $t = 'filedBeginDate';
-        if ($lower === 'fieldenddate')    $t = 'fieldEndDate';
-        if ($lower === 'reportdate')      $t = 'reportDate';
-        if ($lower === 'licensename')     $t = 'licenseName';
-        if ($lower === 'grossarea' || $lower === 'gross_area') $t = 'grossArea';
+        // 변형/스네이크
+        if ($lower === 'fieldbegindate')
+            $t = 'fieldBeginDate';
+        if ($lower === 'fieldenddate')
+            $t = 'fieldEndDate';
+        if ($lower === 'reportdate')
+            $t = 'reportDate';
+        if ($lower === 'licensename')
+            $t = 'licenseName';
+        if ($lower === 'grossarea' || $lower === 'gross_area')
+            $t = 'grossArea';
 
-        $allowed = ['filedBeginDate', 'fieldEndDate', 'reportDate', 'licenseName', 'grossArea'];
+        $allowed = ['fieldBeginDate', 'fieldEndDate', 'reportDate', 'licenseName', 'grossArea'];
         if (!in_array($t, $allowed, true)) {
             throw new InvalidArgumentException("INVALID_SORT_BY: {$v}");
         }
@@ -237,21 +294,28 @@ final class SafetyProjectListQuery implements HttpQueryDto
 
     private static function getStr(array $q, string $key): ?string
     {
-        if (!array_key_exists($key, $q)) return null;
+        if (!array_key_exists($key, $q))
+            return null;
         $v = $q[$key];
-        if ($v === null) return null;
-        if (is_array($v)) $v = $v[0] ?? null;
-        return self::normStr($v === null ? null : (string)$v);
+        if ($v === null)
+            return null;
+        if (is_array($v))
+            $v = $v[0] ?? null;
+        return self::normStr($v === null ? null : (string) $v);
     }
 
     private static function getInt(array $q, string $key): ?int
     {
-        if (!array_key_exists($key, $q)) return null;
+        if (!array_key_exists($key, $q))
+            return null;
         $v = $q[$key];
-        if ($v === null || $v === '') return null;
-        if (is_array($v)) $v = $v[0] ?? null;
-        if ($v === null || $v === '') return null;
+        if ($v === null || $v === '')
+            return null;
+        if (is_array($v))
+            $v = $v[0] ?? null;
+        if ($v === null || $v === '')
+            return null;
 
-        return (int)$v;
+        return (int) $v;
     }
 }

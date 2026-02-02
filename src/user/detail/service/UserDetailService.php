@@ -99,18 +99,7 @@ final class UserDetailService
             ]);
         }
 
-        $basic = new UserBasicRes();
-        $basic->licenseName = $row->licenseName ?? null;
-        $basic->name = $row->name ?? null;
-        $basic->role = $row->role ?? null;
-        $basic->status = $row->status ?? null;
-        $basic->email = $row->email ?? null;
-        $basic->avatarFile = $row->avatarFile ?? null;
-        $basic->remark = $row->remark ?? null;
-
-        $basic->permissions = $this->permissionsFromConfig($row->configJson ?? null);
-
-        return $basic;
+        return UserBasicRes::fromRow($row);
     }
 
     /** privacy row가 없으면 ok(null) 내려주려고 ?UserPrivacyRes 반환 */
@@ -129,35 +118,10 @@ final class UserDetailService
         // user는 있는데 privacy row가 없을 수 있음
         if ($row === null) {
             $privacy = new UserPrivacyRes();
-            $privacy->foreignYn = 'N'; // 기본 내국인 처리(원하면 null로 둬도 됨)
             return $privacy;
         }
 
-        $privacy = new UserPrivacyRes();
-
-        $privacy->foreignYn = $row->foreignYn ?? 'N';
-        $privacy->juminNum = $row->juminNum ?? null;
-        $privacy->birthday = $row->birthday ?? null;
-        $privacy->phoneNumber = $row->phoneNumber ?? null;
-        $privacy->emerNum1 = $row->emerNum1 ?? null;
-        $privacy->emerNum2 = $row->emerNum2 ?? null;
-        $privacy->addr = $row->addr ?? null;
-
-        $privacy->educationLevel = $row->educationLevel ?? null;
-        $privacy->educationMajor = $row->educationMajor ?? null;
-
-        $privacy->familyCnt = isset($row->familyCnt) ? (int) $row->familyCnt : null;
-
-        $privacy->carYn = $row->carYn ?? null;          // jsonSerialize에서 carOwned로 나감
-        $privacy->carNumber = $row->carNumber ?? null;
-        $privacy->carTax = isset($row->carTax) ? (int) $row->carTax : null; // jsonSerialize에서 suwonCarReg
-        $privacy->carModel = $row->carModel ?? null;
-
-        $privacy->religion = $row->religion ?? null;
-        $privacy->bankName = $row->bankName ?? null;
-        $privacy->bankNumber = $row->bankNumber ?? null;
-
-        return $privacy;
+        return UserPrivacyRes::fromRow($row);
     }
 
     public function userOffice(int $userSeq): ?UserOfficeRes
@@ -175,29 +139,7 @@ final class UserDetailService
             return new UserOfficeRes();
         }
 
-        $office = new UserOfficeRes();
-        $office->staffNum = $row->staffNum ?? null;
-        $office->departmentName = $row->departmentNameMapped ?? null;
-
-        $office->positionName = $row->positionNameMapped ?? null;
-        $office->apprentice = $row->apprentice ?? null;
-
-        $office->contractYn = $row->contractYn ?? null;
-        $office->staffCardYn = $row->staffCardYn ?? null;
-        $office->fieldworkYn = $row->fieldworkYn ?? null;
-        //$office->engineerYn = $row->engineerYn ?? null;
-
-        $office->joinDate = $row->joinDate ?? null;
-        $office->resignDate = $row->resignDate ?? null;
-
-        $office->workForm = $row->workForm ?? null;
-        $office->laborForm = $row->laborForm ?? null;
-        $office->contractType = $row->contractType ?? null;
-
-        $office->insurancesAcquisitionDate = $row->insurancesAcquisitionDate ?? null;
-        $office->insurancesLossDate = $row->insurancesLossDate ?? null;
-
-        return $office;
+        return UserOfficeRes::fromRow($row);
     }
 
     public function userCareer(int $userSeq): ?UserCareerRes
@@ -216,15 +158,7 @@ final class UserDetailService
             return new UserCareerRes();
         }
 
-        $career = new UserCareerRes();
-        $career->jobField = $row->jobField ?? null;
-        $career->jobGrade = $row->jobGrade ?? null;
-        $career->certNum1 = $row->certNum1 ?? null;
-        $career->certNum2 = $row->certNum2 ?? null;
-        $career->industrySameMonth = isset($row->industrySameMonth) ? (int) $row->industrySameMonth : null;
-        $career->industryOtherMonth = isset($row->industryOtherMonth) ? (int) $row->industryOtherMonth : null;
-
-        return $career;
+        return UserCareerRes::fromRow($row);
     }
 
 
@@ -238,25 +172,12 @@ final class UserDetailService
             return null;
 
         $row = $this->userDetailRepository->findEtcRow($userSeq);
-       
+        
         if ($row === null) {
             return new UserEtcRes();
         }
 
-        $etc = new UserEtcRes();
-        $etc->youthJobLeap = $row->youthJobLeap ?? null;
-        $etc->youthEmploymentIncentive = $row->youthEmploymentIncentive ?? null;
-        $etc->youthDigital = $row->youthDigital ?? null;
-        $etc->seniorInternship = $row->seniorInternship ?? null;
-        $etc->newMiddleAgedJobs = $row->newMiddleAgedJobs ?? null;
-
-        $etc->groupInsuranceYn = $row->groupInsuranceYn ?? 'N';
-        $etc->incomeTaxReductionBeginDate = $row->incomeTaxReductionBeginDate ?? null;
-        $etc->incomeTaxReductionEndDate = $row->incomeTaxReductionEndDate ?? null;
-        $etc->employedType = $row->employedType ?? null;
-        $etc->militaryPeriod = $row->militaryPeriod ?? null;
-
-        return $etc;
+        return UserEtcRes::fromRow($row);
     }
 
     private function permissionsFromConfig(?string $json): UserPermissionsRes

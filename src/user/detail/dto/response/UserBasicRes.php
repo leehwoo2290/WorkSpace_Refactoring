@@ -6,17 +6,17 @@ namespace App\user\detail\dto\response;
 final class UserBasicRes implements \JsonSerializable
 {
     //public ?int $licenseSeq = null;      // tb_user.license_seq
-    public ?string $licenseName = null;  // tb_license.name
+    private ?string $licenseName = null;  // tb_license.name
 
-    public ?string $name = null;         // tb_user.name
-    public ?string $role = null;         // tb_user.role
-    public ?string $status = null;       // tb_user.status
-    public ?string $email = null;        // tb_user.email
+    private ?string $name = null;         // tb_user.name
+    private ?string $role = null;         // tb_user.role
+    private ?string $status = null;       // tb_user.status
+    private ?string $email = null;        // tb_user.email
 
-    public ?string $avatarFile = null;   // tb_user.avatar_file
-    public ?string $remark = null;       // tb_user.remark
+    private ?string $avatarFile = null;   // tb_user.avatar_file
+    private ?string $remark = null;       // tb_user.remark
 
-    public UserPermissionsRes $permissions;
+    private UserPermissionsRes $permissions;
 
     public function __construct(
         ?string $licenseName = null,
@@ -52,4 +52,21 @@ final class UserBasicRes implements \JsonSerializable
             'permissions' => $this->permissions->jsonSerialize(),
         ];
     }
+
+   public static function fromRow(?object $r, ?UserPermissionsRes $perm = null): self
+{
+    if ($r === null) return new self(null, null, null, null, null, null, null, $perm);
+
+    return new self(
+        $r->licenseName ?? null,
+        $r->name ?? null,
+        $r->role ?? null,
+        $r->status ?? null,
+        $r->email ?? null,
+        $r->avatarFile ?? null,
+        $r->remark ?? null,
+        $perm
+    );
+}
+
 }
