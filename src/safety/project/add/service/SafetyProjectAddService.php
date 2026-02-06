@@ -23,17 +23,31 @@ final class SafetyProjectAddService
 
     public function add(int $userSeq, SafetyProjectAddReq $req): void
     {
+        // log_message('error', 'SafetyProjectAddService::add ENTER ' . json_encode([
+        //     'userSeq' => $userSeq,
+        //     'licenseSeq' => $req->licenseSeq(),
+        //     'checkType' => $req->checkType(),
+        //     'placeName' => $req->placeName(),
+        //     'inspectionBeginDate' => $req->inspectionBeginDate(),
+        //     'inspectionEndDate' => $req->inspectionEndDate(),
+        //     'fieldBeginDate' => $req->fieldBeginDate(),
+        //     'fieldEndDate' => $req->fieldEndDate(),
+        // ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         // 필수 검증(화면 기준)
         if ($userSeq <= 0) {
+             log_message('error', 'SafetyProjectAddService::add UNAUTHORIZED because userSeq<=0 userSeq=' . $userSeq);
             throw ApiException::unauthorized('UNAUTHORIZED', ApiErrorCode::UNAUTHORIZED);
         }
         if ($req->licenseSeq() <= 0) {
+             log_message('error', 'SafetyProjectAddService::add VALIDATION_FAILED licenseSeq' . $userSeq);
             throw ApiException::badRequest('VALIDATION_FAILED', ApiErrorCode::VALIDATION_FAILED);
         }
         if (trim($req->checkType()) === '' || trim($req->placeName()) === '') {
+             log_message('error', 'SafetyProjectAddService::add VALIDATION_FAILED checkType' . $userSeq);
             throw ApiException::badRequest('VALIDATION_FAILED', ApiErrorCode::VALIDATION_FAILED);
         }
-        if (!$this->isDate($req->fieldBeginDate()) || !$this->isDate($req->fieldEndDate())) {
+        if (!$this->isDate($req->inspectionBeginDate()) || !$this->isDate($req->inspectionEndDate())) {
+             log_message('error', 'SafetyProjectAddService::add badRequest inspectionBeginDate' . $userSeq);
             throw ApiException::badRequest('VALIDATION_FAILED', ApiErrorCode::VALIDATION_FAILED);
         }
 
@@ -51,8 +65,8 @@ final class SafetyProjectAddService
             $req->buildingId() ?: null,
             $req->inspectionBeginDate(),
             $req->inspectionEndDate(),
-            $req->fieldBeginDate()?: null,
-            $req->fieldEndDate()?: null,
+            $req->fieldBeginDate() ?: null,
+            $req->fieldEndDate() ?: null,
             $req->remark() ?: null
         );
 

@@ -29,14 +29,15 @@ final class SafetyEngineerDetailService
         }
 
         $row = $this->safetyEngineerDetailRepository->findDetailRow($userSeq);
-
+       
+        //log_message('error', 'ENGINEER_DETAIL_ROW=' . json_encode($row, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         if ($row === null) {
             throw ApiException::badRequest(
                 'INVALID_ROW',
                 ApiErrorCode::VALIDATION_FAILED
             );
         }
-
+        $row->userSeq = $userSeq;
         return SafetyEngineerRes::fromRow($row);
     }
 

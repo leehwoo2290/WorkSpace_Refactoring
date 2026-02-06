@@ -57,6 +57,7 @@ final class SafetyEngineerListPreset implements ListPresetInterface
         $pa = self::A_PROJ_AGG;
 
         return [
+            "{$u}.seq AS user_seq",
             "$l.name AS license_name",
             "$se.grade AS grade",
             "$u.name AS name",
@@ -122,7 +123,7 @@ final class SafetyEngineerListPreset implements ListPresetInterface
 
         // 등급/상태
         // grade (grade -> DB status 매핑)
-        $gradeRaw  = trim((string) ($where['grade']  ?? ''));
+        $gradeRaw = trim((string) ($where['grade'] ?? ''));
 
         if ($gradeRaw !== '') {
             $mapped = EnumMapper::map($maps, 'safety_engineer_grade', $gradeRaw);

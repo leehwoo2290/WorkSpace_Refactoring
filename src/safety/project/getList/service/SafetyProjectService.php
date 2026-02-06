@@ -31,11 +31,15 @@ final class SafetyProjectService
         $offset = ($page - 1) * $size;
 
         $total = $this->safetyProjectRepository->count($query);
-        $rows  = $this->safetyProjectRepository->findList($query);
+        $rows = $this->safetyProjectRepository->findList($query);
 
         $items = [];
         foreach ($rows as $i => $row) {
             $no = $offset + $i + 1;
+
+            $projectSeq = isset($row->project_seq) && $row->project_seq !== null && $row->project_seq !== ''
+                ? (int) $row->project_seq
+                : 0; 
 
             $grossArea = null;
             if (isset($row->gross_area) && $row->gross_area !== null && $row->gross_area !== '') {
@@ -43,6 +47,7 @@ final class SafetyProjectService
             }
 
             $items[] = new SafetyProjectListItem(
+                $projectSeq,
                 $no,
                 !empty($row->status) ? (string) $row->status : null,
                 !empty($row->check_type) ? (string) $row->check_type : null,

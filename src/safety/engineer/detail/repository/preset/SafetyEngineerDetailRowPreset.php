@@ -23,9 +23,13 @@ final class SafetyEngineerDetailRowPreset implements RowPresetInterface
         $se = self::A_ENGINEER;
 
         return [
+            "{$se}.seq AS engineerSeq",
             "{$u}.email AS email",
             "{$u}.name AS name",
-            "{$pr}.mobile AS phoneNumber",
+
+            // mobile을 응답 필드명과 동일하게 alias
+            "COALESCE({$pr}.mobile, '') AS phoneNumber",
+
             "{$se}.grade AS grade",
             "{$se}.license_no AS licenseNum",
             "{$se}.remark AS remark",
@@ -58,6 +62,6 @@ final class SafetyEngineerDetailRowPreset implements RowPresetInterface
     public function applyWhere($db, $query): void
     {
         $u = self::A_USER;
-        $db->where("{$u}.seq", (int)$query);
+        $db->where("{$u}.seq", (int) $query);
     }
 }

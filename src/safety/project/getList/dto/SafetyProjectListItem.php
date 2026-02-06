@@ -5,6 +5,7 @@ namespace App\safety\project\getList\dto;
 
 final class SafetyProjectListItem implements \JsonSerializable
 {
+    private int $projectSeq;          // 프로젝트id
     private int $num;                 // 번호(화면용)
     private ?string $status;          // 상태
     private ?string $checkType;       // 점검 종류
@@ -16,10 +17,11 @@ final class SafetyProjectListItem implements \JsonSerializable
     private ?string $facilityType;    // 건축물 구분
     private ?string $jong;            // 종별
     private ?string $licenseName;     // 점검업체
-    private ?string $engineers;    // 참여 기술진(콤마 구분)
+    private ?string $engineers;       // 참여 기술진(콤마 구분)
     private ?int $grossArea;          // 연면적
 
     public function __construct(
+        int $projectSeq,
         int $num,
         ?string $status,
         ?string $checkType,
@@ -34,6 +36,7 @@ final class SafetyProjectListItem implements \JsonSerializable
         ?string $engineers,
         ?int $grossArea
     ) {
+        $this->projectSeq = $projectSeq;
         $this->num = $num;
         $this->status = $status;
         $this->checkType = $checkType;
@@ -52,6 +55,7 @@ final class SafetyProjectListItem implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
+            'projectSeq' => $this->projectSeq,
             'num' => $this->num,
             'status' => $this->status,
             'checkType' => $this->checkType,

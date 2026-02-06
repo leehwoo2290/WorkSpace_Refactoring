@@ -32,7 +32,7 @@ final class SafetyProjectAddEntity
         string $inspectionEndDate,
         ?string $fieldBeginDate,
         ?string $fieldEndDate,
-        ?string $remark,
+        ?string $remark
     ) {
         $this->userSeq = $userSeq;
         $this->licenseSeq = $licenseSeq;

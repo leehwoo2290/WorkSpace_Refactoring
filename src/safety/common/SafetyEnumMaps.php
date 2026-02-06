@@ -29,6 +29,18 @@ final class SafetyEnumMaps
                 'STRUCTURAL_SAFETY_ASSESSMENT' => '구조안전성검토',
             ],
 
+             'safety_facility_jong' => [
+                'CLASS_1' => '1종',
+                'CLASS_2' => '2종',
+                'CLASS_3' => '3종',
+                'CLASS_OUT' => '종외시설',
+            ],
+
+              'safety_safety_grade' => [
+                'GOOD' => '양호',
+                'POOR' => '미흡',
+            ],
+
             'region' => [
                 'SEOUL' => '서울',
                 'BUSAN' => '부산',

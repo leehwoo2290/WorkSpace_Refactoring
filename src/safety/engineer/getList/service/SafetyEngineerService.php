@@ -27,8 +27,8 @@ final class SafetyEngineerService
         $offset = ($page - 1) * $size;
 
         $total = $this->safetyEngineerRepository->count($query);
-        $rows  = $this->safetyEngineerRepository->findList($query);
-
+        $rows = $this->safetyEngineerRepository->findList($query);
+  
         $items = [];
         foreach ($rows as $i => $r) {
             $no = $offset + $i + 1;
@@ -38,8 +38,14 @@ final class SafetyEngineerService
                 $projectCnt = (int) $r->project_cnt;
             }
 
+            $userSeq = null;
+            if (isset($r->user_seq) && $r->user_seq !== null && $r->user_seq !== '') {
+                $userSeq = (int) $r->user_seq;
+            }
+
             $items[] = new SafetyEngineerListItem(
                 $no,
+                $userSeq,
                 !empty($r->license_name) ? (string) $r->license_name : null,
                 !empty($r->grade) ? (string) $r->grade : null,
                 !empty($r->name) ? (string) $r->name : null,
@@ -68,7 +74,7 @@ final class SafetyEngineerService
             $items[] = new SafetyProjectListEngineerFilterItem(
                 (int) ($r->engineer_seq ?? 0),
                 (string) ($r->name ?? ''),
-               (string) ($r->grade ?? '')
+                (string) ($r->grade ?? '')
             );
         }
 

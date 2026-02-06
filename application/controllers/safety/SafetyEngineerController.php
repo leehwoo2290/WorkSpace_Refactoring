@@ -12,6 +12,11 @@ use App\safety\engineer\detail\dto\request\SafetyEngineerReq;
 
 use App\safety\engineer\getList\dto\response\SafetyProjectListEngineerFilterRes;
 
+use App\safety\engineer\autocomplete\dto\query\SafetyEngineerAutocompleteQuery;
+use App\safety\engineer\autocomplete\dto\response\SafetyEngineerAutocompleteRes;
+
+use App\safety\engineer\detail\dto\response\SafetyEngineerHistoryRes;
+
 final class SafetyEngineerController extends BASE_Controller
 {
     public SafetyModule $safetyModule;
@@ -94,6 +99,37 @@ final class SafetyEngineerController extends BASE_Controller
         } catch (\Throwable $e) {
 
             ApiResult::failThrowable($e, $e->getMessage());
+        }
+    }
+
+    public function autocompleteList()
+    {
+        try {
+            /** @var SafetyEngineerAutocompleteQuery $query */
+            $query = $this->requestQueryDtoMapper->queryRequestDto(SafetyEngineerAutocompleteQuery::class);
+
+            $res = $this->safetyModule->safetyEngineerAutocompleteList($query);
+
+            ApiResult::ok($res, SafetyEngineerAutocompleteRes::class);
+
+        } catch (\Throwable $e) {
+
+            ApiResult::failThrowable($e, $e->getMessage());
+        }
+    }
+    /**
+     * 엔지니어 점검이력(참여 프로젝트 목록)
+     * GET /api/web/safety/engineer/{engineerSeq}/history
+     */
+    public function history(int $engineerSeq): void
+    {
+        try {
+            $res = $this->safetyModule->safetyEngineerHistory($engineerSeq);
+
+            ApiResult::ok($res, SafetyEngineerHistoryRes::class);
+
+        } catch (\Throwable $e) {
+            ApiResult::failThrowable($e);
         }
     }
 }

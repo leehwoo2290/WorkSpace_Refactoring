@@ -96,6 +96,19 @@ $route['api/web/licenseFilter']['get'] = 'license/LicenseController/licenseFilte
 $route['api/web/safety']['get'] = 'safety/SafetyProjectController/list';
 $route['api/web/safety']['post'] = 'safety/SafetyProjectController/add';
 
+// SafetyProject detail
+$route['api/web/safety/(:num)/field-info']['GET'] = 'safety/SafetyProjectController/fieldInfo/$1';
+
+// SafetyProject fieldInfo Filter
+$route['api/web/safety/facility-remark-filter']['get'] = 'safety/SafetyProjectController/facilityRemarkFilter/$1';
+$route['api/web/safety/facility-type-filter']['get'] = 'safety/SafetyProjectController/facilityTypeFilter/$1';
+$route['api/web/safety/contract-manager-filter']['get'] = 'safety/SafetyProjectController/contractManagerFilter/$1';
+
+// SafetyProject schedule Filter
+$route['api/web/safety/(:num)/schedule']['get']  = 'safety/SafetyProjectController/schedule/$1';
+$route['api/web/safety/(:num)/schedule/assigned-filter']['get']  = 'safety/SafetyProjectController/assignedFilter/$1';
+$route['api/web/safety/(:num)/schedule']['put']  = 'safety/SafetyProjectController/updateSchedule/$1';
+
 // SafetyProjectAutocomplete API routes
 $route['api/web/safety/autocomplete']['get'] = 'safety/SafetyProjectController/autocompleteList';
 
@@ -103,12 +116,17 @@ $route['api/web/safety/autocomplete']['get'] = 'safety/SafetyProjectController/a
 $route['api/web/safety/engineers']['get'] = 'safety/SafetyEngineerController/list';
 $route['api/web/safety/engineer']['post'] = 'safety/SafetyEngineerController/add';
 
+// SafetyEngineer Add Autocomplete API routes
+$route['api/web/safety/engineer/autocomplete']['get'] = 'safety/SafetyEngineerController/autocompleteList';
+
 // SafetyEngineer detail
 $route['api/web/safety/engineer/(:num)']['GET']  = 'safety/SafetyEngineerController/detail/$1';
 
 // SafetyEngineer update
 $route['api/web/safety/engineer/(:num)']['PUT']  = 'safety/SafetyEngineerController/update/$1';
 
+// SafetyEngineer history
+$route['api/web/safety/engineer/(:num)/history']['GET']  = 'safety/SafetyEngineerController/history/$1';
 
 // User licenses filter API routes
 $route['api/web/safetyEngineerFilter']['get'] = 'safety/SafetyEngineerController/safetyEngineerFilter';

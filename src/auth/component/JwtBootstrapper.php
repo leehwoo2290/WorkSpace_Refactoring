@@ -34,6 +34,7 @@ final class JwtBootstrapper
     public function bootstrap(): void
     {
         $access = $this->tokenTransport->getAccessToken();
+        // log_message('error', 'JWT_BOOTSTRAP accessTokenPresent=' . ($access ? 'Y' : 'N'));
         if ($access) {
             try {
                 $claims = $this->jwtManager->validateAccessToken($access);

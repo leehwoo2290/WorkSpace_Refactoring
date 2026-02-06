@@ -50,6 +50,7 @@ final class SafetyProjectListPreset implements ListPresetInterface
         $eng = self::A_ENG_AGG;
 
         return [
+            "$sp.seq AS project_seq",
             "$sp.status AS status",
             "$sp.check_type AS check_type",
             // region: "시도 시군구" (둘 다 없으면 NULL)

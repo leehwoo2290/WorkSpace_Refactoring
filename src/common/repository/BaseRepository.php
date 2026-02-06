@@ -386,6 +386,7 @@ abstract class BaseRepository
         });
     }
 
+    
     /**
      * Raw SQL 조회(SELECT) 실행 래퍼 (예외 표준화)
      *

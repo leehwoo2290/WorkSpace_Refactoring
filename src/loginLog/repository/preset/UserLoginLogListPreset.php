@@ -21,7 +21,7 @@ final class UserLoginLogListPreset implements ListPresetInterface
     {
         return [
             'log.seq',
-            'log.reg_time',
+            "DATE_FORMAT(DATE_ADD(log.reg_time, INTERVAL 9 HOUR), '%Y-%m-%d %H:%i:%s') AS reg_time",
             'log.email',
             'log.success',
             'log.country_code',

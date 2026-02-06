@@ -13,6 +13,8 @@ class BASE_Controller extends CI_Controller
     //추후 별도 컨트롤러에 빼기
     protected UserContext $userContext;
     public AuthModule $authModule;
+
+    public AccessGuard $accessGuard;
     public RequestQueryDtoJsonMapper $requestQueryDtoMapper;
 
     public function __construct()
@@ -35,12 +37,19 @@ class BASE_Controller extends CI_Controller
         $this->load->database();
 
         $this->load->library('AuthModule', null, 'authModule');
-        $this->load->library('RequestQueryDtoJsonMapper', null,'requestQueryDtoMapper');
+        $this->load->library('RequestQueryDtoJsonMapper', null, 'requestQueryDtoMapper');
 
         $this->authModule->bootstrap();
 
         // 컨트롤러에서 접근할 UserContext
         $this->userContext = $this->authModule->context();
+
+        $this->load->library('AccessGuard', null, 'accessGuard');
+
+        $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+        $uri = (string) $this->uri->uri_string(); // "api/web/..." 형태로 나옴 (REQUEST_URI 쓰면 prefix 섞일 수 있음)
+
+        $this->accessGuard->check($method, $uri, $this->userContext);
     }
 
     public function __destruct()

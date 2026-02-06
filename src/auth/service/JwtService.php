@@ -227,12 +227,13 @@ final class JwtService
     public function refreshAccessToken(): JwtTokenRes
     {
         $refreshToken = $this->tokenTransport->getRefreshToken();
-        
+        log_message('error', 'refreshAccessToken');
         if (!$refreshToken) {
             //$this->endSession();
             throw ApiException::unauthorized('NO_REFRESH_TOKEN', ApiErrorCode::NO_REFRESH_TOKEN);
         }
         try {
+
             //토큰이 유효한지 최소한의 검증
             //validateRefreshToken에서 유효하지 않거나 만료된 토큰이면 InvalidTokenException이 발생
             $claims = $this->jwtManager->validateRefreshToken($refreshToken);
@@ -255,6 +256,11 @@ final class JwtService
             $now = new DateTimeImmutable('now');
             $tokenId = (string) $claims->jti;
 
+
+            // tokenId(jti)는 refresh 토큰의 "DB 식별자"이므로 비어있거나 형식이 깨지면 즉시 차단
+            if ($tokenId === '' || !preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $tokenId)) {
+                throw ApiException::unauthorized('INVALID_REFRESH_TOKEN', ApiErrorCode::INVALID_REFRESH_TOKEN);
+            }
             //회전(rotate) 처리를 트랜잭션으로 묶음
             //동시 요청/경쟁 조건을 막기 위해 DB 트랜잭션 + row lock
             $jwtTokenPair = $this->dbTransactionRunner->run(function () use ($now, $userSeq, $tokenId, $refreshToken, $roles) {
@@ -337,6 +343,43 @@ final class JwtService
             return new JwtTokenRes($jwtTokenPair->getAccessToken(), (int) $jwtTokenPair->getAccessExp());
 
         } catch (ApiException $e) {
+            // refresh 실패할 때만, 원인 추적용 최소 로그
+            // (특히 REFRESH_ROW_NOT_FOUND에서 중요)
+            try {
+                $refreshToken = $this->tokenTransport->getRefreshToken();
+                $claims = null;
+                $userSeq = 0;
+                $tokenId = null;
+
+                if ($refreshToken) {
+                    // validateRefreshToken 자체가 throw할 수 있으니 try
+                    try {
+                        $claims = $this->jwtManager->validateRefreshToken($refreshToken);
+                        $userSeq = (int) ($claims->sub ?? 0);
+                        $tokenId = (string) ($claims->jti ?? '');
+                    } catch (\Throwable $_) {
+                        // claims 파싱 실패는 그대로 둠
+                    }
+                }
+
+                $deviceId = $this->tokenTransport->getDeviceId();
+
+                // DB 상태 스냅샷 (row 있나? user+device active 있나? user 전체 있나?)
+                $snap = $this->refreshTokenRepository->debugSnapshot($userSeq, (string) $deviceId, (string) $tokenId);
+
+                log_message('error', 'JWT_REFRESH FAIL ' . json_encode([
+                    'code' => $e->errorCode(),
+                    'msg' => $e->getMessage(),
+                    'userSeq' => $userSeq,
+                    'deviceId' => $deviceId,
+                    'tokenId' => $tokenId,
+                    'db' => $snap,   // 여기만 보면 거의 원인 확정 가능
+                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
+            } catch (\Throwable $logErr) {
+                // 로그 때문에 refresh 흐름 깨지면 안 됨
+                log_message('error', 'JWT_REFRESH FAIL (logErr) ' . $logErr->getMessage());
+            }
             if (
                 in_array($e->errorCode(), [
                     ApiErrorCode::REFRESH_TOKEN_EXPIRED,
@@ -347,7 +390,7 @@ final class JwtService
                     ApiErrorCode::USER_NOT_FOUND,
                 ], true)
             ) {
-                //$this->endSession();  
+                $this->endSession();
             }
             throw $e;
         } catch (\Throwable $e) {

@@ -33,6 +33,49 @@ final class RefreshTokenRepository extends BaseRepository
     //     }
     // }
 
+    public function debugSnapshot(int $userSeq, string $deviceId, string $tokenId): array
+    {
+        // userSeq/tokenId가 0/''이면 조회 의미가 없으니 가드
+        $out = [
+            'hasTokenIdRow' => null,
+            'activeCountByUserDevice' => null,
+            'totalCountByUser' => null,
+        ];
+
+        // 1) tokenId row 존재 여부
+        if ($tokenId !== '') {
+            $out['hasTokenIdRow'] = (bool) $this->db->select('1', false)
+                ->from($this->table)
+                ->where('token_id', $tokenId)
+                ->limit(1)
+                ->get()
+                ->row();
+        }
+
+        // 2) 같은 user+device에서 active(replaced_date IS NULL) 토큰이 남아있는지
+        if ($userSeq > 0) {
+            $this->db->from($this->table)
+                ->where('user_seq', $userSeq)
+                ->where('replaced_date IS NULL', null, false);
+
+            if ($deviceId !== '') {
+                $this->db->where('device_id', $deviceId);
+            } else {
+                $this->db->where('device_id IS NULL', null, false);
+            }
+
+            $out['activeCountByUserDevice'] = (int) $this->db->count_all_results();
+        }
+
+        // 3) user 전체 refresh row가 남아있는지
+        if ($userSeq > 0) {
+            $out['totalCountByUser'] = (int) $this->db->from($this->table)
+                ->where('user_seq', $userSeq)
+                ->count_all_results();
+        }
+
+        return $out;
+    }
     public function findByTokenIdForUpdate(string $tokenId): ?RefreshTokenEntity
     {
         // CI3 QueryBuilder로는 FOR UPDATE를 깔끔하게 붙이기 어려워 raw SQL 사용
@@ -95,6 +138,7 @@ final class RefreshTokenRepository extends BaseRepository
             ],
             function () use ($id): void {
                 $this->db->where('seq', $id);
+                $this->db->where('replaced_date IS NULL', null, false);
                 $this->db->limit(1);
             }
         );
@@ -102,20 +146,37 @@ final class RefreshTokenRepository extends BaseRepository
 
     public function revokeAllByUserSeq(int $userSeq): void
     {
-        $this->deleteOrThrow(
+        // DELETE 대신 soft revoke(replaced_date)로 처리 → 쿠키가 잠깐 남아도 ROW_NOT_FOUND를 줄임
+        $now = date('Y-m-d H:i:s');
+
+        $this->updateOrThrow(
             $this->table,
+            [
+                'replaced_date' => $now,
+                'update_time' => $now,
+            ],
             function () use ($userSeq): void {
                 $this->db->where('user_seq', $userSeq);
+                $this->db->where('replaced_date IS NULL', null, false);
             }
         );
     }
 
     public function revokeByTokenId(string $tokenId): void
     {
-        $this->deleteOrThrow(
+        // DELETE 대신 soft revoke(replaced_date)
+        $now = date('Y-m-d H:i:s');
+
+        $this->updateOrThrow(
             $this->table,
+            [
+                'replaced_date' => $now,
+                'update_time' => $now,
+            ],
             function () use ($tokenId): void {
                 $this->db->where('token_id', $tokenId);
+                $this->db->where('replaced_date IS NULL', null, false);
+                $this->db->limit(1);
             }
         );
     }
@@ -126,8 +187,16 @@ final class RefreshTokenRepository extends BaseRepository
      */
     public function revokeActiveByUserSeqAndDeviceId(int $userSeq, ?string $deviceId): void
     {
-        $this->deleteOrThrow(
+
+        // DELETE 대신 soft revoke(replaced_date)
+        $now = date('Y-m-d H:i:s');
+
+        $this->updateOrThrow(
             $this->table,
+            [
+                'replaced_date' => $now,
+                'update_time' => $now,
+            ],
             function () use ($userSeq, $deviceId): void {
                 $this->db->where('user_seq', $userSeq);
 

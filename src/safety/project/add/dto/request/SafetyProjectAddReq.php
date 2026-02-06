@@ -61,7 +61,7 @@ final class SafetyProjectAddReq extends ReqDtoBase
         $fieldEndDate = self::toStrOrNull(self::get($data, ['field_end_date', 'fieldEndDate'], ''));
 
         $inspectionBeginDate = self::toStr(self::get($data, ['inspection_begin_date', 'inspectionBeginDate'], ''));
-        $inspectionEndDate = self::toStr(self::get($data, ['inspection_end_date', 'inspectionndDate'], ''));
+        $inspectionEndDate = self::toStr(self::get($data, ['inspection_end_date', 'inspectionEndDate'], ''));
 
         $remark = self::toStrOrNull(self::get($data, ['remark'], null));
 

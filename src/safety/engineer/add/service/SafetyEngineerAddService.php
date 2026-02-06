@@ -43,7 +43,7 @@ final class SafetyEngineerAddService
             throw ApiException::badRequest('USER_QUIT', ApiErrorCode::VALIDATION_FAILED);
         }
 
-        $userSeq = (int) $userRow->seq;
+        $userSeq = (int) $userRow->user_seq;
 
         // 이미 엔지니어 등록되어 있으면 충돌
         if ($this->repo->existsActiveEngineerByUserSeq($userSeq)) {

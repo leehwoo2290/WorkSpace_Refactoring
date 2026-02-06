@@ -6,6 +6,7 @@ namespace App\safety\engineer\getList\dto;
 final class SafetyEngineerListItem implements \JsonSerializable
 {
     private int $num;                 // 번호
+    private int $userSeq;              // 유저 id
     private ?string $licenseName;     // 소속(license_name)
     private ?string $grade;           // 등급
     private ?string $name;           // 이름
@@ -21,6 +22,7 @@ final class SafetyEngineerListItem implements \JsonSerializable
 
     public function __construct(
         int $num,
+        int $userSeq,
         ?string $licenseName,
         ?string $grade,
         ?string $name,
@@ -35,6 +37,7 @@ final class SafetyEngineerListItem implements \JsonSerializable
         ?string $remark
     ) {
         $this->num = $num;
+        $this->userSeq = $userSeq;
         $this->licenseName = $licenseName;
         $this->grade = $grade;
         $this->name = $name;
@@ -49,35 +52,76 @@ final class SafetyEngineerListItem implements \JsonSerializable
         $this->remark = $remark;
     }
 
-    public function num(): int { return $this->num; }
-    public function licenseName(): ?string { return $this->licenseName; }
-    public function grade(): ?string { return $this->grade; }
-    public function department(): ?string { return $this->department; }
-    public function position(): ?string { return $this->position; }
-    public function licenseNum(): ?string { return $this->licenseNum; }
-    public function email(): ?string { return $this->email; }
-    public function status(): ?string { return $this->status; }
-    public function projectCnt(): ?int { return $this->projectCnt; }
-    public function lastProject(): ?string { return $this->lastProject; }
-    public function lastProjectDate(): ?string { return $this->lastProjectDate; }
-    public function remark(): ?string { return $this->remark; }
+    public function userSeq(): int
+    {
+        return $this->userSeq;
+    }
+    public function num(): int
+    {
+        return $this->num;
+    }
+    public function licenseName(): ?string
+    {
+        return $this->licenseName;
+    }
+    public function grade(): ?string
+    {
+        return $this->grade;
+    }
+    public function department(): ?string
+    {
+        return $this->department;
+    }
+    public function position(): ?string
+    {
+        return $this->position;
+    }
+    public function licenseNum(): ?string
+    {
+        return $this->licenseNum;
+    }
+    public function email(): ?string
+    {
+        return $this->email;
+    }
+    public function status(): ?string
+    {
+        return $this->status;
+    }
+    public function projectCnt(): ?int
+    {
+        return $this->projectCnt;
+    }
+    public function lastProject(): ?string
+    {
+        return $this->lastProject;
+    }
+    public function lastProjectDate(): ?string
+    {
+        return $this->lastProjectDate;
+    }
+    public function remark(): ?string
+    {
+        return $this->remark;
+    }
 
     public function jsonSerialize(): array
     {
         return [
-            'num'             => $this->num,
-            'licenseName'     => $this->licenseName,
-            'grade'           => $this->grade,
-            'name'           => $this->name,
-            'department'      => $this->department,
-            'position'        => $this->position,
-            'licenseNum'      => $this->licenseNum,
-            'email'           => $this->email,
-            'status'          => $this->status,
-            'projectCnt'      => $this->projectCnt,
-            'lastProject'     => $this->lastProject,
+            'userSeq' => $this->userSeq,
+            'num' => $this->num,
+            'licenseName' => $this->licenseName,
+            'grade' => $this->grade,
+            'name' => $this->name,
+            'department' => $this->department,
+            'position' => $this->position,
+            'licenseNum' => $this->licenseNum,
+            'email' => $this->email,
+            'status' => $this->status,
+            'projectCnt' => $this->projectCnt,
+            'lastProject' => $this->lastProject,
             'lastProjectDate' => $this->lastProjectDate,
-            'remark'          => $this->remark,
+            'remark' => $this->remark,
         ];
     }
 }

@@ -6,7 +6,7 @@ namespace App\loginLog\component;
 use App\loginLog\Entity\UserLoginLogEntity;
 use App\loginLog\Repository\UserLoginLogRepository;
 use DateTimeImmutable;
-
+use DateTimeZone;
 /**
  * 로그인 로그 기록 서비스
  * 
@@ -30,7 +30,7 @@ final class UserLoginLogRecoder
         string $email,
         ?string $deviceId = null
     ): void {
-        $now = new DateTimeImmutable('now');
+        $now = new DateTimeImmutable('now', new DateTimeZone('UTC'));
 
         $entity = new UserLoginLogEntity(
             null,
@@ -62,7 +62,7 @@ final class UserLoginLogRecoder
         ?string $deviceId = null
     ): void {
         $now = new DateTimeImmutable('now');
-        
+
         $entity = new UserLoginLogEntity(
             null,
             $email,
@@ -87,12 +87,18 @@ final class UserLoginLogRecoder
 
     private function getUserIp(): string
     {
+        log_message('error', 'IP_DEBUG ' . json_encode([
+            'REMOTE_ADDR' => $_SERVER['REMOTE_ADDR'] ?? null,
+            'XFF' => $_SERVER['HTTP_X_FORWARDED_FOR'] ?? null,
+            'X_REAL_IP' => $_SERVER['HTTP_X_REAL_IP'] ?? null,
+            'CLIENT_IP' => $_SERVER['HTTP_CLIENT_IP'] ?? null,
+        ], JSON_UNESCAPED_SLASHES));
         return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
     }
 
     private function isMobile(): bool
     {
         $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
-        return (bool)preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $ua);
+        return (bool) preg_match('/Mobile|Android|iPhone|iPad|iPod/i', $ua);
     }
 }

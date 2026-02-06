@@ -94,23 +94,55 @@ final class TokenTransport
     public function clear(): void
     {
         $c = $this->jwtConfig['cookie'] ?? [];
-        if (!empty($c['refresh_name'])) {
-            $this->setCookie((string)$c['refresh_name'], '', time() - 3600, $c);
-        }
+
+        $refreshName = (string)($c['refresh_name'] ?? 'refreshToken');
+        $this->clearCookieVariants($refreshName, $c);
+
         if (!empty($c['access_name'])) {
-            $this->setCookie((string)$c['access_name'], '', time() - 3600, $c);
+            $this->clearCookieVariants((string)$c['access_name'], $c);
         }
     }
 
     private function setCookie(string $name, string $value, int $expTs, array $opt): void
     {
-        setcookie($name, $value, [
+        $options = [
             'expires'  => $expTs,
             'path'     => $opt['path'] ?? '/',
-            'domain'   => $opt['domain'] ?? '',
             'secure'   => (bool)($opt['secure'] ?? false),
             'httponly' => (bool)($opt['httponly'] ?? true),
             'samesite' => $opt['samesite'] ?? 'Lax',
-        ]);
+        ];
+
+        // domain이 빈 문자열이면 Domain 속성을 아예 생략(브라우저별 Domain= 처리 이슈 방지)
+        if (!empty($opt['domain'])) {
+            $options['domain'] = (string)$opt['domain'];
+        }
+
+        setcookie($name, $value, $options);
+    }
+
+    private function clearCookieVariants(string $name, array $opt): void
+    {
+        // 과거 path/domain 설정이 달라 중복 쿠키가 생겼을 때를 대비해 여러 변형을 같이 만료시킨다.
+        $paths = array_values(array_unique(array_filter([
+            (string)($opt['path'] ?? '/'),
+            '/',
+            '/api',
+            '/dashboard',
+        ], static fn($p) => is_string($p) && $p !== '')));
+
+        $domains = array_values(array_unique([
+            (string)($opt['domain'] ?? ''),
+            '',
+        ]));
+
+        foreach ($paths as $path) {
+            foreach ($domains as $domain) {
+                $o = $opt;
+                $o['path'] = $path;
+                $o['domain'] = $domain;
+                $this->setCookie($name, '', time() - 3600, $o);
+            }
+        }
     }
 }
